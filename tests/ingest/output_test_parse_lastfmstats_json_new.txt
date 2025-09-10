@@ -1,11 +1,11 @@
 
-Output: 2025-09-10 09:50
+Output: 2025-09-10 21:36
 
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/empty_json.json
-Invalid Data: Empty JSON data.
+File '/home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/empty_json.json' contains empty JSON data.
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
@@ -15,12 +15,12 @@ No such file or directory
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/empty.json
-Invalid Data: Not a valid JSON: Expecting value at line 1 column 1
+Not a valid JSON: Expecting value at line 1 column 1
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/invalid_json.json
-Invalid Data: Not a valid JSON: Expecting value at line 1 column 13
+Not a valid JSON: Expecting value at line 1 column 13
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
@@ -48,22 +48,22 @@ File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/lastfmst
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/wrong_column.json
-Invalid Data: Column 'username' not found
+Column not found: 'username'
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/wrong_column_2.json
-Invalid Data: Column 'scrobbles' not found
+Column not found: 'scrobbles'
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/wrong_scrobbles_column_values.json
-Invalid Data: Cannot create DataFrame. Expected non-scalar value for at least one of the keys
+Cannot create DataFrame. Expected non-scalar value for at least one of the keys
 
 -x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x--x-|
 
 File: /home/siddhant/Documents/Python_Projects/memory.fm/tests/data/raw/unordered.json
-Invalid Data: Not a valid JSON: Expecting ':' delimiter at line 1 column 44
+Not a valid JSON: Expecting ':' delimiter at line 1 column 44
 
 
 --------------------------------------------------------Output-End--------------------------------------------------------

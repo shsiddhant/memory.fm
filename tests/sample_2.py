@@ -1,12 +1,9 @@
 from tabulate import tabulate
 from memory_fm import parse_lastfmstats_json, loaders
-from memory_fm.normalise.normalise_lastfmstats import normalise
 
 with open("sample.json", "r") as fp:
     df = loaders.parse_json(fp)
 scrobble_df = parse_lastfmstats_json.extract_scrobble_dataframe(df)
 scrobble_df = parse_lastfmstats_json.verify_scrobbles_columns(scrobble_df, scrobbles_columns=['track', 'artist', 'album'])
-
-scrobble_df = normalise(scrobble_df)
 table = tabulate(scrobble_df, tablefmt="grid", headers="keys")
 print(table)

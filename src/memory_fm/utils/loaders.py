@@ -8,14 +8,8 @@ import json
 import pandas as pd
 from typing import IO
 from pathlib import Path
-
+from memory_fm import exceptions
 PathLike = str | Path
-
-
-class InvalidDataError(Exception):
-    def __init__(self, error):
-        self.error = error
-        super().__init__(self.error)
 
 
 def parse_json(json_file: PathLike | IO[str] = None) -> pd.DataFrame:
@@ -41,11 +35,11 @@ def parse_json(json_file: PathLike | IO[str] = None) -> pd.DataFrame:
     except OSError:
         raise
     except json.JSONDecodeError as e:
-        raise InvalidDataError(f"Not a valid JSON: {e.msg} at line {e.lineno} column {e.colno}")
+        raise exceptions.ScrobbleError(f"Not a valid JSON: {e.msg} at line {e.lineno} column {e.colno}")
     except ValueError as e:
         if "If using all scalar values, you must pass an index" in str(e):
-            raise InvalidDataError("Cannot create DataFrame. Expected non-scalar value for at least one of the keys")
+            raise exceptions.ScrobbleError("Cannot create DataFrame. Expected non-scalar value for at least one of the keys")
     if not log_json:
-        raise InvalidDataError("Empty JSON data.")
+        raise exceptions.EmptyJSONError(json_file)
 
     return log_df

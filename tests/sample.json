@@ -1,7 +1,3 @@
 {"username":"lazulinoother",
-"scrobbles":[
-		{"track":"Good to Go","artist":"Elliott Smith","album":"Elliott Smith"},
-		{"track":"Moon sequel","artist":"Mount Eerie","album":"Dawn"},
-		{"track":"They'll Only Miss You When You Leave","artist":"Carissa's Wierd","album":"Songs About Leaving"}
-	]
+"scrobbles":[{"track":"The Modern Leper",        "artist":"Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":1757467823000},{"track":"I Feel Better","artist":   "Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":1757468072000},{"track":"Good Arms vs. Bad Arms","artist":   "Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":1757468274000},{"track":"Floating in the Forth","artist":"Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":1757514204000}]
 }

@@ -1,7 +1,8 @@
 from pathlib import Path
 from tabulate import tabulate
 from datetime import datetime as dt
-from memory_fm import parse_lastfmstats_json, check_json_validity
+import pandas as pd
+from memory_fm import utils, ingest, exceptions
 
 project_dir = Path(__file__).resolve().parent.parent
 
@@ -12,7 +13,7 @@ file_name_list = [
     ]
 
 files_separator = '-x-' * 40 + '|\n'
-output_file = project_dir / 'ingest' / 'output_test_parse_lastfmstats_json.txt'
+output_file = project_dir / 'ingest' / 'output_test_parse_lastfmstats_json_new.txt'
 now = dt.now()
 date_time_now = now.strftime("%Y-%m-%d %H:%M")
 output = f"Output: {date_time_now}\n\n"
@@ -23,16 +24,23 @@ for name in file_name_list:
     output = output + f"File: {orig_json_path}\n"
     
     try:
-        df = check_json_validity.parse_json(orig_json_path)
-        scrobble_df = parse_lastfmstats_json.extract_scrobble_dataframe(df)
+        df = utils.loaders.parse_json(orig_json_path)
+        scrobble_df = ingest.parse_lastfmstats_json.extract_scrobble_dataframe(df)
+        scrobble_df = ingest.parse_lastfmstats_json.verify_scrobbles_columns(scrobble_df)
+        #scrobble_df['date'] = pd.to_datetime(scrobble_df['date'], unit='ms')
     except OSError as e:
         output = output + e.strerror + "\n" 
-    except check_json_validity.InvalidDataError as e:
-        output = output + f"Invalid Data: {e}\n"
+    except exceptions.EmptyJSONError as e:
+        output = output + f"{e}\n"
+    except exceptions.SchemaError as e:
+        output = output + f"{e}\n"
+    except exceptions.ScrobbleError as e:
+        output = output + f"{e}\n"
     else:
         table = tabulate(scrobble_df, tablefmt="grid", headers="keys")
         output = output + table + "\n"
-
+print(scrobble_df['date'])
+print()
 print(table)
 output_end = 'Output-End'.center(122, "-")
 output = f"""
@@ -41,12 +49,12 @@ output = f"""
 {output_end}
 
 """
-print(output)
+#print(output)
 
-try:
-    with open(output_file, 'a') as fp:
-        fp.write(output)
-        print("Output written to file:", output_file)
-
-except OSError as e:
-    print(e)
+#try:
+#    with open(output_file, 'a') as fp:
+#        fp.write(output)
+#        print("Output written to file:", output_file)
+#
+#except OSError as e:
+#    print(e)
