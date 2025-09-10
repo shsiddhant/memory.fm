@@ -1,0 +1,25 @@
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*~
+*.swp
+*.bak
+*.tmp
+
+# Python cache
+*.pyc
+__pycache__/
+*/__pycache__/
+
+# Build artifacts
+*.egg-info/
+
+# Venv
+venv/
+.venv/
+env/
+.env/
+
+.obsidian/

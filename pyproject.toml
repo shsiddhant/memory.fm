@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools >= 61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memory.fm"
+version = "0.1.0"
+authors = [
+	{name="Siddhant Sharma", email="sharmasiddhant@protonmail.com" },
+]
+description = "Toolkit for reading, analysing, visualizing and exporting last.fm scrobble data."
+requires-python = ">=3.10"
+dependencies = [
+	"pandas",
+	"tabulate",
+]
