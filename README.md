@@ -21,7 +21,7 @@ pip install -e .
 ```shell
 git clone https://gitlab.com/sharmasiddhant/memory.fm/
 cd memory.fm/tests
-python sample_lastfmstats.com
+python sample_lastfmstats.com.py
 ```
 Output
 ```
