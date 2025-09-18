@@ -13,3 +13,17 @@
 - Separated file reader from loaders and put into util.
 - Added type hints
 - Added pytest as dev dependency
+
+**Class: `ScrobbleLog`**
+- Added dunder methods:
+    - `__bool__`
+    - `__contains__`
+    - `__eq__`
+    - `__getitem__`
+    - `__iter__` returns an iterator: `ScrobbleLogIterator` instance
+    - `__len__`
+- Added `append` method to append `Scrobble`, list of `Scrobble`, or `ScrobbleLog`to existing `ScrobbleLog`
+- Added `from_scrobble` method to create `ScrobbleLog` from username and `Scrobble`
+
+**Pytest**
+- Added and succesfully passed 22 pytest tests for `io` and core object classes.

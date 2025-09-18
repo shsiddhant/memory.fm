@@ -11,6 +11,21 @@ if TYPE_CHECKING:
     from memoryfm._typing import PathLike
 
 
+def _write_string(
+    data: str,
+    file: PathLike | IO[str] | None = None,
+) ->None:
+    """
+    Write `dict` to JSON format.
+    """
+    if file is not None:
+        file_like = _file_opener(file, "w")
+        file_like.write(data)
+        file_like.close()
+    else:
+        return data
+    return None
+
 def _dict_to_json(
     data,
     file: PathLike | IO[str] | None = None,
@@ -21,11 +36,10 @@ def _dict_to_json(
     if file is not None:
         file_like = _file_opener(file, "w")
         json.dump(data, file_like)
-        file.close()
+        file_like.close()
     else:
-        return data
+        return json.dumps(data)
     return None
-
 
 def _dict_to_csv(
     data,
@@ -37,7 +51,7 @@ def _dict_to_csv(
     if file is not None:
         file_like = _file_opener(file, "w")
         json.dump(data, file_like)
-        file.close()
+        file_like.close()
     else:
         return data
     return None
