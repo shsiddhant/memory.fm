@@ -4,19 +4,40 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "memory.fm"
-version = "0.1.0dev"
+version = "0.1.0.dev0"
 authors = [
 	{name="Siddhant Sharma", email="sharmasiddhant@protonmail.com" },
 ]
-description = "Toolkit for reading, analysing, visualizing and exporting last.fm scrobble data."
+description = "Small toolkit for reading, analysing, visualizing and exporting last.fm scrobble data."
 requires-python = ">=3.10"
 dependencies = [
 	"pandas",
 	"tabulate",
 	"pyyaml"
 ]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 
 [dependency-groups]
 dev = [
     "pytest>=8.4.2",
 ]
+
+classifiers = {
+"Development Status :: 2 - Pre-Alpha"
+
+"Intended Audience :: End Users/Desktop"
+"Intended Audience :: Developers"
+
+"Topic :: Software Development :: Libraries :: Python Modules"
+"Topic :: Internet :: Log Analysis"
+
+"License :: OSI Approved :: MIT License"
+
+}
+
+[project.urls]
+Repository = "https://gitlab.com/sharmasiddhant/memory.fm.git"
+Issues = "https://gitlab.com/sharmasiddhant/memory.fm/-/issues"
+Changelog = "https://gitlab.com/sharmasiddhant/memory.fm/-/blob/main/CHANGELOG.md"

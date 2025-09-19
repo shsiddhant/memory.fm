@@ -1,27 +1,36 @@
 # memory.fm (WIP)
 
+[![Python](https://img.shields.io/badge/python-3.10%2B-4B8BBE?style=for-the-badge&logo=python&logoColor=%23FFE873)](https://www.python.org/)
+[![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
+
 Small toolkit for reading, analysing, visualizing and exporting last.fm scrobble data. Work in progress.
-Implemented: Load JSON/CSV data obtained from lastfmstats.com and get a ScrobbleLog object.
+Implemented: Load JSON/CSV data obtained from lastfmstats.com and get a ScrobbleLog object and use its methods.
 
 **Inspired by personal music listening habits**
 
 ## Status: WIP
-* JSON/CSV parsing and lastfmstats DataFrame extracter modules present.
-* `ScrobbleLog` class and methods for string representation present.
-* Canonical `dict` representation and `to_dict` and `from_dict` present.
-* JSON/CSV read and write methods present.
-* Exception handling added.
-* Next goal: Add CLI implementation and pytest tests.
+- [x] JSON/CSV parsing for lastfmstats.com exports.
+- [x] Object classes `Scrobble` and `ScrobbleLog` for single scrobble and scrobble logs.
+- [x] Canonical `dict` representations for object classes.
+- [x] Print pretty looking `ScrobbleLog` using `tabular` package.
+- [x] Filter `ScrobbleLog` by date.
+- [x] Exception handling.
+- [x] Pytest Tests
+- [ ] Top tracks/artist/album charts
+- [ ] CLI implementation.
+- [ ] Daily/Weekly track/album/artist obsession streaks.
+- [ ] Documentation using asciidoc.
 
 ## Installation
+Requires Python 3.10 or above
 ```shell
 pip install -e .
 ```
 ## Usage (example)
 ```shell
 git clone https://gitlab.com/sharmasiddhant/memory.fm/
-cd memory.fm/tests
-python sample_lastfmstats.com.py
+cd memory.fm/examples
+python from_lastfmstats.com.py
 ```
 Output
 ```
@@ -71,44 +80,6 @@ Scrobble Logs for username: lazulinoother
 +------------------+----------------+----------------------+----------------------+
 Showing 10 out of total 13 scrobbles
 ```
-Sample json file: sample.json
-```json
-{"username":"lazulinoother",
-"scrobbles":[{"track":"The Modern Leper",        "artist":"Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":   1757467823000},{"track":"I Feel Better","artist":   "Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":         1757468072000},{"track":"Good Arms vs. Bad Arms","artist":   "Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":1757468274000},{"track":"Floating in the Forth","artist":"Frightened Rabbit","album":"The Midnight Organ Fight","albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85","date":    1757514204000}]
-}
-```
-
-Sample csv file: sample.csv
-```csv
-Artist│Album│AlbumId│Track│Date#lazulinoother
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Shades of Cool"│"1594535082000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Shades of Cool"│"1594535254000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Brooklyn Baby"│"1594535609000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"West Coast"│"1594535866000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Sad Girl"│"1594536184000"
-"Cigarettes After Sex"│"I."│"50b51f4b-48ae-4f67-b94b-fe2f1aa87fb9"│"Dreaming of You"│"1594536486000"
-"Cigarettes After Sex"│"I."│"50b51f4b-48ae-4f67-b94b-fe2f1aa87fb9"│"Starry Eyes"│"1594536692000"
-"Cigarettes After Sex"│"Cigarettes After Sex"│"0c68495e-485d-4976-bb85-438249649d08"│"Sunsetz"│"1594537250000"
-"Cigarettes After Sex"│"Cigarettes After Sex"│"0c68495e-485d-4976-bb85-438249649d08"│"Flash"│"1594537524000"
-"Cigarettes After Sex"│"Cigarettes After Sex"│"0c68495e-485d-4976-bb85-438249649d08"│"Truly"│"1594537767000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Black Beauty"│"1594538110000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Guns and Roses"│"1594538380000"
-"Lana Del Rey"│"Ultraviolence"│"060d1168-7ea0-4290-9b05-ea3d23b14966"│"Florida Kilos"│"1594538637000"
-```
-Sample script: sample_lastfmstats.py
-
-```python
-import memoryfm as mfm
-
-scrobble_log = mfm.from_lastfmstats("sample.json", "json")
-
-print("\nTesting printing from JSON\n")
-print(scrobble_log)
-
-scrobble_log = mfm.from_lastfmstats("sample.csv", "csv")
-
-print("\nTesting printing from CSV\n")
-print(scrobble_log)
-```
-
+# LICENSE
+[![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 

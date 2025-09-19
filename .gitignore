@@ -23,3 +23,6 @@ env/
 .env/
 
 .obsidian/
+
+# Full lastfmstats JSON export
+*/data/lastfmstats-lazulinoother.json
