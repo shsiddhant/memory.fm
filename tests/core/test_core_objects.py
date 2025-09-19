@@ -89,9 +89,8 @@ class TestScrobbleLog:
 
     def test_to_json(self, tmp_path):
         file_temp = tmp_path / "test_to_json.json"
-        scrobble_log = mfm.from_lastfmstats(file_json, "json")
+        scrobble_log = mfm.from_lastfmstats(file_json, "json", tz="Europe/Berlin")
         scrobble_log.to_json(file_temp)
         import json
         content = file_temp.read_text()
         assert json.loads(content).get("meta")["source"] == "lastfmstats.com"
-

@@ -17,6 +17,8 @@ from memoryfm.core._meta import _validate_meta, _validate_tz, _meta_generator
 
 if TYPE_CHECKING:
     from typing import IO, Self
+    import datetime
+
 
 # ---------------------------------------------------------------------
 # Scrobble class - represents a single scrobble
@@ -27,6 +29,7 @@ class Scrobble:
     Class representing a single scrobble
     """
     timestamp: pd.Timestamp
+    tzinfo: str
     track: str
     artist: str
     album: str | None = None
@@ -48,7 +51,7 @@ class Scrobble:
         """
         if not isinstance(data, dict):
             raise TypeError("Expecting dict type value as data")
-        keys = ["timestamp", "track", "artist"]
+        keys = ["timestamp", "track", "artist", "tzinfo"]
         for key in keys:
             if key not in data.keys():
                 raise ScrobbleError(f"Missing {key}")
@@ -85,6 +88,7 @@ class Scrobble:
             album = data["album"]
         return cls(
             timestamp=pd.Timestamp(data["timestamp"]),
+            tzinfo=data["tzinfo"],
             track=data["track"],
             artist=data["artist"],
             album=album
@@ -189,10 +193,10 @@ class ScrobbleLog:
                     f"Required DataFrame column not found: {column}",
                     column
                 )
-        from memoryfm.io._normalise import normalise_timestamps
-        normalise_timestamps(self.df["timestamp"], tz=self.tz,
-                             unit="ms"
-                             )
+        if not self.df.dropna.empty:
+            from memoryfm.io._normalise import normalise_timestamps
+            normalise_timestamps(self.df["timestamp"], tz=self.tz,
+                                 unit="ms")
         if "album" not in self.df.columns:
             self.df["album"] = None
         self.df = self.df[["timestamp", "track", "artist", "album"]]
@@ -256,7 +260,6 @@ class ScrobbleLog:
         """Access scrobbles by index or slice
         """
         if isinstance(key, slice):
-            print(key)
             return ScrobbleLog(df=self.df[key], username=self.username,
                                tz=self.tz, source=self.meta["source"])
         elif isinstance(key, int):
@@ -311,11 +314,15 @@ class ScrobbleLog:
     def to_dict(self, orient: str = "records") ->dict:
         """Canonical dict representation of ScrobbleLog
         """
-        d = {
+        if not len(self):
+            scrobbles = self.df.to_dict(orient="list")
+        else:
+            scrobbles = self.df.to_dict(orient=orient)
+        data = {
             "meta": self.meta,
-            "scrobbles": self.df.to_dict(orient=orient),
+            "scrobbles": scrobbles
         }
-        return d
+        return data
 
     @classmethod
     def from_dict(cls, data: dict, orient: str = "records") ->Self:
@@ -343,11 +350,16 @@ class ScrobbleLog:
         Write ScrobbleLog to JSON format.
         """
         import json
-        df_new = self.df.copy()
-        df_new["timestamp"] = df_new["timestamp"].apply(pd.Timestamp.isoformat)
+        if not len(self):
+            scrobbles = self.df.to_dict(orient="list")
+        else:
+            df_new = self.df.copy()
+            df_new["timestamp"] = df_new["timestamp"].apply(
+                                                    pd.Timestamp.isoformat)
+            scrobbles = df_new.to_json(orient=orient)
         data = {
-                        "meta": self.meta,
-                        "scrobbles": df_new.to_json(orient=orient)
+            "meta": self.meta,
+            "scrobbles": scrobbles
         }
         json_data = json.dumps(data)
         from memoryfm.io._writers import _write_string

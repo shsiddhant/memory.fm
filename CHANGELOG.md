@@ -24,13 +24,14 @@
     - `__len__`
 - Added `append` method to append `Scrobble`, list of `Scrobble`, or `ScrobbleLog`to existing `ScrobbleLog`.
 - Added `from_scrobble` method to create `ScrobbleLog` from username and `Scrobble`.
-- Added `tzinfo` attribute to object classes, and updated methods, and `io` &`filters` modules accordingly.
+- Added `tz` attribute to object classes, and updated methods, and `io` &`filters` modules accordingly.
 - Added `filter_by_date` method to `ScrobbleLog` class to get date filtered `ScrobbleLog`.
 - Added `top_charts` module to get top `n` tracks/artists/albums.
 - Added `meta` attribute to `ScrobbleLog` to store metadata and updated the modules accordingly.
+- Updated `meta` validation.
+- Fixed `ZoneInfo` missed exception `IsADirectoryError`.
 
 **Pytest**
 - Added and succesfully passed pytest tests for `io` modules and core object classes and methods.
 - Updated and added unit tests due to addition of `meta` attribute mentioned above.
-- Updated `meta` validation.
 - Finished unit tests for `meta` validation.

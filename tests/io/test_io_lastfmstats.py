@@ -136,9 +136,15 @@ class TestNormaliseLastfmstats:
                     "date": ["2020-08-10", "dhj"]
         }
         df = pd.DataFrame(df_data)
+<<<<<<< HEAD
         msg = r".* doesn't match format .*"
         with pytest.raises(SchemaError, match=msg):
             normalise_lastfmstats(df=df, username="sid")
+=======
+        msg = r"time data .* doesn't match format .*"
+        with pytest.raises(SchemaError, match=msg):
+            normalise_lastfmstats("sid", df, )
+>>>>>>> 73eec99 (Added top  tracks/artists/albums charts, made all timestamps timezone aware and added a timezone attribute to object classes.)
 
     def test_fromlastfmstats_normalise(self):
         df_data = [
@@ -150,8 +156,28 @@ class TestNormaliseLastfmstats:
                     }
         ]
         df = pd.DataFrame(df_data)
+<<<<<<< HEAD
         dict_d = normalise_lastfmstats(
             username="sid", df=df, tz="Europe/London"
         ).to_dict(orient="records")
         assert dict_d["meta"]["tz"] == "Europe/London"
         assert dict_d["scrobbles"]
+=======
+        expected_dict = {"username": "sid",
+                         "scrobbles": [
+                             {
+                                "timestamp":
+                                 Timestamp(
+                                    '2025-09-17 20:44:14.033000+0530',
+                                     tz='Asia/Kolkata'
+                                ),
+                                "track": "T1",
+                                "artist": "Ar1",
+                                "album": "Alb1",
+                             }
+                         ],
+                         "tzinfo": "Europe/London"
+                         }
+        dict_d = normalise_lastfmstats("sid", df, tz="Europe/London").to_dict(orient="records")
+        assert dict_d == expected_dict
+>>>>>>> 73eec99 (Added top  tracks/artists/albums charts, made all timestamps timezone aware and added a timezone attribute to object classes.)
