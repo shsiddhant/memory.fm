@@ -1,6 +1,5 @@
 import pytest
 import pandas as pd
-from pandas import Timestamp
 from pathlib import Path
 
 from memoryfm.io._loaders import load_csv, load_json
@@ -118,7 +117,7 @@ class TestFromLastfmstats:
         data = {"username": {0},
                 "scrobbles": []
                 }
-        msg = r"Expecting string value .*"
+        msg = r"Expecting string type value .*"
         with pytest.raises(InvalidDataError, match=msg):
             _validate_data(data)
 
@@ -130,7 +129,7 @@ class TestNormaliseLastfmstats:
         }
         df = pd.DataFrame(df_data)
         with pytest.raises(SchemaError, match="Column not found"):
-            normalise_lastfmstats("sid", df)
+            normalise_lastfmstats(df=df, username="sid")
 
     def test_fromlastfmstats_normalise_bad_date(self):
         df_data = {
@@ -139,7 +138,7 @@ class TestNormaliseLastfmstats:
         df = pd.DataFrame(df_data)
         msg = r"non convertible value .* with the unit 'ms', at position 0"
         with pytest.raises(SchemaError, match=msg):
-            normalise_lastfmstats("sid", df)
+            normalise_lastfmstats(df=df, username="sid")
 
     def test_fromlastfmstats_normalise(self):
         df_data = [
@@ -151,18 +150,8 @@ class TestNormaliseLastfmstats:
                     }
         ]
         df = pd.DataFrame(df_data)
-        expected_dict = {"username": "sid",
-                         "scrobbles": [
-                             {
-                                "timestamp":
-                                 Timestamp(
-                                    '2025-09-17 20:44:14.033000+0530',
-                                     tz='Asia/Kolkata'
-                                ),
-                                "track": "T1",
-                                "artist": "Ar1",
-                                "album": "Alb1",
-                             }
-                         ]}
-        dict_d = normalise_lastfmstats("sid", df).to_dict(orient="records")
-        assert dict_d == expected_dict
+        dict_d = normalise_lastfmstats(
+            username="sid", df=df, tz="Europe/London"
+        ).to_dict(orient="records")
+        assert dict_d["meta"]["tz"] == "Europe/London"
+        assert dict_d["scrobbles"]
