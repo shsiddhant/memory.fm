@@ -29,7 +29,6 @@ class Scrobble:
     Class representing a single scrobble
     """
     timestamp: pd.Timestamp
-    tzinfo: str
     track: str
     artist: str
     album: str | None = None
@@ -51,7 +50,7 @@ class Scrobble:
         """
         if not isinstance(data, dict):
             raise TypeError("Expecting dict type value as data")
-        keys = ["timestamp", "track", "artist", "tzinfo"]
+        keys = ["timestamp", "track", "artist"]
         for key in keys:
             if key not in data.keys():
                 raise ScrobbleError(f"Missing {key}")
@@ -88,7 +87,6 @@ class Scrobble:
             album = data["album"]
         return cls(
             timestamp=pd.Timestamp(data["timestamp"]),
-            tzinfo=data["tzinfo"],
             track=data["track"],
             artist=data["artist"],
             album=album
@@ -153,24 +151,24 @@ class ScrobbleLog:
             try:
                 _validate_meta(meta)
             except (ValueError, SchemaError):
-                print("Invalid `meta`. "
-                      "Trying to generate a new `meta` from data")
+                print("Invalid meta. "
+                      "Trying to generate a new meta from data")
             else:
                 self.username = meta["username"]
                 self.tz = meta["tz"]
                 self.meta = meta
         else:
             if not isinstance(username, str):
-                raise InvalidDataError("Expecting string type value for `username`")
+                raise InvalidDataError("Expecting string type value for username")
             elif not username.strip():
-                raise InvalidDataError("`username` only contains white-space")
+                raise InvalidDataError("username only contains white-space")
             self.username = username
             if source is None:
                 source = "manual"
             elif not isinstance(source, str):
-                raise InvalidDataError("Expecting string type value for `source`")
+                raise InvalidDataError("Expecting string type value for source")
             elif not source.strip():
-                raise InvalidDataError("`source` only contains white-space")
+                raise InvalidDataError("source only contains white-space")
             self.tz = tz
             _validate_tz(tz)
             self._validate_df()
@@ -185,7 +183,7 @@ class ScrobbleLog:
         Validate DataFrame
         """
         if not isinstance(self.df, pd.DataFrame):
-            raise InvalidDataError("Expecting a pandas DataFrame as `df`")
+            raise InvalidDataError("Expecting a pandas DataFrame as df")
         columns = ["timestamp", "track", "artist"]
         for column in columns:
             if column not in self.df.columns:
@@ -285,7 +283,7 @@ class ScrobbleLog:
 
     def __contains__(self, item: Scrobble) ->bool:
         """
-        Define `in` operator value for item in ScrobbleLog
+        Define in operator value for item in ScrobbleLog
         """
         if isinstance(item, Scrobble):
             return item.to_dict() in self.df.to_dict(orient="records")
@@ -329,7 +327,7 @@ class ScrobbleLog:
         """Create a ScrobbleLog from a canonical dict representation
         """
         if not isinstance(data, dict):
-            raise InvalidDataError("Expecting `dict` type value for 'data'")
+            raise InvalidDataError("Expecting dict type value for 'data'")
         if "scrobbles" not in data.keys():
             raise SchemaError("Key 'scrobbles' not found", "scrobbles")
         df = pd.DataFrame(data["scrobbles"])
@@ -466,7 +464,7 @@ class ScrobbleLog:
         n: int = 5
     ) ->pd.Series:
         """
-        Get top `n` tracks/artists/albums by number of scrobbles.
+        Get top n tracks/artists/albums by number of scrobbles.
         """        
         names_dict = {
             "track": "Track",
