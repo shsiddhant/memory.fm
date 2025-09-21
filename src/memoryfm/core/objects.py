@@ -191,7 +191,7 @@ class ScrobbleLog:
                     f"Required DataFrame column not found: {column}",
                     column
                 )
-        if not self.df.dropna.empty:
+        if not self.df.dropna().empty:
             from memoryfm.io._normalise import normalise_timestamps
             normalise_timestamps(self.df["timestamp"], tz=self.tz,
                                  unit="ms")
