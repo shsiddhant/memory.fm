@@ -149,21 +149,24 @@ class ScrobbleLog:
             try:
                 _validate_meta(meta)
             except (ValueError, SchemaError):
-                print("Invalid 'meta'. "
-                      "Trying to generate a new 'meta' from data")
+                print("Invalid `meta`. "
+                      "Trying to generate a new `meta` from data")
             else:
                 self.username = meta["username"]
                 self.tz = meta["tz"]
                 self.meta = meta
         else:
             if not isinstance(username, str):
-                raise InvalidDataError("Expecting string type value for 'username'")
+                raise InvalidDataError("Expecting string type value for `username`")
+            elif not username.strip():
+                raise InvalidDataError("`username` only contains white-space")
             self.username = username
             if source is None:
                 source = "manual"
             elif not isinstance(source, str):
-                raise InvalidDataError("Expecting string type value for 'source'")
-
+                raise InvalidDataError("Expecting string type value for `source`")
+            elif not source.strip():
+                raise InvalidDataError("`source` only contains white-space")
             self.tz = tz
             _validate_tz(tz)
             self._validate_df()
@@ -178,7 +181,7 @@ class ScrobbleLog:
         Validate DataFrame
         """
         if not isinstance(self.df, pd.DataFrame):
-            raise InvalidDataError("Expecting a pandas DataFrame as df")
+            raise InvalidDataError("Expecting a pandas DataFrame as `df`")
         columns = ["timestamp", "track", "artist"]
         for column in columns:
             if column not in self.df.columns:
