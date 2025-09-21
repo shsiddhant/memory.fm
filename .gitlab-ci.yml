@@ -36,7 +36,8 @@ unit-test:   # This job runs in the test stage.
     - virtualenv venv
     - source venv/bin/activate
   script:
-    - pip install --editable ".[dev]"
+    - pip install --editable .
+    - pip install pytest
     - pytest -q tests/
 
 #lint-test-job:   # This job also runs in the test stage.
