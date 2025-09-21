@@ -16,7 +16,7 @@ Implemented: Load JSON/CSV data obtained from lastfmstats.com and get a Scrobble
 - [x] Filter `ScrobbleLog` by date.
 - [x] Exception handling.
 - [x] Pytest Tests
-- [ ] Top tracks/artist/album charts
+- [x] Top tracks/artist/album charts
 - [ ] CLI implementation.
 - [ ] Daily/Weekly track/album/artist obsession streaks.
 - [ ] Documentation using asciidoc.

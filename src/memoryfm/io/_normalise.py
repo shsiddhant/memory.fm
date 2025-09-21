@@ -1,6 +1,6 @@
 """Module: memoryfm.normalise.normalise_lastfmstats
 """
-
+from __future__ import annotations
 import pandas as pd
 from memoryfm.errors import SchemaError
 from memoryfm.core.objects import ScrobbleLog
@@ -48,14 +48,9 @@ def normalise_lastfmstats(
     """
     df = df.rename(str.lower, axis=1)
     if "date" in df.columns:
-        df["date"] = normalise_timestamps(df["date"],
-                                                   tz=tz,
-                                                   unit="ms")[0]
-        tz = normalise_timestamps(df["date"],
-                                                   tz=tz,
-                                                   unit="ms")[1]
+        df["date"] = normalise_timestamps(df["date"], tz=tz, unit="ms")[0]
+        tz = normalise_timestamps(df["date"], tz=tz, unit="ms")[1]
     else:
         raise SchemaError("Column not found", 'date')
-    df =df.rename(columns={'date':'timestamp'})
+    df = df.rename(columns={'date':'timestamp'})
     return ScrobbleLog(df=df, username=username, tz=tz, source="lastfmstats.com")
-

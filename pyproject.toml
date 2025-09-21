@@ -18,10 +18,18 @@ dependencies = [
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
+classifiers = [
+"Development Status :: 2 - Pre-Alpha",
+"Intended Audience :: End Users/Desktop",
+"Intended Audience :: Developers",
+"Topic :: Software Development :: Libraries :: Python Modules",
+"Topic :: Internet :: Log Analysis",
+]
 
 [dependency-groups]
 dev = [
     "pytest>=8.4.2",
+    "python-lsp-ruff>=2.2.2",
 ]
 
 classifiers = [
