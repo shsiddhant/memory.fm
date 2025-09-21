@@ -136,7 +136,7 @@ class TestNormaliseLastfmstats:
                     "date": ["2020-08-10", "dhj"]
         }
         df = pd.DataFrame(df_data)
-        msg = r"non convertible value .* with the unit 'ms', at position 0"
+        msg = r".* doesn't match format .*"
         with pytest.raises(SchemaError, match=msg):
             normalise_lastfmstats(df=df, username="sid")
 

@@ -24,18 +24,13 @@ dev = [
     "pytest>=8.4.2",
 ]
 
-classifiers = {
-"Development Status :: 2 - Pre-Alpha"
-
-"Intended Audience :: End Users/Desktop"
-"Intended Audience :: Developers"
-
-"Topic :: Software Development :: Libraries :: Python Modules"
-"Topic :: Internet :: Log Analysis"
-
-"License :: OSI Approved :: MIT License"
-
-}
+classifiers = [
+"Development Status :: 2 - Pre-Alpha",
+"Intended Audience :: End Users/Desktop",
+"Intended Audience :: Developers",
+"Topic :: Software Development :: Libraries :: Python Modules",
+"Topic :: Internet :: Log Analysis",
+]
 
 [project.urls]
 Repository = "https://gitlab.com/sharmasiddhant/memory.fm.git"

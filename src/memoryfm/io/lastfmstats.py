@@ -31,8 +31,11 @@ if TYPE_CHECKING:
     from typing import IO, AnyStr, Literal
 
 
-def from_lastfmstats(file: PathLike | IO[AnyStr],
-                     file_type: Literal["json", "csv"]) ->ScrobbleLog:
+def from_lastfmstats(
+    file: PathLike | IO[AnyStr],
+    file_type: Literal["json", "csv"],
+    tz: str | None = None
+) ->ScrobbleLog:
     """
     """
     if file_type == "json":
