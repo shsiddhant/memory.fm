@@ -30,7 +30,7 @@ pip install -e .
 ```shell
 git clone https://gitlab.com/sharmasiddhant/memory.fm/
 cd memory.fm/examples
-python from_lastfmstats.com.py
+python from_lastfmstats.py
 ```
 Output
 ```

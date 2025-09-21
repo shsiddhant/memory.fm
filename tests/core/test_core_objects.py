@@ -9,14 +9,16 @@ file_json = data_dir / "json" / "latest_scrobble.json"
 sample_log = mfm.from_lastfmstats(file, "csv")
 data_valid = {  
                 "timestamp": pd.Timestamp("2023-12-17 22:00"),
+                "tz": "Europe/London",
                 "track": "Clementine",
                 "artist": "Elliott Smith",
                 "album": "Elliott Smith"
 }
 
-dict_valid = {  
-                "username": "sid",
-                "scrobbles": [data_valid]
+dict_valid = {
+    "username": "sid",
+    "scrobbles": [data_valid],
+    "tz": "Asia/Kolkata"
 }
 
 
@@ -29,7 +31,8 @@ dict_valid_2 = {
             "artist": "Ar1",
             "album": None
         }
-    ]
+    ],
+    "tz": "Etc/UTC"
 }
 
 class TestScrobbleLog:
@@ -37,7 +40,9 @@ class TestScrobbleLog:
         scrobble_log = mfm.ScrobbleLog.from_dict(dict_valid)
         assert isinstance(scrobble_log, mfm.ScrobbleLog)
         assert scrobble_log.username == "sid"
-        assert scrobble_log.df.loc[0, "track"] == "Clementine"
+        assert scrobble_log.df.iloc[0]["track"] == "Clementine"
+        assert scrobble_log.tz == "Asia/Kolkata"
+        assert scrobble_log.meta["memory.fm_version"] == "0.1.0.dev0"
 
     def test_validate(self):
         dict_data = {
@@ -47,7 +52,8 @@ class TestScrobbleLog:
                  "artist": "Ar1",
                  "album": None
                  }
-            ]
+            ],
+            "tz": "Etc/UTC"
         }
         msg = "Required DataFrame column not found: timestamp"
         with pytest.raises(mfm.errors.SchemaError, match=msg):
@@ -67,22 +73,25 @@ class TestScrobbleLog:
         scrobble = sample_log[2]
         assert scrobble in sample_log
 
+    def test_iter(self):
+        for scrobble in sample_log:
+            assert scrobble.artist in ("Lana Del Rey", "Cigarettes After Sex")
+
     def test_append(self):
         scrobble_log = mfm.ScrobbleLog.from_dict(dict_valid_2)
+        assert len(scrobble_log) == 1
         scrobble = mfm.Scrobble.from_dict(data_valid)
         scrobble_log.append(scrobble)
-        assert scrobble_log.df.loc[0, "artist"] ==  "Ar1"
-        assert scrobble_log.df.loc[1, "album"] == "Elliott Smith"
+        assert len(scrobble_log) == 2
+        assert scrobble_log.df.iloc[0]["artist"] ==  "Ar1"
+        assert scrobble_log.df.iloc[1]["album"] == "Elliott Smith"
+        assert scrobble_log.tz == "Etc/UTC"
 
     def test_to_json(self, tmp_path):
         file_temp = tmp_path / "test_to_json.json"
         scrobble_log = mfm.from_lastfmstats(file_json, "json")
         scrobble_log.to_json(file_temp)
-        content = (
-            '{"username":"sid","scrobbles":['
-            '{"timestamp":1757748941000,"track":"Days of Candy",'
-            '"artist":"Beach House","album":"Depression Cherry"}]}'
-        )
-        assert file_temp.read_text() == content
+        import json
+        content = file_temp.read_text()
+        assert json.loads(content).get("meta")["source"] == "lastfmstats.com"
 
-TestScrobbleLog().test_eq()

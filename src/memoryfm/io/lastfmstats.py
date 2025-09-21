@@ -31,8 +31,11 @@ if TYPE_CHECKING:
     from typing import IO, AnyStr, Literal
 
 
-def from_lastfmstats(file: PathLike | IO[AnyStr],
-                     file_type: Literal["json", "csv"]) ->ScrobbleLog:
+def from_lastfmstats(
+    file: PathLike | IO[AnyStr],
+    file_type: Literal["json", "csv"],
+    tz: str | None = None
+) ->ScrobbleLog:
     """
     """
     if file_type == "json":
@@ -44,8 +47,7 @@ def from_lastfmstats(file: PathLike | IO[AnyStr],
     _validate_data(data) 
     username = data["username"]
     df = pd.DataFrame(data["scrobbles"])
-    scrobble_log = normalise_lastfmstats(username,
-                                         df)
+    scrobble_log = normalise_lastfmstats(df, username, tz)
     return scrobble_log
 
 
@@ -64,4 +66,4 @@ def _validate_data(data: dict) -> None:
             "'list', 'dict', or 'pandas.DataFrame' for key 'scrobbles'"
         )
     if not isinstance(data['username'], str):
-            raise InvalidDataError("Expecting string value for key 'username'")
+            raise InvalidDataError("Expecting string type value for key 'username'")
