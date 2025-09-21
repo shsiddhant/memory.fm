@@ -2,7 +2,6 @@
 """
 
 import pandas as pd
-from tzlocal import get_localzone_name
 from memoryfm.errors import SchemaError
 from memoryfm.core.objects import ScrobbleLog
 
