@@ -24,7 +24,7 @@ class TestValidateTZ:
             _validate_tz(10)
     
     def test_tz_invalid_iana(self):
-        msg = "No time zone found with key Asia"
+        msg = "Invalid tz IANA string"
         with pytest.raises(InvalidDataError, match=msg):
             _validate_tz("Asia")
     

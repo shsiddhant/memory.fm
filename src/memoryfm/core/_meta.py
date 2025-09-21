@@ -11,8 +11,8 @@ def _validate_tz(tz: str) ->None:
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
     try:
         ZoneInfo(tz)
-    except ZoneInfoNotFoundError as e:
-        raise InvalidDataError(e)
+    except (ZoneInfoNotFoundError, IsADirectoryError) as e:
+        raise InvalidDataError("Invalid tz IANA string") from e
 
 def _meta_generator(
     df: pd.DataFrame,
