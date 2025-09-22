@@ -212,20 +212,32 @@ class ScrobbleLog:
         Return String representation of ScrobbleLog
         It is called by str() and print()
         """
-        df_new = self.df.copy()
-        df_new["timestamp"] = self.df["timestamp"].dt.strftime("%Y-%m-%d %H:%M")
+        # Default value. Provide config option to override later.
+        maxcolwidths = 4*[20]
+        df_new = self.df.copy().sort_values(by=['timestamp'],
+                                            ascending=False)
+        df_new["timestamp"] = (
+                        df_new["timestamp"].dt.strftime("%Y-%m-%d %H:%M")
+        )
         df_new = df_new.rename(str.capitalize, axis=1)
         if not len(self):
             str_df = "-----No scrobbles present-----"
         elif len(self) <= 10:
             str_df = tabulate(df_new, headers="keys", tablefmt="grid",
+                              maxcolwidths=maxcolwidths,
                               showindex=False)
         else:
             total = len(self)
-            str_df_head = tabulate(df_new.head(), headers="keys", tablefmt="grid",
-                                   showindex=False)
-            str_df_tail = tabulate(df_new.tail(), tablefmt="grid",
-                                   showindex=False)
+            str_df_head = tabulate(
+                        df_new.head(), headers="keys",
+                        tablefmt="grid", maxcolwidths=maxcolwidths,
+                        showindex=False
+            )
+            str_df_tail = tabulate(
+                        df_new.tail(), headers="keys",
+                        tablefmt="grid", maxcolwidths=maxcolwidths,
+                        showindex=False
+            )
             str_df = (
                 f"{str_df_head}\n"
                 "...  ...  ...  ...\n...  ...  ...  ...\n"
@@ -234,8 +246,9 @@ class ScrobbleLog:
             )
         string_repr = (
             f"ScrobbleLog for username: {self.username}\n"
-            f"{str_df}\n"
-            f"Time Zone: {self.tz}"
+            f"Time Zone: {self.tz}\n"
+            f"Source: {self.meta['source']}\n"
+            f"{str_df}"
         )
         return string_repr 
 
@@ -489,4 +502,4 @@ class ScrobbleLog:
         count_series = df_new[kind].value_counts()
         count_series.index.name = names_dict.get(kind)
         count_series.name = "Scrobbles"
-        return count_series.head(n) 
+        return count_series.head(n)
