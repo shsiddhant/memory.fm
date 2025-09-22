@@ -63,7 +63,8 @@ def _validate_data(data: dict) -> None:
     if not isinstance(data['scrobbles'], (list, dict, pd.DataFrame)):
         raise InvalidDataError(
             "Expecting value of type "
-            "'list', 'dict', or 'pandas.DataFrame' for key 'scrobbles'"
+            "'list', 'dict', or 'pandas.DataFrame' for key: scrobbles"
         )
     if not isinstance(data['username'], str):
-            raise InvalidDataError("Expecting string type value for key 'username'")
+        raise InvalidDataError("Expecting string type value for key: "
+                               "username")

@@ -53,4 +53,5 @@ def normalise_lastfmstats(
     else:
         raise SchemaError("Column not found", 'date')
     df = df.rename(columns={'date':'timestamp'})
-    return ScrobbleLog(df=df, username=username, tz=tz, source="lastfmstats.com")
+    return ScrobbleLog(df=df, username=username,
+                       tz=tz, source="lastfmstats.com")

@@ -20,5 +20,7 @@ def top_charts_markdown(
     }
     count_series = scrobble_log.top_charts(kind, n)
     top_charts_markdown = count_series.to_markdown()
-    return {"kind_print": kind_print_dict.get(kind),
-            "markdown": top_charts_markdown}
+    return {
+        "kind_print": kind_print_dict.get(kind),
+        "markdown": top_charts_markdown
+    }
