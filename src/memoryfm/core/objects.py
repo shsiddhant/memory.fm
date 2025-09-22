@@ -431,14 +431,14 @@ class ScrobbleLog:
         """
         if n is None:
             n = 5
-        return ScrobbleLog(self.username, self.df.head(n), self.tz)
+        return ScrobbleLog(self.df.head(n), meta=self.meta)
 
     def tail(self, n: int | None = None) ->Self:
         """ Return ScrobbleLog for the first n scrobbles 
         """
         if n is None:
             n = 5
-        return ScrobbleLog(self.username, self.df.tail(n), self.tz)
+        return ScrobbleLog(self.df.tail(n), meta=self.meta)
 
     def filter_by_date(
         self,
