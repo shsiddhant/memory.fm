@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import pandas as pd
 from typing import TYPE_CHECKING
-from memoryfm.errors import ParseError, InvalidDataError
+from memoryfm.errors import ParseError
 from memoryfm.util._file_handler import _file_opener
 
 
@@ -43,20 +43,20 @@ def load_csv(file: PathLike | IO[str] = None) -> pd.DataFrame:
     for line in file_like:
         col_list = line.split(";")
         if not line_num and len(col_list) != 5:
-            raise InvalidDataError("Wrong delimiter or missing columns: "
+            raise ParseError(file, "Wrong delimiter or missing columns: "
                                    f"{len(col_list)}")
         elif not line_num:
             last_col = col_list[-1]
             pos_username = last_col.find("Date#")
             if pos_username:
-                raise InvalidDataError("Expecting last column name: "
+                raise ParseError(file, "Expecting last column name: "
                                        "'Data#{username}'")
             else:
                 username = last_col[5:].strip()
                 if not username:
-                    raise InvalidDataError("Blank or only whitespace username")
+                    raise ParseError(file, "Blank or only whitespace username")
         if line_num and len(col_list) != 5:
-            raise InvalidDataError("Expected delimiter ';' in line number "
+            raise ParseError(file, "Expected delimiter ';' in line number "
                                    f"{line_num+1}: {line}")
         line_num = line_num + 1
     file_like.close()

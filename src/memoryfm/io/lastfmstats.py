@@ -22,7 +22,7 @@ import pandas as pd
 from typing import TYPE_CHECKING
 
 from memoryfm._typing import PathLike
-from memoryfm.errors import InvalidDataError, ScrobbleError
+from memoryfm.errors import InvalidDataError
 from memoryfm.io._loaders import load_csv, load_json
 from memoryfm.io._normalise import normalise_lastfmstats
 from memoryfm.core.objects import ScrobbleLog
@@ -35,7 +35,7 @@ def from_lastfmstats(
     file: PathLike | IO[AnyStr],
     file_type: Literal["json", "csv"],
     tz: str | None = None
-) ->ScrobbleLog:
+) -> ScrobbleLog:
     """
     """
     if file_type == "json":
@@ -43,7 +43,7 @@ def from_lastfmstats(
     elif file_type == "csv":
         data = load_csv(file)
     else:
-        raise ScrobbleError('Only "json" or "csv" allowed as "file_type"')
+        raise InvalidDataError('Only "json" or "csv" allowed as "file_type"')
     _validate_data(data) 
     username = data["username"]
     df = pd.DataFrame(data["scrobbles"])
@@ -56,7 +56,7 @@ def _validate_data(data: dict) -> None:
 
     """
     if not hasattr(data, "keys"):
-        raise InvalidDataError("Expecting dict-like data")
+        raise InvalidDataError("Expecting dict type data")
     for key in ['username', 'scrobbles']:
         if key not in data.keys():
             raise InvalidDataError(f"Key not found: '{key}'")

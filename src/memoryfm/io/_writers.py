@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 import json
+from pathlib import Path
 from typing import TYPE_CHECKING
 from memoryfm.util._file_handler import _file_opener
 
@@ -14,10 +15,13 @@ if TYPE_CHECKING:
 def _write_string(
     data: str,
     file: PathLike | IO[str] | None = None,
-) ->None:
+) ->str | None:
     """
     Write `dict` to JSON format.
     """
+    if isinstance(file, Path):
+        Path(file).resolve().write_text(data)
+        print("Pathlike\n")
     if file is not None:
         file_like = _file_opener(file, "w")
         file_like.write(data)

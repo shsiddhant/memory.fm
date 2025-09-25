@@ -7,6 +7,7 @@ data_dir  = Path(__file__).resolve().parent.parent / "data"
 file = data_dir / "csv" / "sample.csv"
 file_json = data_dir / "json" / "latest_scrobble.json"
 sample_log = mfm.from_lastfmstats(file, "csv")
+print(sample_log.meta)
 data_valid = {  
                 "timestamp": pd.Timestamp("2023-12-17 22:00"),
                 "tz": "Europe/London",
@@ -91,6 +92,9 @@ class TestScrobbleLog:
         file_temp = tmp_path / "test_to_json.json"
         scrobble_log = mfm.from_lastfmstats(file_json, "json", tz="Europe/Berlin")
         scrobble_log.to_json(file_temp)
-        import json
         content = file_temp.read_text()
+        import json
         assert json.loads(content).get("meta")["source"] == "lastfmstats.com"
+        assert json.loads(content).get("meta")["tz"] == "Europe/Berlin"
+
+TestScrobbleLog().test_to_json(data_dir)

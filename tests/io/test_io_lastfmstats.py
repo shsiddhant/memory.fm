@@ -6,10 +6,10 @@ from memoryfm.io._loaders import load_csv, load_json
 from memoryfm.io.lastfmstats import from_lastfmstats, _validate_data
 from memoryfm.io._normalise import normalise_lastfmstats
 from memoryfm.errors import (
-    ScrobbleError,
     SchemaError,
     ParseError,
-    InvalidDataError
+    InvalidDataError,
+    #InvalidTypeError
 )
 
 data_dir = Path(__file__).resolve().parent.parent / "data"
@@ -68,19 +68,19 @@ class TestLoaders:
     def test_mismatch_delimiter(self):
         file = csv_dir / "mismatch_delimiter.csv"
         msg = r"Expected delimiter ';' in line number 2: .*"
-        with pytest.raises(InvalidDataError, match=msg):
+        with pytest.raises(ParseError, match=msg):
             load_csv(file)
     
     def test_wrong_header_csv(self):
         file = csv_dir / "wrong_header.csv"
         msg = r"Expecting last column name: .*"
-        with pytest.raises(InvalidDataError, match=msg):
+        with pytest.raises(ParseError, match=msg):
             return load_csv(file)
     
     def test_no_username_csv(self):
         file = csv_dir / "no_username.csv"
         msg = "Blank or only whitespace username"
-        with pytest.raises(InvalidDataError, match=msg):
+        with pytest.raises(ParseError, match=msg):
             return load_csv(file)
 
 
@@ -88,17 +88,17 @@ class TestFromLastfmstats:
     def test_wrong_file_type(self):
         file = json_dir / "sample.json"
         msg = 'Only "json" or "csv" allowed as "file_type"'
-        with pytest.raises(ScrobbleError, match=msg):
+        with pytest.raises(InvalidDataError, match=msg):
             from_lastfmstats(file, "jsom")
 
     def test_lastfmstats_validate_dict_type(self):
         data = []
-        msg = "Expecting dict-like data"
+        msg = "Expecting dict type data"
         with pytest.raises(InvalidDataError, match=msg):
             _validate_data(data)
 
     def test_lastfmstats_validate_keys(self):
-        data = {"Alpha": "user",
+        data = {"user": "user",
                 "scrobbles": []
                 }
         msg = "Key not found: 'username'"
@@ -137,7 +137,7 @@ class TestNormaliseLastfmstats:
         }
         df = pd.DataFrame(df_data)
         msg = r".* doesn't match format .*"
-        with pytest.raises(SchemaError, match=msg):
+        with pytest.raises(InvalidDataError, match=msg):
             normalise_lastfmstats(df=df, username="sid")
 
     def test_fromlastfmstats_normalise(self):
