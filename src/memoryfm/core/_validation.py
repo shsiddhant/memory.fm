@@ -160,6 +160,7 @@ def validate_meta(meta: dict) -> dict:
     if {"start", "end"} != set(meta["date_range"].keys()):
         raise SchemaError("date_range keys must be one of these : "
                           "'start', 'end'")
-    if not meta["source"].strip():
-        raise InvalidDataError("source only contains white-space")
+#    if not meta["source"].strip():
+#        raise InvalidDataError("source only contains white-space")
+    validate_text(meta['source'], 'source')
     return meta

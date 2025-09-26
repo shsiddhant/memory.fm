@@ -10,7 +10,6 @@ sample_log = mfm.from_lastfmstats(file, "csv")
 print(sample_log.meta)
 data_valid = {  
                 "timestamp": pd.Timestamp("2023-12-17 22:00"),
-                "tz": "Europe/London",
                 "track": "Clementine",
                 "artist": "Elliott Smith",
                 "album": "Elliott Smith"
@@ -42,7 +41,7 @@ class TestScrobbleLog:
         assert isinstance(scrobble_log, mfm.ScrobbleLog)
         assert scrobble_log.username == "sid"
         assert scrobble_log.df.iloc[0]["track"] == "Clementine"
-        assert scrobble_log.tz == "Asia/Kolkata"
+        assert scrobble_log.tz == 'Asia/Kolkata'
         assert scrobble_log.meta["memory.fm_version"] == "0.1.0.dev0"
 
     def test_validate(self):
@@ -96,5 +95,3 @@ class TestScrobbleLog:
         import json
         assert json.loads(content).get("meta")["source"] == "lastfmstats.com"
         assert json.loads(content).get("meta")["tz"] == "Europe/Berlin"
-
-TestScrobbleLog().test_to_json(data_dir)

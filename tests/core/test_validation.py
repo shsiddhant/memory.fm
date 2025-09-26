@@ -29,7 +29,7 @@ class TestValidateTZ:
             validate_tz("Asia")
     
     def test_tz_tzlocal(self):
-        assert validate_tz() == "Asia/Kolkata"
+        assert validate_tz()
 
     def test_tz_valid(self):
         assert validate_tz("Europe/London") == "Europe/London"
@@ -89,7 +89,7 @@ class TestValidateMeta:
             validate_meta(meta)
 
     def test_whitespace_source(self):
-        msg = r"source only contains .*"
+        msg = r"source cannot be just white-space"
         meta = meta_valid.copy()
         meta["source"] = ""
         with pytest.raises(InvalidDataError, match=msg):
