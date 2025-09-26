@@ -403,13 +403,11 @@ class ScrobbleLog:
                              showindex=showindex)
         else:
             total = len(self)
-            df1 = df_new.head()
-            df2 = df_new.tail()
-            dfsep = pd.DataFrame({"Timestamp":3*['...'],
-                                  "Track":3*['...'],
-                                  "Artist":3*['...'],
-                                  "Album":3*['...']}
-                                 )
+            len_1 = max_length // 2
+            len_2 = max_length - len_1
+            df1 = df_new.head(len_1)
+            df2 = df_new.tail(len_2)
+            dfsep = pd.DataFrame(3*[{col: '...' for col in df_new.columns}])
             df = pd.concat([df1, dfsep, df2], ignore_index=True)
             df_table = tabulate(df, headers="keys", tablefmt=tablefmt,
                               maxcolwidths=maxcolwidths,

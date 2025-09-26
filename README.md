@@ -99,7 +99,7 @@ Metadata for filtered ScrobbleLog
 
 ---
 
-# Development
+## Development
 
 - Clone the repository and install in editable mode with dev dependencies.
 ```shell
@@ -115,7 +115,7 @@ pytest tests/
 
 ---
 
-# Roadmap
+## Roadmap
 
 - [ ] Support for loading Spotify listening history exports.
 - [ ] CLI commands for loading, printing, exporting, filters, top charts, etc. 
@@ -125,12 +125,12 @@ pytest tests/
 
 ---
 
-# License
+## License
 [![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 
 ---
 
-### Acknowledgments
+## Acknowledgments
 
 Thanks to Felix Hagemans (https://github.com/felhag) for the fantastic [lastfmstats](https://www.lastfmstats.com).
 
