@@ -42,7 +42,7 @@ class TestScrobbleLog:
         assert scrobble_log.username == "sid"
         assert scrobble_log.df.iloc[0]["track"] == "Clementine"
         assert scrobble_log.tz == 'Asia/Kolkata'
-        assert scrobble_log.meta["memory.fm_version"] == "0.1.0.dev0"
+        assert scrobble_log.meta["memory.fm_version"] == mfm.__version__
 
     def test_validate(self):
         dict_data = {

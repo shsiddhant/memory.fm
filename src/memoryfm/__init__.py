@@ -7,7 +7,7 @@ except ImportError:
 try:
     __version__ = version("memory.fm")
 except PackageNotFoundError:
-    __version__ = "0.0.0.dev0"    # Fallback value only
+    __version__ = "0.0.0"    # Fallback value only
 
 from memoryfm.core.objects import ScrobbleLog, Scrobble
 from memoryfm.io.api import from_lastfmstats

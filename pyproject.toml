@@ -1,23 +1,25 @@
 [build-system]
-requires = ["setuptools >= 61.0.0"]
+requires = ["setuptools >= 80.0.0", "setuptools_scm>=8.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "memory.fm"
-version = "0.1.0.dev0"
-authors = [
-	{name="Siddhant Sharma", email="sharmasiddhant@protonmail.com" },
-]
-description = "Small toolkit for reading, analysing, visualizing and exporting last.fm scrobble data."
-requires-python = ">=3.10"
+#version = "0.1.0.dev0"
+dynamic = ["version"]
 dependencies = [
 	"pandas",
 	"tabulate",
 	"pyyaml"
 ]
+requires-python = ">=3.10"
+authors = [
+	{name="Siddhant Sharma", email="sharmasiddhant@protonmail.com" },
+]
+description = "A small Python library and CLI application for reading, analyzing, visualizing and exporting Last.fm scrobble data."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
+keywords = ["lastfm", "last.fm", "music", "dataset", "data nalysis"]
 classifiers = [
 "Development Status :: 2 - Pre-Alpha",
 "Intended Audience :: End Users/Desktop",
@@ -26,18 +28,17 @@ classifiers = [
 "Topic :: Internet :: Log Analysis",
 ]
 
-[dependency-groups]
+[tool.setuptools_scm]
+fallback_version = "0.0.0"
+
+[project.optional-dependencies]
 dev = [
     "pytest>=8.4.2",
     "python-lsp-ruff>=2.2.2",
+		"tzlocal",
 ]
-
-classifiers = [
-"Development Status :: 2 - Pre-Alpha",
-"Intended Audience :: End Users/Desktop",
-"Intended Audience :: Developers",
-"Topic :: Software Development :: Libraries :: Python Modules",
-"Topic :: Internet :: Log Analysis",
+extra = [
+	"tzlocal"
 ]
 
 [project.urls]
