@@ -7,10 +7,12 @@ A small Python library and CLI application for reading, analyzing, visualizing a
 
 **Inspired by the habit of repurposing music listening history as a medium to bring up memories.**
 
+---
+
 ## Features
 
-- Parse Last.fm  JSON/CSV obtained from [lastfmstats](https://www.lastfmstats.com)
-- API loosely modeled after [pandas](https://pypi.org/project/pandas/).
+- Read and parse Last.fm  JSON/CSV obtained from [lastfmstats](https://www.lastfmstats.com)
+- Library API loosely modeled after [pandas](https://pypi.org/project/pandas/).
 - Core object classes.
     - `Scrobble` - instance represents a single scrobble.
     - `ScrobbleLog` - instance represents a scrobble log. This class is the primary focus.
@@ -18,14 +20,16 @@ A small Python library and CLI application for reading, analyzing, visualizing a
 - `ScrobbleLog`:
     - Rich metadata such as username, timezone, and number of scrobbles, recorded in  `ScrobbleLog.meta` 
     - Use dunder methods for printing, slicing, iterating, and getting number of scrobbles.
-    - Export to a canonical `JSON` which includes the metadata. Import the same to quickly re-create the `ScrobbleLog`.
+    - Export to a canonical JSON which includes the metadata. Import the same to quickly re-create the `ScrobbleLog`.
     - Export to nice-looking markdown using [tabulate](https://pypi.org/project/tabulate/).
     - Filter `ScrobbleLog` by date.
     - Get top charts for tracks, artists, and albums.
     
 - Should be Added Soon:
 	- Support for Spotify listening history exports
-	- CLI 
+	- CLI commands.
+
+---
 
 ## Installation
 
@@ -34,7 +38,11 @@ A small Python library and CLI application for reading, analyzing, visualizing a
 pip install git+https://gitlab.com/sharmasiddhant/memory.fm.git
 ```
 
+*(Until the first PyPI release)*
+
 Requires **Python>=3.10**
+
+---
 
 ## Quick Start
 
@@ -89,7 +97,41 @@ Metadata for filtered ScrobbleLog
 }
 ```
 
+---
 
-# LICENSE
+# Development
+
+- Clone the repository and install in editable mode with dev dependencies.
+```shell
+git clone https://gitlab.com/sharmasiddhant/memory.fm.git
+cd memory.fm
+pip install -e ".[dev]"
+```
+
+- Tests
+```shell
+pytest tests/
+```
+
+---
+
+# Roadmap
+
+- [ ] Support for loading Spotify listening history exports.
+- [ ] CLI commands for loading, printing, exporting, filters, top charts, etc. 
+- [ ] API support for Last.fm and Spotify.
+- [ ] More analyses based on frequency, obsessive listens/streaks, duration (à la Spotify wrapped) etc.
+- [ ] Visualizations.
+
+---
+
+# License
 [![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 
+---
+
+### Acknowledgments
+
+Thanks to Felix Hagemans (https://github.com/felhag) for the fantastic [lastfmstats](https://www.lastfmstats.com).
+
+---
