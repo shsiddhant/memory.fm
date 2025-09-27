@@ -29,14 +29,18 @@ stages:          # List of stages for jobs, and their order of execution#
 #
 unit-test:   # This job runs in the test stage.
   image: python:3.10
-  stage: test    # It only starts when the job in the build stage completes successfully.
+  stage: test 
+  cache:
+    paths:
+      - .venv/lib
+    key: "$CI_COMMIT_REF_SLUG"   # It only starts when the job in the build stage completes successfully.
   before_script:
     - python --version ; pip --version  # For debugging
     - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
+    - virtualenv .venv
+    - source .venv/bin/activate
   script:
-    - pip install --editable .
+    - pip install --editable ".[dev]"
     - pip install pytest
     - pytest -q tests/
 
