@@ -425,10 +425,8 @@ class ScrobbleLog:
             from datetime import datetime
             markdown = (
                 f"ScrobbleLog for username: {self.username}  \n"
-                f"From {datetime.strftime(
-                    self.df['timestamp'].min(), datetimefmt
-                )} to {datetime.strftime(
-                    self.df['timestamp'].max(), datetimefmt)}\n\n"
+                f"From {datetime.strftime(self.df['timestamp'].min(), datetimefmt)} "
+                f"to {datetime.strftime(self.df['timestamp'].max(), datetimefmt)}\n\n"
                 f"{df_table}"
             )
             

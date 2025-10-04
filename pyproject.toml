@@ -11,6 +11,7 @@ dependencies = [
 	"pyyaml",
 	"typer",
 	"rich",
+	"pyarrow",
 ]
 requires-python = ">=3.10"
 authors = [
