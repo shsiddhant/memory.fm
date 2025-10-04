@@ -15,15 +15,15 @@ if TYPE_CHECKING:
 def _write_string(
     data: str,
     file: PathLike | IO[str] | None = None,
+    mode: str = 'w'
 ) ->str | None:
     """
     Write `dict` to JSON format.
     """
     if isinstance(file, Path):
         Path(file).resolve().write_text(data)
-        print("Pathlike\n")
     if file is not None:
-        file_like = _file_opener(file, "w")
+        file_like = _file_opener(file, mode)
         file_like.write(data)
         file_like.close()
     else:

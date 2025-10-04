@@ -4,12 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "memory.fm"
-#version = "0.1.0.dev0"
 dynamic = ["version"]
 dependencies = [
 	"pandas",
 	"tabulate",
-	"pyyaml"
+	"pyyaml",
+	"typer",
+	"rich",
 ]
 requires-python = ">=3.10"
 authors = [
@@ -36,10 +37,18 @@ dev = [
     "pytest>=8.4.2",
     "python-lsp-ruff>=2.2.2",
 		"tzlocal",
+		"wcwidth",
+		"typer",
 ]
 extra = [
-	"tzlocal"
+	"tzlocal",
 ]
+
+[project.scripts]
+memoryfm = "memoryfm.cli.main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [project.urls]
 Repository = "https://gitlab.com/sharmasiddhant/memory.fm.git"

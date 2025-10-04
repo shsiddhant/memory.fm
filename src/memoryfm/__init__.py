@@ -11,9 +11,11 @@ except PackageNotFoundError:
 
 from memoryfm.core.objects import ScrobbleLog, Scrobble
 from memoryfm.io.api import from_lastfmstats
+from memoryfm.io.spotify import from_spotify
 
 __all__ = [
         "from_lastfmstats",
+        "from_spotify",
         "ScrobbleLog",
         "Scrobble"
 ]

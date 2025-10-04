@@ -47,3 +47,34 @@ def normalise_lastfmstats(
     log = ScrobbleLog(df=df, username=username,
                       tz=tz, source="lastfmstats.com")
     return log
+
+def normalise_spotify(
+    df: pd.DataFrame,
+    username: str | None = None,
+    tz: str | None = None
+) -> ScrobbleLog:
+    """
+    """
+    expected_cols = [
+        'ts',
+        'ms_played',
+        'master_metadata_album_artist_name',
+        'master_metadata_album_artist_name',
+        'master_metadata_track_name'
+    ]
+    column_map = {
+        'ts': 'timestamp',
+        'ms_played': 'duration',
+        'master_metadata_track_name': 'track',
+        'master_metadata_album_artist_name': 'artist',
+        'master_metadata_album_album_name': 'album'
+    }
+    for column in expected_cols:
+        if column not in df.columns:
+            raise SchemaError(f"Missing expected column: {column}", column)
+    df = df.rename(columns=column_map)
+    df = df[df['reason_end'] == "trackdone"]
+    df['timestamp'] = normalise_timestamps(df['timestamp'],
+                                           tz=tz, unit=None)
+    df = df[['timestamp', 'track', 'artist', 'album', 'duration']]
+    return ScrobbleLog(df=df, username=username, tz=tz, source="spotify")
