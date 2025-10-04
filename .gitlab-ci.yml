@@ -33,7 +33,7 @@ unit-test:   # This job runs in the test stage.
   cache:
     paths:
       - .venv/lib
-    key: "$CI_COMMIT_REF_SLUG"   # It only starts when the job in the build stage completes successfully.
+    key: "v0.2.0"   # It only starts when the job in the build stage completes successfully.
   before_script:
     - python --version ; pip --version  # For debugging
     - pip install virtualenv
