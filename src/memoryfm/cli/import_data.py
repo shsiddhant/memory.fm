@@ -29,12 +29,14 @@ def import_spotify(
     file: Path,
     username: str = None,
     overwrite: bool = False,
+    min_duration_seconds: int = 60,
 ) -> None:
     """
     Import Spotify Listening History JSON
     """
     import_and_save(file, file_type="json", source="spotify",
-                    import_name=username, overwrite=overwrite)
+                    import_name=username, overwrite=overwrite,
+                    min_duration_seconds=min_duration_seconds)
 
 @app.command("delete")
 def delete(import_name: str, confirm: bool = True):

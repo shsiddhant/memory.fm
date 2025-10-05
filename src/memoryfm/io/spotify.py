@@ -20,11 +20,13 @@ if TYPE_CHECKING:
 def from_spotify(
     file: PathLike | IO[AnyStr],
     username: str | None = None,
-    tz: str | None = None
+    tz: str | None = None,
+    min_duration_ms: int | None = 60000,
 ) -> ScrobbleLog:
     """Create a ScrobbleLog from Spotify export.
     """
     data = load_json(file)
     df = pd.DataFrame(data)
-    scrobble_log = normalise_spotify(df)
+    scrobble_log = normalise_spotify(df=df, username=username, tz=tz,
+                                     min_duration_ms=min_duration_ms)
     return scrobble_log

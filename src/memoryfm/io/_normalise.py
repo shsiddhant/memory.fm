@@ -51,7 +51,8 @@ def normalise_lastfmstats(
 def normalise_spotify(
     df: pd.DataFrame,
     username: str | None = None,
-    tz: str | None = None
+    tz: str | None = None,
+    min_duration_ms: int | None = 60000,
 ) -> ScrobbleLog:
     """
     """
@@ -72,6 +73,8 @@ def normalise_spotify(
     for column in expected_cols:
         if column not in df.columns:
             raise SchemaError(f"Missing expected column: {column}", column)
+    if min_duration_ms is not None:
+        df = df[df['ms_played'] >= min_duration_ms]
     df = df.rename(columns=column_map)
     df = df[df['reason_end'] == "trackdone"]
     df['timestamp'] = normalise_timestamps(df['timestamp'],
