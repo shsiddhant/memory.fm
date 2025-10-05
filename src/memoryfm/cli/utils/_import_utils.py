@@ -98,6 +98,7 @@ def import_and_save(
     source: Literal["lastfmstats", "spotify"],
     overwrite: bool,
     import_name: str | None = None,
+    min_duration_seconds: int | None = 60,
 ) -> None:
     """
     """
@@ -114,7 +115,7 @@ def import_and_save(
         ):
             import_name = scrobble_log.meta.get("username")
     elif source == "spotify":
-        scrobble_log = from_spotify(file, username=import_name)
+        scrobble_log = from_spotify(file, username=import_name, min_duration_ms=min_duration_seconds*1000)
     else:
         print("No such source available:", source)
     if scrobble_log is not None:
