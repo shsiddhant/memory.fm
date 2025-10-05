@@ -7,7 +7,6 @@ import pandas as pd
 from typing import TYPE_CHECKING
 
 from memoryfm._typing import PathLike
-from memoryfm.errors import InvalidDataError
 from memoryfm.io._loaders import load_json
 from memoryfm.core.objects import ScrobbleLog
 from memoryfm.io._normalise import normalise_spotify

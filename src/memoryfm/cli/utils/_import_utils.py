@@ -3,6 +3,7 @@ from pathlib import Path
 import memoryfm
 import json
 from typing import Literal
+from typer import Exit
 from memoryfm.io.lastfmstats import from_lastfmstats
 from memoryfm.io.spotify import from_spotify
 from memoryfm.io._writers import _write_string
@@ -39,27 +40,28 @@ def add_to_imports(name: str, overwrite: bool = False):
         InvalidDataError
     ):
         imports_data = []
-    names = [d.get('import-name') for d in imports_data]
+    names = get_imported_names(imports_file)
     if name in names and not overwrite:
-        raise InvalidDataError(
-                f"Scrobble Log with the name {name} already exists."
-                "Try --overwrite to overwrite the existing import"
-        )
-    elif name not in names:
-        from datetime import datetime
-        imported_data = {   
-                            "importname": name,
-                            "importdate": datetime.now().isoformat(),
-                            "path": f"{base_dir}/imports/{name}"
+        print(f"Scrobble Log with the name {name} already exists."
+              "Try --overwrite to overwrite the existing import")
+        raise Exit(3)
+    elif name in names and overwrite:
+        name_imported_data = next(
+            (d for d in imports_data if d.get("importname") == name),
+            None)
+        imports_data.remove(name_imported_data)
+    from datetime import datetime
+    imported_data = {"importname": name,
+                     "importdate": datetime.now().isoformat(),
+                     "path": f"{base_dir}/imports/{name}"
         }
-        imports_data.append(imported_data)
+    imports_data.append(imported_data)
     _write_string(json.dumps(imports_data, indent=4), file=imports_file)
 
 def _delete_saved_import(import_name: str, confirm=True):
     names = get_imported_names(imports_file)
     if import_name not in names:
         print("No import found for import name:", import_name)
-        from typer import Exit
         raise Exit(2)
     elif confirm:
        confirmation = input(
@@ -97,6 +99,12 @@ def import_and_save(
     overwrite: bool,
     import_name: str | None = None,
 ) -> None:
+    """
+    """
+    if import_name in get_imported_names(imports_file) and not overwrite:
+        print(f"Scrobble Log with the name {import_name} already exists."
+              "Try --overwrite to overwrite the existing import")
+        raise Exit(3)
     scrobble_log = None
     if source == "lastfmstats":
         scrobble_log = from_lastfmstats(file, file_type)
@@ -118,8 +126,7 @@ def import_and_save(
 def imports_file_exists(imports_file: Path) -> None:
     if not imports_file.exists():
         print("No imports found.")
-        import typer
-        raise typer.Exit(1)
+        raise Exit(1)
 
 def read_imports(imports_file: Path, check_exist=True) -> list | None:
     if check_exist:
@@ -134,7 +141,8 @@ def read_imports(imports_file: Path, check_exist=True) -> list | None:
 
 def validate_imports_file(data):
     if not isinstance(data, list):
-        raise InvalidDataError("Imports file is invalid:", imports_file)
+        print("Imports file is invalid:", imports_file)
+        raise Exit(1)
     else:
         return data
 
