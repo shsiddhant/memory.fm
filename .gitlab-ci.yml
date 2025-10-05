@@ -30,10 +30,6 @@ stages:          # List of stages for jobs, and their order of execution#
 unit-test:   # This job runs in the test stage.
   image: python:3.10
   stage: test 
-  cache:
-    paths:
-      - .venv/lib
-    key: "v0.2.0"   # It only starts when the job in the build stage completes successfully.
   before_script:
     - python --version ; pip --version  # For debugging
     - pip install virtualenv
