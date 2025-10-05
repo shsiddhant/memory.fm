@@ -26,6 +26,7 @@ def validate_df(
                 f"Required DataFrame column not found: {column}",
                 column
             )
+    df = df.replace(r'^\s*$', None, regex=True)
     df = df.dropna(subset=required_columns)
     if not df.empty:
         tz = validate_tz(tz)
@@ -33,10 +34,17 @@ def validate_df(
         with pd.option_context('mode.copy_on_write', True):
             df["timestamp"] = normalise_timestamps(df["timestamp"],
                                                    tz=tz, unit="ms")
-    if "album" not in df.columns:
-        df["album"] = None
-    df = df[["timestamp", "track", "artist", "album"]]
-    df = df.replace(r'^\s*$', None, regex=True)
+    if 'album' not in df.columns:
+        df["album"] = pd.NA
+    if (
+        'duration' not in df.columns or
+        df.dropna(subset = ['duration']).empty
+    ):
+        df = df[["timestamp", "track", "artist", "album"]]
+    else:
+        df = df[["timestamp", "track", "artist", "album", "duration"]]
+    df = df.convert_dtypes()
+    df = df.reset_index(drop=True)
     return df
 
 def validate_tz(tz: str | None = None) -> str:
@@ -74,7 +82,7 @@ def validate_text(
     """ 
     
     if not isinstance(text, str | None):
-        raise InvalidTypeError(f"Expecting string value for {text}")
+        raise InvalidTypeError(f"Expecting string type value for {text}")
     elif text is not None and not text.strip():
         raise InvalidDataError(f"{field} cannot be just white-space")
     else:
@@ -93,18 +101,25 @@ def meta_generator(
     if not isinstance(df, pd.DataFrame):
         raise InvalidTypeError("Expecting a pandas DataFrame")
     from importlib.metadata import version
+    if source == "spotify":
+        listens = "num_listens"
+    else:
+        listens = "num_scrobbles"
     meta = {
         "username": validate_text(username, "username"),
         "tz": validate_tz(tz),
-        "num_scrobbles": len(df),
+        listens: len(df),
         "date_range": {
             "start": None,
             "end": None
         },
         "source": source,
+        "duration_present": False,
         "memory.fm_version": f"{version('memory.fm')}",
-        "schema_version": 1
+        "schema_version": 2
     }
+    if df.get('duration') is not None:
+        meta['duration_present'] = True
     if source is None:
         meta["source"] = "manual"
     if len(df):
@@ -121,46 +136,50 @@ def validate_meta(meta: dict) -> dict:
     """
     Validate meta schema
     """
+    if not isinstance(meta, dict):
+        raise InvalidTypeError("Expecting a dict type value")
+    if meta.get("source") == "spotify":
+        listens = "num_listens"
+    else:
+        listens = "num_scrobbles"
+    
     types = {
-        "username": [str, "str"],
         "tz": [str, "str"],
         "memory.fm_version": [str, "str"],
         "schema_version": [int, "int"],
-        "num_scrobbles": [int, "int"],
+        listens: [int, "int"],
         "date_range": [dict, "dict"],
         "source": [str, "str"]
     }
-    if not isinstance(meta, dict):
-        raise InvalidTypeError("Expecting a dict type value")
+    if "username" not in meta.keys():
+        raise SchemaError("Missing key: username", "username")
+    meta["username"] = validate_text(meta["username"], "username")
     for key in types.keys():
         if key not in meta.keys():
             raise SchemaError(f"Missing key: {key}", key)
         elif not isinstance(meta[key], types[key][0]):
             raise InvalidTypeError(
                 f"Expecting {types[key][1]} type value for key: {key}]", key)
-    meta["username"] = validate_text(meta["username"], "username")
     meta["tz"] = validate_tz(meta["tz"])
-    if meta["num_scrobbles"] < 0:
+    if meta[listens] < 0:
         raise InvalidDataError("Expecting non-negative integer value for key: "
-                          "num_scrobbles", "num_scrobbles")
+                          f"{listens}", listens)
     for key in ["start", "end"]:
         if key not in meta["date_range"].keys():
             raise SchemaError(
                 f'meta["date_range"] key not found: {key}', key)
         elif (
-            meta["num_scrobbles"] > 0 and
+            meta[listens] > 0 and
             not isinstance(meta["date_range"][key], str)
         ):
             raise InvalidTypeError('Expecting string type value for: '
                               f'meta["date_range"]["{key}"]')
-        elif (not meta["num_scrobbles"] and
+        elif (not meta[listens] and
               meta["date_range"][key] is not None):
             raise InvalidDataError('If num_scrobbles is 0, '
                               f'{key} must be None type')
     if {"start", "end"} != set(meta["date_range"].keys()):
         raise SchemaError("date_range keys must be one of these : "
                           "'start', 'end'")
-#    if not meta["source"].strip():
-#        raise InvalidDataError("source only contains white-space")
     validate_text(meta['source'], 'source')
     return meta

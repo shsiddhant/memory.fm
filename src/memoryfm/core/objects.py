@@ -27,7 +27,11 @@ from memoryfm.core._validation import(
 )
 
 if TYPE_CHECKING:
-    from typing import IO, Self
+    from typing import (
+        IO,
+        Self,
+        List
+    )
     import datetime
 
 
@@ -49,10 +53,12 @@ class Scrobble:
         """
         if self.album == "NaN":
             self.album = None
-        string_repr = (f"Timestamp: {self.timestamp}\n"
-                       f"Track: {self.track}\n"
-                       f"Artist: {self.artist}\n"
-                       f"Album: {self.album}\n")
+        string_repr = (
+            f"Timestamp: {self.timestamp}\n"
+            f"Track: {self.track}\n"
+            f"Artist: {self.artist}\n"
+            f"Album: {self.album}\n"
+        )
         return string_repr
 
     def validate_dict(data:dict) -> None:
@@ -76,7 +82,7 @@ class Scrobble:
             "timestamp": self.timestamp,
             "track": self.track,
             "artist": self.artist,
-            "album": self.album
+            "album": self.album,
         }
         return dict_repr
     
@@ -92,15 +98,11 @@ class Scrobble:
     
         """
         cls.validate_dict(data)
-        if "album" not in data.keys():
-            album = None
-        else:
-            album = data["album"]
         return cls(
             timestamp=pd.Timestamp(data["timestamp"]),
             track=data["track"],
             artist=data["artist"],
-            album=album
+            album=data.get("album"),
         )
  
     def to_dict(self) -> dict:
@@ -113,6 +115,7 @@ class Scrobble:
         """Define a canonical pandas DataFrame representation of Scrobble
         """
         df_repr = pd.DataFrame(self.to_dict(), index=[0])
+        df_repr = df_repr.replace({None:pd.NA})
         return df_repr
     
 
@@ -165,17 +168,18 @@ class ScrobbleLog:
             DataFrame containing scrobble data.
             Columns:
                 Required: ['timestamp', 'track', 'artist']
-                Optional: ['album']
+                Optional: ['album', 'duration']
             Allowed values in columns:
             'timestamp': str, int, float, datetime, pd.Timestamp
             'track': str
             'artist': str
-            A row with None type value in any column will be discarded.
+            A row with None type value in any required column will be discarded.
             'album': 
                             
         If no 'album' column is found, a new column 'album' is added,
-        with each value set to `None`.
-        
+        with each value set to pandas `<NA>`
+        If no 'duration' column is found, a new column 'duration' is added,
+        with each value set to pandas`<NA>`.
         If meta is passed and valid, uses it do extract username, tz, source.
         An updated meta is generated from the data if `update_meta` is True.
         If not, tries to use `username`, `tz`, and `source` values (if passed)
@@ -268,7 +272,7 @@ class ScrobbleLog:
         """
         return self.to_markdown(tablefmt="pipe", maxcolwidths=20,
                                 max_length=10, show_extra=False,
-                                newest_first=False)
+                                newest_first=True)
 
     def __bool__(self) -> bool:
         """Truth value"""
@@ -377,7 +381,7 @@ class ScrobbleLog:
         file: PathLike | IO[str] | None = None,
         maxcolwidths: list[int] | None=None,
         tablefmt: str | None = "github",
-        newest_first: bool = False,
+        newest_first: bool = True,
         max_length: int | None = None,
         datetimefmt: str = "%Y-%m-%d %H:%M",
         showindex: bool = False,
@@ -385,44 +389,44 @@ class ScrobbleLog:
     ) -> str | None:
         """Write a nice looking ScrobbleLog in markdown using tabulate
         """
-        df_new = self.df.copy().sort_values(by=['timestamp'],
+        df = self.df.copy().sort_values(by=['timestamp'],
                                             ascending = not newest_first)
-        df_new["timestamp"] = (
-                        df_new["timestamp"].dt.strftime(datetimefmt)
-        )
-        df_new = df_new.rename(str.capitalize, axis=1)
-        if not len(self):
+        from memoryfm.util.duration_convert import ms_to_time
+        if 'duration' in df.columns:
+            df["duration"] = ms_to_time(df["duration"])
+        df = df.rename(str.capitalize, axis=1)
+        if (max_length is not None and max_length <= 0) or not len(self):
             df_table = "-----No scrobbles present-----"
+            return df_table
         elif (
             max_length is None or
             len(self) <= max_length
         ):
-            df_table = tabulate(df_new, headers="keys",
-                             tablefmt=tablefmt,
-                             maxcolwidths=maxcolwidths,
-                             showindex=showindex)
+            bottom_text = ""
         else:
             total = len(self)
-            df1 = df_new.head()
-            df2 = df_new.tail()
-            dfsep = pd.DataFrame({"Timestamp":3*['...'],
-                                  "Track":3*['...'],
-                                  "Artist":3*['...'],
-                                  "Album":3*['...']}
-                                 )
-            df = pd.concat([df1, dfsep, df2], ignore_index=True)
-            df_table = tabulate(df, headers="keys", tablefmt=tablefmt,
-                              maxcolwidths=maxcolwidths,
-                              showindex=showindex)
-            df_table = (df_table + "\n"
-                     + f"Showing {max_length} out of {total} scrobbles") 
+            listen = "scrobbles"
+            if self.meta.get('source') == "spotify":
+                listen = "listens"
+            df = df.head(max_length)
+            bottom_text = f"Showing newest {max_length} out of {total} {listen}" 
+        df["Timestamp"] = (
+                        df["Timestamp"].dt.strftime(datetimefmt)
+        )
+        if len(self):
+            df_table = tabulate(df, headers="keys",
+                                tablefmt=tablefmt,
+                                maxcolwidths=maxcolwidths,
+                                showindex=showindex)
+        df_table = df_table + "\n" + bottom_text
         if not show_extra:
             markdown = df_table
         else:
+            from datetime import datetime
             markdown = (
                 f"ScrobbleLog for username: {self.username}  \n"
-                f"From {self.meta['date_range']['start']} to "
-                f"{self.meta['date_range'].get('end')}\n\n"
+                f"From {datetime.strftime(self.df['timestamp'].min(), datetimefmt)} "
+                f"to {datetime.strftime(self.df['timestamp'].max(), datetimefmt)}\n\n"
                 f"{df_table}"
             )
             
@@ -461,9 +465,49 @@ class ScrobbleLog:
             "scrobbles": scrobbles
         }
         import json
-        json_data = json.dumps(data)
         from memoryfm.io._writers import _write_string
-        return _write_string(json_data, file)
+        return _write_string(json.dumps(data), file)
+    
+ 
+    @classmethod
+    def from_parquet(
+        cls,
+        meta_file: PathLike | IO[str],
+        df_file: PathLike | IO [str],
+        start: str | pd.Timestamp | datetime.datetime | None = None,
+        end: str | pd.Timestamp | datetime.datetime | None = None,
+        *,
+        artists: List[str] | None = None,
+        albums: List[str] | None = None,
+        tracks: List[str] | None = None
+    ) -> Self:
+        """
+        Read parquet export
+        """
+        from pandas import read_parquet
+        from memoryfm.io._loaders import load_json
+        kind = {"artists": artists, "album": albums, "tracks": tracks}
+        filter_df = [(k, 'in', v) for k, v in kind.items() if v is not None]
+        if filter_df:
+            df = read_parquet(df_file, filters=filter_df)
+        else:
+            df = read_parquet(df_file)
+        meta = load_json(meta_file)
+        return cls(df=df, meta=meta).filter_by_date(start, end)
+            
+
+    def to_parquet(
+        self,
+        meta_file: PathLike | IO[str],
+        df_file:  PathLike | IO[str],
+    ) -> None:
+        """
+        Import and save to df to parquet, and metadata to JSON
+        """
+        import json
+        from ..io._writers import _write_string
+        _write_string(json.dumps(self.meta), meta_file)
+        self.df.to_parquet(df_file)
 
     def to_csv( 
         self,
@@ -569,14 +613,14 @@ class ScrobbleLog:
         filter_condition = filter_start & filter_end
         date_filtered_df = self.df[filter_condition]
         return ScrobbleLog(df=date_filtered_df, username=self.username,
-                           tz=self.tz, source="filter")
+                           tz=self.tz, source=self.meta.get("source"))
 
     # -----------------------------------------------------------------
     # Charts Methods
 
     def top_charts(
         self: ScrobbleLog,
-        kind: str = "track",
+        kind: str = "tracks",
         n: int = 5
     ) -> pd.Series:
         """

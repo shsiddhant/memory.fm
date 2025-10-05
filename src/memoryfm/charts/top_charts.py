@@ -24,3 +24,4 @@ def top_charts_markdown(
         "kind_print": kind_print_dict.get(kind),
         "markdown": top_charts_markdown
     }
+

@@ -24,10 +24,8 @@ A small Python library and CLI application for reading, analyzing, visualizing a
     - Export to nice-looking markdown using [tabulate](https://pypi.org/project/tabulate/).
     - Filter `ScrobbleLog` by date.
     - Get top charts for tracks, artists, and albums.
-    
-- Should be Added Soon:
 	- Support for Spotify listening history exports
-	- CLI commands.
+- CLI commands to import JSON/CSV, print `ScrobbleLog` and top charts, with options to filter by timeperiod, tracks, artists, and albums.
 
 ---
 
@@ -117,11 +115,11 @@ pytest tests/
 
 ## Roadmap
 
-- [ ] Support for loading Spotify listening history exports.
-- [ ] CLI commands for loading, printing, exporting, filters, top charts, etc. 
-- [ ] API support for Last.fm and Spotify.
+- [x] Support for loading Spotify listening history exports.
+- [x] CLI commands for loading, printing, exporting, filters, top charts, etc. 
 - [ ] More analyses based on frequency, obsessive listens/streaks, duration (à la Spotify wrapped) etc.
 - [ ] Visualizations.
+- [ ] API support for Last.fm and Spotify.
 
 ---
 

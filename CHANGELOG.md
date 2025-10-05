@@ -1,5 +1,31 @@
 ## [Unreleased]
 
+### Added
+
+- Add functions to  parse and normalise the Spotify listening history JSON
+- Add a typer CLI app with the following commands.
+    - `import lastfmstats`: import JSON/CSV from obtained from lastfmstats.com
+    - `list`: list all imports
+    - `load`: load an import
+    - `loaded`: check loaded import
+    - `print`: print `ScrobbleLog`
+    - `top`: list top (n) artists/albums/tracks
+
+### Changed
+
+- Update validators to include the duration column in `ScrobbleLog` obtained from Spotify JSON data.
+- Convert `None/NaN` and blanks to pandas `<NA>`.
+- Reset index after validation.
+- Update `meta` generator to include a  boolean`duration_present` key, to specify if the "duration" column is present or not.
+- Update `meta` key `num_scrobbles` to `num_listens` if source is spotify.
+- Update `schema_version: 2`.
+
+### Fixed
+
+- Fix missing f-string in `io/_normalise lineno 74`.
+- Remove `duration` attribute from `Scrobble` class.
+- Clean up `ScrobbleLog` method `to_markdown`  and handle the case when max length is 0.
+
 ---
 
 ## [v0.2.0] - 2025-09-22
