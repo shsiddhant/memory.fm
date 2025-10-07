@@ -26,3 +26,6 @@ env/
 
 # Full lastfmstats JSON export
 */data/lastfmstats-lazulinoother.json
+
+*/docs/build/
+/docs/build/

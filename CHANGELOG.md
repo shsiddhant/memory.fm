@@ -26,6 +26,11 @@
 - Remove `duration` attribute from `Scrobble` class.
 - Clean up `ScrobbleLog` method `to_markdown`  and handle the case when max length is 0.
 
+### Documentation
+
+- Setup Sphinx generated docs with `autosummary` and `numpydoc`.
+- Update docstrings for `ScrobbleLog` class.
+
 ---
 
 ## [v0.2.0] - 2025-09-22

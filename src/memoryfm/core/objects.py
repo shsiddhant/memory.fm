@@ -1,7 +1,7 @@
 """Module memoryfm.core.objects
 Defines object classes:
 ScrobbleLog : represents a scrobble log
-Scrobble    : (dataclass) represents a single scrobble.
+Scrobble: (dataclass) represents a single scrobble.
 """
 
 from __future__ import annotations
@@ -41,15 +41,32 @@ if TYPE_CHECKING:
 @dataclass
 class Scrobble:
     """
-    Class representing a single scrobble
+    Class representing a single scrobble/listen.
+
+    Parameters
+    ----------
+    timestamp: pandas Timestamp
+        Timestamp at which the track was scrobbled.
+    track: str
+        Name/title of the scrobbled track.
+    artist: str
+        Artist name for the scrobbled track.
+    album: str, default None
+        (Optional) Album name for the scrobbled track.
+
+    See Also
+    --------
+    Scrobble.from_dict: Constructor from a dictionary with keys corresponding to each parameter (album is optional).
     """
+    
     timestamp: pd.Timestamp
     track: str
     artist: str
     album: str | None = None
 
     def __str__(self) -> str:
-        """Return String representation of Scrobble
+        """
+        Return a string representation of a Scrobble.
         """
         if self.album == "NaN":
             self.album = None
@@ -63,7 +80,8 @@ class Scrobble:
 
     def validate_dict(data:dict) -> None:
         """
-        Validate dict before creating Scrobble from dict
+        Check if the dictionary contains the required keys before creating 
+        a Scrobble from it.
         """
         if not isinstance(data, dict):
             raise InvalidTypeError("Expecting dict type value.")
@@ -76,7 +94,7 @@ class Scrobble:
     
     def __dict__(self) -> dict:
         """
-        Define a canonical dict representation of Scrobble
+        Returns the canonical dict representation of a Scrobble.
         """
         dict_repr = {
             "timestamp": self.timestamp,
@@ -92,10 +110,7 @@ class Scrobble:
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         """
-        Construct Scrobble from dict
-    
-        Creates Scrobble object from dictionary.
-    
+        Construct a Scrobble from a dictionary.
         """
         cls.validate_dict(data)
         return cls(
@@ -107,12 +122,13 @@ class Scrobble:
  
     def to_dict(self) -> dict:
         """
-         Get a canonical dict representation of Scrobble
+         Returns the canonical dict representation of a Scrobble.
         """
         return self.__dict__()
 
     def to_dataframe(self) -> pd.DataFrame:
-        """Define a canonical pandas DataFrame representation of Scrobble
+        """
+        Returns a canonical pandas DataFrame representation of a Scrobble.
         """
         df_repr = pd.DataFrame(self.to_dict(), index=[0])
         df_repr = df_repr.replace({None:pd.NA})
@@ -123,15 +139,14 @@ class Scrobble:
 # Iterator
 
 class ScrobbleLogIterator:
+    """
+    Iterator class to iterate over a ScrobbleLog.
+    """
     def __init__(self, scrobble_log):
-        """
-        """
         self.scrobble_log = scrobble_log
         self.index = 0
 
     def __next__(self):
-        """
-        """
         if self.index < len(self.scrobble_log):
             scrobble = self.scrobble_log[self.index]
             self.index += 1
@@ -141,11 +156,59 @@ class ScrobbleLogIterator:
 
 
 # ---------------------------------------------------------------------
-# ScroobleLog class - represents a scrobble log
+# ScrobbleLog class - represents a scrobble log
 
 class ScrobbleLog:
     """
-    Class representing a scrobble log
+    Class representing a scrobble log, i.e. a sequence of scrobbles. 
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+
+        |  A pandas DataFrame containing the scrobbles. It must have the 
+           following columns:
+        |  1. timestamp : ``str``, ``int``, ``datetime``, ``pd.Timestamp``
+        |   This column contains timestamps of scrobbles. If ``int``, then 
+            it will be assumed to be unix epoch (milliseconds).
+        |  2. track : ``str``
+        |   This column contains track names.
+        |  3. artist : ``str``
+        |   This column contains artist names.
+        |  There are two optional columns:
+        |  1. album : ``str``
+        |   This column contains album names.
+        |  2. duration : ``str``, ``int``, ``timedelta, ``pd.timedelta``
+        |   This column contains durations of scrobbles/listens.
+
+    meta : dict, default None
+
+        |  A dictionary containing metadata with the following schema:
+        |  "username" (``str``, ``None``) : Username for the ScrobbleLog.
+        |  "tz" (``str``) : Timezone IANA string
+        |  "num_scrobbles" (last.fm) or "num_listens" (``str``) : 
+           Number of scrobbles/listens.
+        |  "date_range" (``dict``) : A dictionary with keys,
+        |    1. "start" (``str``, ``None``) : Date of first scrobble in isoformat
+        |    2. "end" (``str``, ``None``) : Date of last scrobble in isoformat.
+        |  "source" (``str``, ``None``) : Source of data (lastfmstats/spotify).
+        |  "duration_present" (``bool``) : ``True`` if duration column present.
+        |  "memoryfm.version" (``str``) : Version of `memory.fm`.
+        |  "schema_version" (``int``) : Version of metadata schema.
+
+    update_meta : bool, default True
+        If ``True``, then meta is updated.
+    username : str, default None
+        username used while generating ``meta`` if no ``meta`` is passed.
+    tz : str, default "Etc/UTC"
+        tz value used while generating ``meta`` if no ``meta`` is passed.
+    source : str, default "manual"
+        source used while generating ``meta`` if no ``meta`` is passed.
+
+    See Also
+    --------
+    meta_generator : Generates ``meta`` from ``username``, ``tz``, and ``source``
+    
     """
     
     # ----------------------------------------------------------------
@@ -159,33 +222,7 @@ class ScrobbleLog:
         username: str | None = None,
         tz: str | None = "Etc/UTC",
         source: str | None = "manual",
-    ) -> Self:
-        """ Create ScrobbleLog object from data.
-        
-        Parameters
-        ----------
-        df: pd.DataFrame
-            DataFrame containing scrobble data.
-            Columns:
-                Required: ['timestamp', 'track', 'artist']
-                Optional: ['album', 'duration']
-            Allowed values in columns:
-            'timestamp': str, int, float, datetime, pd.Timestamp
-            'track': str
-            'artist': str
-            A row with None type value in any required column will be discarded.
-            'album': 
-                            
-        If no 'album' column is found, a new column 'album' is added,
-        with each value set to pandas `<NA>`
-        If no 'duration' column is found, a new column 'duration' is added,
-        with each value set to pandas`<NA>`.
-        If meta is passed and valid, uses it do extract username, tz, source.
-        An updated meta is generated from the data if `update_meta` is True.
-        If not, tries to use `username`, `tz`, and `source` values (if passed)
-        to generate `meta`
-         
-        """
+    ) -> None:
         try:
             meta = validate_meta(meta)
         except (SchemaError, InvalidTypeError, InvalidDataError) as e:
@@ -206,6 +243,14 @@ class ScrobbleLog:
 
     @property
     def df(self) -> pd.DataFrame:
+        """
+        DataFrame containing scrobbles, normalised with required
+        columns and dtypes.
+
+        Returns
+        -------
+        pd.DataFrame
+        """
         return self._df
 
     @df.setter

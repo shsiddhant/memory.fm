@@ -39,7 +39,13 @@ dev = [
     "python-lsp-ruff>=2.2.2",
 		"tzlocal",
 		"wcwidth",
-		"typer",
+		"typer",		
+]
+doc = [
+		"numpydoc",
+		"sphinx",
+		"pydata-sphinx-theme",
+		"sphinx_design",
 ]
 extra = [
 	"tzlocal",
