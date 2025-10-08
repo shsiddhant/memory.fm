@@ -39,27 +39,12 @@ def load_csv(file: PathLike | IO[str] = None) -> pd.DataFrame:
     """
     """ 
     file_like = _file_opener(file, "r")
-    line_num = 0
-    for line in file_like:
-        col_list = line.split(";")
-        if not line_num and len(col_list) != 5:
-            raise ParseError(file, "Wrong delimiter or missing columns: "
-                                   f"{len(col_list)}")
-        elif not line_num:
-            last_col = col_list[-1]
-            pos_username = last_col.find("Date#")
-            if pos_username:
-                raise ParseError(file, "Expecting last column name: "
-                                       "'Data#{username}'")
-            else:
-                username = last_col[5:].strip()
-                if not username:
-                    raise ParseError(file, "Blank or only whitespace username")
-        if line_num and len(col_list) != 5:
+    from csv import reader
+    csv_reader = reader(file_like, delimiter=';', quotechar='"')
+    for line, row in enumerate(csv_reader, start=1):
+        if len(row) != 5:
             raise ParseError(file, "Expected delimiter ';' in line number "
-                                   f"{line_num+1}: {line}")
-        line_num = line_num + 1
-    file_like.close()
+                                   f"{line}: {row}")
     file_like = _file_opener(file)
     try:
         df = pd.read_csv(file_like, sep=";")
@@ -72,6 +57,13 @@ def load_csv(file: PathLike | IO[str] = None) -> pd.DataFrame:
         raise ParseError(file, e) from e
     # Last column name expected of the form "Date#{username}"
     last_column = df.columns[-1]
+    pos_username = last_column.find("Date#")
+    if pos_username:
+        raise ParseError(file, "Expecting last column name: 'Data#{username}'")
+    else:
+        username = last_column[5:].strip()
+    if not username:
+        raise ParseError(file, "Blank or only whitespace username")
     df = pd.DataFrame.rename(df, columns={last_column: "Date"})
     data = {"username": username, "scrobbles": df.to_dict(orient="records")}
     return data
