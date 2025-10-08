@@ -22,37 +22,25 @@ release = '0.2.0'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.duration', 'sphinx.ext.autodoc', 'sphinx.ext.coverage',
-    'sphinx.ext.autosummary', 'myst_parser', 'sphinx_design', 'numpydoc'
+    'sphinx.ext.duration',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.autosummary',
+    'sphinx_design',
+    'numpydoc'
 ]
 
-myst_enable_extensions = ['colon_fence']
 
 templates_path = ['_templates']
 exclude_patterns = []
 
 autosummary_generate = True
 
-# numpydoc
-#numpydoc_attributes_as_param_list = False
+# -- numpydoc ---
+
+# numpydoc_attributes_as_param_list = False
 numpydoc_show_class_members = False
 numpydoc_show_inherited_class_members = False
-
-# Napoleon settings
-# napoleon_google_docstring = False
-# napoleon_numpy_docstring = False
-# napoleon_include_init_with_doc = False
-# napoleon_include_private_with_doc = False
-# napoleon_include_special_with_doc = False
-# napoleon_use_admonition_for_examples = False
-# napoleon_use_admonition_for_notes = False
-# napoleon_use_admonition_for_references = False
-# napoleon_use_ivar = True
-# napoleon_use_param = True
-# napoleon_use_rtype = True
-# napoleon_use_keyword = True
-# napoleon_custom_sections = None
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -75,12 +63,13 @@ html_theme_options = {
     ],
     "show_toc_level": 1,
     "navbar_align": "left",
+    "collapse_navigation": True,
     "show_nav_level": 1,
     "navbar_center": ["navbar-nav"],
 }
-
 html_sidebars = {
-    "api": [
+    "**": [
         "sidebar-nav-bs",
+        "sidebar-ethical-ads"
     ]
 }

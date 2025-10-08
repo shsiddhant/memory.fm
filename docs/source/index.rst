@@ -63,7 +63,7 @@ A small Python library and CLI application for reading, analyzing, visualizing a
    :hidden:
    :maxdepth: 2
 
-   quickstart
+   quickstart/index
 
 .. toctree::
    :hidden:
