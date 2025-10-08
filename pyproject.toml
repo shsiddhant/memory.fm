@@ -6,12 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "memory.fm"
 dynamic = ["version"]
 dependencies = [
-	"pandas",
-	"tabulate",
-	"pyyaml",
-	"typer",
-	"rich",
-	"pyarrow",
+	"pandas>=2.3.3,<3.0",
+	"tabulate>=0.9,<1.0",
+	"pyyaml>=6.0,<7.0",
+	"typer>=0.19,<1.0",
+	"rich>=14.1,<15.0",
+	"pyarrow>=21.0,<22.0",
+	"wcwidth>=0.2.14,<0.3",
 ]
 requires-python = ">=3.10"
 authors = [
@@ -35,19 +36,17 @@ fallback_version = "0.0.0"
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.4.2",
-    "python-lsp-ruff>=2.2.2",
+    "pytest",
+    "python-lsp-ruff",
 		"tzlocal",
-		"wcwidth",
-		"typer",		
 ]
 doc = [
-		"numpydoc",
 		"sphinx",
-		"pydata-sphinx-theme",
 		"sphinx_design",
+		"pydata-sphinx-theme",
+		"numpydoc",
 ]
-extra = [
+timezone = [
 	"tzlocal",
 ]
 
