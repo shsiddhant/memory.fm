@@ -27,7 +27,7 @@ unit-test:   # This job runs in the test stage.
     matrix:
       - PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13"]   
   script:
-    - uv sync --all-groups
+    - uv sync --all-groups --extra "dev"
     - uv run pytest
   after_script:
     - uv cache prune --ci # Trim the cache to optimize for CI
