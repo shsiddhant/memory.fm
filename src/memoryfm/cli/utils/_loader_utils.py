@@ -12,14 +12,20 @@ from memoryfm import ScrobbleLog
 
 
 def _load_saved_log(import_name: str):
-    if not (imports_dir / import_name).exists():
+    if not (imports_dir / f"{import_name}").exists():
         print(f"No ScrobbleLog with name: '{import_name}'")
         raise typer.Exit(2)
     imports_list = read_imports(imports_file)
-    data = next(
-            (d for d in imports_list if d.get("importname") == import_name),
-            None
-    )
+    if import_name == "None":
+        data = next(
+                (d for d in imports_list if d.get("importname") is None),
+                None
+        )
+    else:
+        data = next(
+                (d for d in imports_list if d.get("importname") == import_name),
+                None
+        )
     with open(loaded_file, 'w') as fp:
         json.dump(data, fp, indent=4)
     print("Loaded:", import_name)
@@ -35,13 +41,6 @@ def check_loaded(msg=None):
         print("Loaded file invalid:", loaded_file)
     else:
         return import_name
-#    if import_name is None:
-#        print("No import loaded.")
-#        if msg is not None:
-#            print(msg)
-#        raise typer.Exit(3)
-#    else:
-#        return import_name
 
 def check_cache():
     if not base_dir.exists():
@@ -53,9 +52,7 @@ def read_cache_from_name(
     **kwargs
 ) -> ScrobbleLog:
     check_cache()
-    if import_name is None:
-        import_name = check_loaded("Load an import first.")
-    import_name_dir = imports_dir / import_name
+    import_name_dir = imports_dir / f"{import_name}"
     meta_file = import_name_dir / f'{import_name}-meta.json'
     df_file = import_name_dir / f'{import_name}-df.parquet'
     if not import_name_dir.exists():

@@ -17,7 +17,7 @@ from memoryfm.cli import (
 
 
 def create_import_name_dir(name: str) -> Path:
-    import_name_dir = imports_dir / name
+    import_name_dir = imports_dir / f"{name}"
     import_name_dir.mkdir(parents=True, exist_ok=True)
     return import_name_dir
 
@@ -75,11 +75,11 @@ def _delete_saved_import(import_name: str, confirm=True):
         imports_list.remove(name_imported_data)
         with open(imports_file, 'w') as fp:
             json.dump(imports_list, fp, indent=4)
-        meta_file = imports_dir / import_name / f"{import_name}-meta.json"
-        df_file = imports_dir / import_name / f"{import_name}-df.parquet"
+        meta_file = imports_dir / f"{import_name}" / f"{import_name}-meta.json"
+        df_file = imports_dir / f"{import_name}" / f"{import_name}-df.parquet"
         meta_file.unlink()
         df_file.unlink()
-        (imports_dir / import_name).rmdir()
+        (imports_dir / f"{import_name}").rmdir()
         from ._loader_utils import check_loaded
         if loaded_file.is_file() and check_loaded() == import_name:
             loaded_file.unlink()
@@ -110,7 +110,7 @@ def import_and_save(
     if source == "lastfmstats":
         scrobble_log = from_lastfmstats(file, file_type)
         if (
-            import_name == "default" and
+            import_name is None and
             scrobble_log.meta.get("username") is not None
         ):
             import_name = scrobble_log.meta.get("username")

@@ -67,7 +67,7 @@ def print_scrobbles(
 
 
 def cli_top_charts(
-    import_name: str,
+    import_name: str | None = None,
     kind: str = "tracks",
     n: int = 5,
     **kwargs
