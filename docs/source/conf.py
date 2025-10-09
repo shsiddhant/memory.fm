@@ -23,11 +23,14 @@ release = '0.2.0'
 
 extensions = [
     'sphinx.ext.duration',
+    'sphinx.ext.doctest',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'IPython.sphinxext.ipython_directive',
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.autosummary',
     'sphinx_design',
-    'numpydoc'
+    'numpydoc',
 ]
 
 
@@ -47,6 +50,9 @@ numpydoc_show_inherited_class_members = False
 
 html_theme = "pydata_sphinx_theme"
 html_static_path = ['_static']
+html_css_files = [
+    "css/custom.css",
+]
 html_theme_options = {
     "external_links": [
         {
@@ -64,12 +70,9 @@ html_theme_options = {
     "show_toc_level": 1,
     "navbar_align": "left",
     "collapse_navigation": True,
-    "show_nav_level": 1,
+    "show_nav_level": 2,
     "navbar_center": ["navbar-nav"],
 }
 html_sidebars = {
-    "**": [
-        "sidebar-nav-bs",
-        "sidebar-ethical-ads"
-    ]
+    "index.rst": []
 }

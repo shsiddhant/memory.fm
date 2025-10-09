@@ -45,6 +45,7 @@ doc = [
 		"sphinx_design",
 		"pydata-sphinx-theme",
 		"numpydoc",
+		"ipython>=8.37.0",
 ]
 timezone = [
 	"tzlocal",
