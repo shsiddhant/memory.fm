@@ -316,8 +316,7 @@ class ScrobbleLog:
         Return String representation of ScrobbleLog
         """
         return self.to_markdown(tablefmt="pipe", maxcolwidths=20,
-                                max_length=10, show_extra=False,
-                                newest_first=True)
+                                max_length=10, show_extra=False,)
 
     def __bool__(self) -> bool:
         """Truth value"""
@@ -339,7 +338,7 @@ class ScrobbleLog:
         """
         if isinstance(key, slice):
             return ScrobbleLog(
-                df=self.df[key],
+                df=self.df.iloc[key],
                 meta=self.meta,
                 source=self.meta['source']
             )
@@ -426,7 +425,7 @@ class ScrobbleLog:
         file: PathLike | IO[str] | None = None,
         maxcolwidths: list[int] | None=None,
         tablefmt: str | None = "github",
-        newest_first: bool = True,
+        newest_first: bool | None = None,
         max_length: int | None = None,
         datetimefmt: str = "%Y-%m-%d %H:%M",
         showindex: bool = False,
@@ -434,8 +433,10 @@ class ScrobbleLog:
     ) -> str | None:
         """Write a nice looking ScrobbleLog in markdown using tabulate
         """
-        df = self.df.copy().sort_values(by=['timestamp'],
-                                            ascending = not newest_first)
+        df = self.df.copy()
+        if newest_first is not None:
+            df = df.sort_values(by=['timestamp'],
+                                       ascending = not newest_first)
         from memoryfm.util.duration_convert import ms_to_time
         if 'duration' in df.columns:
             df["duration"] = ms_to_time(df["duration"])
@@ -625,7 +626,7 @@ class ScrobbleLog:
         return ScrobbleLog(self.df.head(n), meta=self.meta)
 
     def tail(self, n: int | None = None) -> Self:
-        """ Return ScrobbleLog for the first n scrobbles 
+        """ Return ScrobbleLog for the last n scrobbles 
         """
         if n is None:
             n = 5
