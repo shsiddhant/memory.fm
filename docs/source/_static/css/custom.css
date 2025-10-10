@@ -1,17 +1,130 @@
+/* Primary sidebar */
+
 .bd-sidebar-primary {
-    max-width: 20%;
+    max-width: 22%;
 }    
 
 .bd-page-width {
     max-width: 100%;  /* default is 88rem */
 }
 
+
+/* ----------------------------------- Colors ----------------------------------------- */
+
 html[data-theme="light"] {
-    --pst-color-primary: #F75552;
-    --pst-color-secondary: #DEA000;
+    --pst-color-primary: #B40B08;
+    --pst-color-secondary: #236763;
+    --pst-color-accent: #B40B08;
 }
 
 html[data-theme="dark"] {
-    --pst-color-secondary: #6C757D;
+    --pst-color-primary: #FB9E98;
+    --pst-color-secondary:#4DC5B6;
+    --pst-color-accent: #FB9E98;
 }
 
+
+/* -------------------------------------- Fonts ------------------------------------- */
+
+
+/* ------------------------------- Sans-Serif ---------------------------------------- */
+
+
+/* Regular */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Next";
+    src: url("../fonts/AtkinsonHyperlegibleNext-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Next";
+    src: url("../fonts/AtkinsonHyperlegibleNext-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Italic */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Next";
+    src: url("../fonts/AtkinsonHyperlegibleNext-RegularItalic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Bold Italic */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Next";
+    src: url("../fonts/AtkinsonHyperlegibleNext-BoldItalic.woff2") format("woff2");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+
+/* --------------------------------- Monospace ---------------------------------- */
+
+/* Regular */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Mono";
+    src: url("../fonts/AtkinsonHyperlegibleMono-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Mono";
+    src: url("../fonts/AtkinsonHyperlegibleMono-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Italic */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Mono";
+    src: url("../fonts/AtkinsonHyperlegibleMono-RegularItalic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Bold Italic */
+
+@font-face {
+    font-family: "Atkinson Hyperlegible Mono";
+    src: url("../fonts/AtkinsonHyperlegibleMono-BoldItalic.woff2") format("woff2");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+
+/* ----------------------------- Apply fonts globally -------------------------------------- */
+
+html {
+    --pst-font-family-base: "Atkinson Hyperlegible Next", var(--pst-font-family-base-system);
+    --pst-font-family-heading: "Atkinson Hyperlegible Next", var(--pst-font-family-base-system);
+    --pst-font-family-monospace: "Atkinson Hyperlegible Mono", var(--pst-font-family-monospace-system);
+}
+
+/* Reduce code font size */
+
+code, pre {
+    font-family: var(--pst-font-family-monospace);
+    font-size: 0.95em;
+}
