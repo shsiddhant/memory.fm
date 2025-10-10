@@ -1,4 +1,4 @@
-## [Unreleased]
+## [v0.4.0] - 2025-10-10
 
 ### Added
 
@@ -10,6 +10,7 @@
     - `loaded`: check loaded import
     - `print`: print `ScrobbleLog`
     - `top`: list top (n) artists/albums/tracks
+
 
 ### Changed
 
@@ -25,11 +26,30 @@
 - Fix missing f-string in `io/_normalise lineno 74`.
 - Remove `duration` attribute from `Scrobble` class.
 - Clean up `ScrobbleLog` method `to_markdown`  and handle the case when max length is 0.
+- Fix undesired ParseError while loading a CSV if one of the values contains a semicolon.
+
+### Build
+
+- Update dependencies
+    - Added: 
+        - `typer` - CLI
+        - `pyarrow` - Export to parquet
+        - `wcwidth` - Correct widths for CJK characters.
+- Optional dependencies groups:
+    - doc : `sphinx`, `sphinx_design`, `pydata-sphinx-theme`, `numpydoc`, and `ipython`.
+    - timezone : `tzlocal`
+- Generate CLI executable/script from typer app using setuptools.
+- Setup uv managed CI.
 
 ### Documentation
 
 - Setup Sphinx generated docs with `autosummary` and `numpydoc`.
 - Update docstrings for `ScrobbleLog` class.
+- Add a quickstart guide.
+    - Install instructions
+    - Library Usage with examples using IPython.
+    - CLI Usage with examples.
+- Improve README and add a CONTRIBUTING guide.
 
 ---
 

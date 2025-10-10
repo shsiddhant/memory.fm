@@ -7,9 +7,11 @@
 memory.fm
 =========
 
-A small Python library and CLI application for reading, analyzing, visualizing and exporting `Last.fm <https://www.last.fm>`_ scrobble data. Meant for anyone who obsesses over their music listening.
+A small Python library and CLI tool for reading, analyzing, visualizing and exporting `Last.fm <https://www.last.fm>`_ scrobble data.
 
-**Inspired by the habit of repurposing music listening history as a medium to bring up memories.**
+Meant for anyone who obsesses over their music listening. Even if you aren't as obsessed, you are still welcome and encouraged to try it out.
+
+**Inspired by my habit of repurposing music listening history as a medium to bring up memories.**
 
 .. grid:: 1 2 2 2
    :gutter: 4

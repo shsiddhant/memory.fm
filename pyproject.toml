@@ -18,7 +18,7 @@ requires-python = ">=3.10"
 authors = [
 	{name="Siddhant Sharma", email="sharmasiddhant@protonmail.com" },
 ]
-description = "A small Python library and CLI application for reading, analyzing, visualizing and exporting Last.fm scrobble data."
+description = "A small Python library and CLI tool for reading, analyzing, visualizing and exporting Last.fm scrobble data."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
