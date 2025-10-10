@@ -49,6 +49,9 @@ def print_scrobbles(
     from memoryfm.cli.utils._cli_printer import date_filter
     from pandas._libs.tslibs.parsing import DateParseError
     start, end = date_filter(start=from_date, end=to_date, last=last)
+    if import_name is None:
+        from memoryfm.cli.utils._loader_utils import check_loaded
+        import_name = check_loaded()
     try:
         scrobble_log = read_cache_from_name(
                     import_name, start=start, end=end, artists=by_artists,
