@@ -33,7 +33,6 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
     - Export to nice-looking markdown using [tabulate](https://pypi.org/project/tabulate/).
     - Filter `ScrobbleLog` by date.
     - Get top charts for tracks, artists, and albums.
-- Support for Spotify listening history exports
 
 ---
 
@@ -199,7 +198,7 @@ If you'd like to explore, improve, fix something, report bugs, or suggest any fe
 
 To get started, you can have a look at the [issues tracker](https://gitlab.com/sharmasiddhant/memory.fm/-/issues). If you want to report a bug or make a feature request or suggestions, please open a [new issue](https://gitlab.com/sharmasiddhant/memory.fm/-/issues/new?type=ISSUE) using an appropriate template.
 
-See [[CONTRIBUTING]] for a detailed overview of the contributing guidelines.
+See [CONTRIBUTING](CONTRIBUTING.md) for a detailed overview of the contributing guidelines.
 
 ---
 

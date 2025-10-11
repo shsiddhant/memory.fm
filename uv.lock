@@ -525,6 +525,7 @@ name = "memory-fm"
 source = { editable = "." }
 dependencies = [
     { name = "pandas" },
+    { name = "platformdirs" },
     { name = "pyarrow" },
     { name = "pyyaml" },
     { name = "rich" },
@@ -557,6 +558,7 @@ requires-dist = [
     { name = "ipython", marker = "extra == 'doc'", specifier = ">=8.37.0" },
     { name = "numpydoc", marker = "extra == 'doc'" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "platformdirs", specifier = ">=4.4.0" },
     { name = "pyarrow", specifier = ">=21.0,<22.0" },
     { name = "pydata-sphinx-theme", marker = "extra == 'doc'" },
     { name = "pytest", marker = "extra == 'dev'" },

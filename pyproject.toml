@@ -13,6 +13,7 @@ dependencies = [
 	"rich>=14.1,<15.0",
 	"pyarrow>=21.0,<22.0",
 	"wcwidth>=0.2.14,<0.3",
+	"platformdirs>=4.4.0",
 ]
 requires-python = ">=3.10"
 authors = [

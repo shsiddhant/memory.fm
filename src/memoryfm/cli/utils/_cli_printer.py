@@ -79,6 +79,9 @@ def cli_top_charts(
     CLI top charts
     """
     start, end = date_filter(**kwargs)
+    if import_name is None:
+        from memoryfm.cli.utils._loader_utils import check_loaded
+        import_name = check_loaded()
     charts = read_cache_from_name(import_name, start=start,
                                 end=end).top_charts(kind, n)
     print(charts.to_markdown())

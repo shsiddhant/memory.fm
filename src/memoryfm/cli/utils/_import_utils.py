@@ -59,6 +59,8 @@ def add_to_imports(name: str, overwrite: bool = False):
     _write_string(json.dumps(imports_data, indent=4), file=imports_file)
 
 def _delete_saved_import(import_name: str, confirm=True):
+    if import_name == "None":
+        import_name = None
     names = get_imported_names(imports_file)
     if import_name not in names:
         print("No import found for import name:", import_name)
@@ -102,10 +104,7 @@ def import_and_save(
 ) -> None:
     """
     """
-    if import_name in get_imported_names(imports_file) and not overwrite:
-        print(f"Scrobble Log with the name {import_name} already exists."
-              "Try --overwrite to overwrite the existing import")
-        raise Exit(3)
+    ensure_files_and_dirs()
     scrobble_log = None
     if source == "lastfmstats":
         scrobble_log = from_lastfmstats(file, file_type)
@@ -115,9 +114,14 @@ def import_and_save(
         ):
             import_name = scrobble_log.meta.get("username")
     elif source == "spotify":
-        scrobble_log = from_spotify(file, username=import_name, min_duration_ms=min_duration_seconds*1000)
+        scrobble_log = from_spotify(file, username=import_name,
+                                    min_duration_ms=min_duration_seconds*1000)
     else:
         print("No such source available:", source)
+    if import_name in get_imported_names(imports_file) and not overwrite:
+        print(f"Scrobble Log with the name {import_name} already exists."
+              "Try --overwrite to overwrite the existing import")
+        raise Exit(3)
     if scrobble_log is not None:
         import_name_dir = create_import_name_dir(import_name)
         write_import_files(import_name, scrobble_log)
@@ -151,3 +155,8 @@ def get_imported_names(imports_file: Path) -> list:
     data = read_imports(imports_file)
     names = [d.get("importname") for d in data]
     return names
+
+def ensure_files_and_dirs() -> None:
+    imports_dir.mkdir(exist_ok=True)
+    if not imports_file.is_file():
+        imports_file.write_text("[\n]")

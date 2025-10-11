@@ -1,3 +1,33 @@
+## [Unreleased]
+
+
+### Added
+
+-
+-
+
+### Changed
+
+-
+-
+
+
+### Fixed
+
+-
+-
+
+---
+
+
+## [v0.4.1] - 2025-10-10
+
+### Changed
+
+- Replace unix style directory paths to `platformdirs` paths in CLI, to make it work across platforms.
+
+---
+
 ## [v0.4.0] - 2025-10-10
 
 ### Added
