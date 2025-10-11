@@ -2,7 +2,7 @@
 
 Thanks for taking an interest in improving **memory.fm**.
 
-This guide explains how to setup the project locally, make changes, and submit them. Even if you make a small fix like a typo, please follow the [code guidelines](#Code%20guidelines).
+This guide explains how to setup the project locally, make changes, and submit them. Even if you make a small fix like a typo, please follow the [code guidelines](#code-guidelines).
 
 
 
@@ -49,7 +49,7 @@ git checkout -b your-new-branch
 
 ## Make changes, commit and push to remote
 
-After making changes, you can check via `git status`. Please make sure you follow the [code guidelines](#Code%20guidelines).
+After making changes, you can check via `git status`. Please make sure you follow the [code guidelines](#code-guidelines).
 
 ```shell
 git status
@@ -85,7 +85,7 @@ pytest
 
 ## Open a merge request
 
-1. Make sure that your changes have followed the [code guidelines](#Code%20guidelines). Also ensure that the CI pipeline jobs run successfully. Once everything looks good, go over to your fork on GitLab. 
+1. Make sure that your changes have followed the [code guidelines](#code-guidelines). Also ensure that the CI pipeline jobs run successfully. Once everything looks good, go over to your fork on GitLab. 
 2. Create a new merge request, with `your-new-branch` as the source branch, and the upstream/original `main` as the target branch.
 3. Please write a descriptive title with prefixes such as:
 	- `fix` : If you fix something. Please include the issue # if you fix a bug that's open in the issues tracker.
