@@ -431,7 +431,51 @@ class ScrobbleLog:
         showindex: bool = False,
         show_extra: bool = True
     ) -> str | None:
-        """Write a nice looking ScrobbleLog in markdown using tabulate
+        """
+        Print ScrobbleLog in a nice looking markdown format.
+
+        Parameters
+        ----------
+        file : PathLike or TextIOBase
+            Path or file to write the markdown.
+
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+
+            If ``None``, the markdown is returned as a string.
+        maxcolwidths : list[int], default None
+            A list of the maximum column widths allowed, in the same order as the
+            ScrobbleLog DataFrame columns. To omit a column, put ``None`` at its
+            position in the list.
+        tablefmt : str, default 'github'
+            The style of the table containing scrobbles. See `tabulate
+            <https://pypi.org/project/tabulate/>`_ for options and details.
+        newest_first : bool, default None
+
+            * if ``True``, the ScrobbleLog is sorted by timestamps with newest
+              scrobbles appearing at the top.
+            * if ``False``, the ScrobbleLog is sorted by timestamps with oldest
+              scrobbles appearing at the top.
+            * if ``None``, the ScrobbleLog is not sorted.
+
+        max_length : int, default None
+            The maximum number of scrobbles to print.
+        datetimefmt : str, default "%Y-%m-%d %H:%M"
+            The datetime format to use for the 'Timestamp' values.
+        showindex : bool, default ``False``
+            Whether or not to show the index.
+        show_extra : bool, default ``True``
+            Whether or not show extra information like username, dates of the first
+            and the last scrobbles.
+
+        Returns
+        -------
+        None or str
+            If file is ``None``, returns the markdown as a string. Returns ``None``
+            otherwise.
+
         """
         df = self.df.copy()
         if newest_first is not None:
@@ -485,7 +529,27 @@ class ScrobbleLog:
         file: PathLike | IO[str] | None = None,
     ) -> ScrobbleLog:
         """
-        Create ScrobbleLog from canonical JSON.
+        Create ScrobbleLog from a canonical JSON.
+
+        Parameters
+        ---------- 
+        file : PathLike or TextIOBase object.
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+
+            The file must contain a valid :ref:`canonical JSON <canonical-json>`.
+
+        Returns
+        -------
+        ScrobbleLog
+
+        See Also
+        --------
+        :func:`to_json`
+           Convert a ScrobbleLog to a canonical JSON.
+
         """
         from memoryfm.io._loaders import load_json
         canonical_dict = load_json(file)
@@ -498,7 +562,44 @@ class ScrobbleLog:
         datetimefmt: str | None = "%Y-%m-%dT%H:%M:%S%z",
     ) -> str | None:
         """
-        Write ScrobbleLog to canonical JSON format.
+        Convert a ScrobbleLog to a canonical JSON.
+
+        A canonical JSON is of the form
+
+        .. code-block:: python
+           :caption: Canonical JSON format
+           :name: canonical-json
+           
+           # A canonical JSON
+           {
+              "meta": ScrobbleLog.meta,
+              "scrobbles": ScrobbleLog.df.to_dict(orient=orient)
+           }
+
+        Parameters
+        ----------
+        file : PathLike or TextIOBase object.
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+        orient : str, default 'records'
+            The style of values of ``scrobbles`` key. Allowed orient values are
+
+            * ``records`` : list like ``[{column -> value}, ... , {column -> value}]``
+            * ``index`` : dict like ``{index -> {column -> value}}``
+            * ``columns`` : dict like ``{column -> {index -> value}}``
+
+        datetimefmt : str, default '%Y-%m-%dT%H:%M:%S%z'
+            A string representing a valid datetime format built from format codes.
+            For example: '%Y-%m-%d' would be a date of the format YYYY-MM-DD.
+            The default is the standard ISO 8601 with the UTC offset.
+
+        Returns
+        -------
+        None or str
+            If file is ``None``, returns the JSON string. Returns ``None`` otherwise.
+
         """
         if not len(self):
             scrobbles = self.df.to_dict(orient="list")
@@ -528,7 +629,51 @@ class ScrobbleLog:
         tracks: List[str] | None = None
     ) -> Self:
         """
-        Read parquet export
+        Create a ScrobbleLog from a :ref:`canonical parquet export
+        <canonical_parquet>`.
+
+        Parameters
+        ----------
+        meta_file : PathLike or TextIOBase object
+            JSON file containing ScrobbleLog met as JSON string.
+            The following types are accepted
+
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+        df_file : PathLike or TextIOBase object 
+            Parquet file containing the ScrobbleLog DataFrame.
+            The following types are accepted
+
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+        start : str, pd.Timestamp, datetime.datetime, default None
+            The datetime to start reading the scrobbles.
+        end : str, pd.Timestamp, datetime.datetime, default None
+            The datetime to stop reading the scrobbles.
+
+        artists : List[str], default None
+            A list of strings containing artist names. It's a whitelist, i.e. only
+            scrobbles with artist names from among the list are included.
+        albums : List[str], default None
+            A list of strings containing album names. It's a whitelist, i.e. only
+            scrobbles with album names from among the list are included.
+        tracks : List[str], default None
+            A list of strings containing track names. It's a whitelist, i.e. only
+            scrobbles with track names from among the list are included.
+
+        Returns
+        -------
+        ScrobbleLog
+
+        See Also
+        --------
+        :func:`to_parquet`
+           Write ScrobbleLog to canonical parquet.
+
         """
         from pandas import read_parquet
         from memoryfm.io._loaders import load_json
@@ -548,7 +693,35 @@ class ScrobbleLog:
         df_file:  PathLike | IO[str],
     ) -> None:
         """
-        Import and save to df to parquet, and metadata to JSON
+        Write ScrobbleLog to canonical parquet.
+
+        .. _canonical_parquet:
+        
+        The canonical parquet refers to a pair of files.
+
+        * A JSON file : contains the ScrobbleLog meta
+        * A parquet file : contains the ScrobbleLog DataFrame
+
+        Parameters
+        ---------- 
+        meta_file : PathLike or TextIOBase object
+            Path or file to save ScrobbleLog meta as a JSON string. The following
+            types are accepted
+
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+        df_file : PathLike or TextIOBase object 
+            Path or file to save ScrobbleLog DataFrame as a parquet file.
+            The following types are accepted
+
+            * A pathlib path, or
+            * A string corresponding to a path, such as
+              ``/home/username/Documents/filename``, or
+            * A TextIOBase object having a ``read()`` method.
+
+
         """
         import json
         from ..io._writers import _write_string

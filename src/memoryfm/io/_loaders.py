@@ -1,6 +1,6 @@
 """Module: memoryfm.utils.loaders
 Handle JSON file inputs, possible errors, and parsing of JSON data into
-a pandas DataFrame for further processing depending on the JSON source.
+a dictionary or pandas DataFrame for further processing depending on the JSON source.
 """
 
 from __future__ import annotations
@@ -17,12 +17,13 @@ if TYPE_CHECKING:
 
 
 def load_json(file: PathLike | IO[str] = None) ->Any:
-    r"""Read JSON file and return a pandas DataFrame, or raise an exception
+    """
+    Read JSON file and return a dictionary.
       
     Parameters
     ----------
     file: PathLike object such as open( or file/file-like object
-    
+
     """
     file_like = _file_opener(file, "r")
     try:

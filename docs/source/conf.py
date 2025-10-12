@@ -13,10 +13,11 @@ sys.path.insert(0, srcpath)
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+from memoryfm import __version__
 project = 'memory.fm'
 copyright = '2025, Siddhant Sharma'
 author = 'Siddhant Sharma'
-release = '0.2.0'
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -37,6 +38,7 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = []
 
+autodoc_typehints = "none"
 autosummary_generate = True
 
 # -- numpydoc ---

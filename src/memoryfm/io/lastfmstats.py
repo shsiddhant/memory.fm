@@ -13,9 +13,6 @@ You When You Leave","artist":"Carissa's Wierd","album":"Songs About Leaving",
 
 Corresponding DataFrame base_df obtained using utils.loaders.parse_json
 
-Functions: verify_columns,
-           extract_scrobble_dataframe,
-           verify_scrobbles_columns
 """
 from __future__ import annotations
 import pandas as pd
@@ -28,7 +25,11 @@ from memoryfm.io._normalise import normalise_lastfmstats
 from memoryfm.core.objects import ScrobbleLog
 
 if TYPE_CHECKING:
-    from typing import IO, AnyStr, Literal
+    from typing import(
+        IO,
+        AnyStr,
+        Literal,
+    )
 
 
 def from_lastfmstats(
@@ -37,6 +38,29 @@ def from_lastfmstats(
     tz: str | None = None
 ) -> ScrobbleLog:
     """
+    Create a ScrobbleLog from a JSON/CSV export obtained from
+    `lastfmstats <https://lastfmstats.com>`_.
+
+    Parameters
+    ----------
+    file : PathLike or TextIOBase object.
+        * A pathlib path, or
+        * A string corresponding to a path, such as
+          ``/home/username/Documents/filename``, or
+        * A TextIOBase object having a ``read()`` method.
+    file_type : Literal["json", "csv"]
+       The type of file must either be 'json' or 'csv'.
+    tz : str, default None
+        IANA Timezone string.
+        
+        If not passed, attempt to use
+        ``tzlocal.get_localzone_name`` to calculate it. If ``tzlocal`` is not found,
+        default to 'Etc/UTC'.
+
+    Returns
+    -------
+    ScrobbeLog
+        
     """
     if file_type == "json":
         data = load_json(file)
@@ -53,7 +77,7 @@ def from_lastfmstats(
 
 def _validate_data(data: dict) -> None:
     """
-
+    Validate data types and dictionary keys.
     """
     if not hasattr(data, "keys"):
         raise InvalidDataError("Expecting dict type data")
