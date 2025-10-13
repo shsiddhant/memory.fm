@@ -1,9 +1,9 @@
 
 .. _usage-cli:
 
-====
-CLI
-====
+============
+Command Line
+============
 
 Installing memory.fm gives you access to a command line tool 
 ``memoryfm``. 

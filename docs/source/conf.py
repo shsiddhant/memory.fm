@@ -7,13 +7,13 @@
 
 import os
 import sys
+from memoryfm import __version__
 srcpath = os.path.abspath('../../src')
 sys.path.insert(0, srcpath)
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-from memoryfm import __version__
 project = 'memory.fm'
 copyright = '2025, Siddhant Sharma'
 author = 'Siddhant Sharma'
@@ -63,6 +63,11 @@ html_theme_options = {
         },
     ],
     "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/shsiddhant/memory.fm",
+            "icon": "fa-brands fa-github",
+        },
         {
             "name": "GitLab",
             "url": "https://gitlab.com/sharmasiddhant/memory.fm",

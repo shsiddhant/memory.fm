@@ -16,6 +16,7 @@ External Sources
     
     from_lastfmstats
     from_spotify
+    from_spotify_zip
 
 Canonical Sources
 ~~~~~~~~~~~~~~~~~

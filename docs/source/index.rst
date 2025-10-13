@@ -32,6 +32,20 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
 
          Go to QuickStart
 
+   .. grid-item-card:: API Reference
+
+      Detailed description of package API.
+
+      +++
+
+      .. button-ref:: api
+         :ref-type: ref
+         :click-parent:
+         :color: secondary
+         :expand:
+
+         Go to API Reference
+
    .. grid-item-card:: User Guide
       
       User guide for more detailed information and explanation.
@@ -47,20 +61,6 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
          Go to user guide
 
 
-   .. grid-item-card:: API Reference
-
-      Detailed description of package API.
-
-      +++
-
-      .. button-ref:: api
-         :ref-type: ref
-         :click-parent:
-         :color: secondary
-         :expand:
-
-         Go to API Reference
-
 .. toctree::
    :hidden:
    :maxdepth: 2
@@ -71,10 +71,11 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
    :hidden:
    :maxdepth: 2
 
-   user_guide/index
+   references/index
 
 .. toctree::
    :hidden:
    :maxdepth: 2
 
-   references/index
+   user_guide/index
+

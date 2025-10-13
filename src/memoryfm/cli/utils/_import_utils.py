@@ -2,10 +2,14 @@ from __future__ import annotations
 from pathlib import Path
 import memoryfm
 import json
+import zipfile
 from typing import Literal
 from typer import Exit
 from memoryfm.io.lastfmstats import from_lastfmstats
-from memoryfm.io.spotify import from_spotify
+from memoryfm.io.spotify import (
+    from_spotify,
+    from_spotify_zip,
+)
 from memoryfm.io._writers import _write_string
 from memoryfm.errors import InvalidDataError
 from memoryfm.cli import (
@@ -103,6 +107,7 @@ def import_and_save(
     min_duration_seconds: int | None = 60,
 ) -> None:
     """
+    Import Last.fm scrobble data or Spotify Listening History.
     """
     ensure_files_and_dirs()
     scrobble_log = None
@@ -113,7 +118,10 @@ def import_and_save(
             scrobble_log.meta.get("username") is not None
         ):
             import_name = scrobble_log.meta.get("username")
-    elif source == "spotify":
+    elif source == "spotify" and zipfile.is_zipfile(file):
+        scrobble_log = from_spotify_zip(file, username=import_name,
+                                        min_duration_ms=min_duration_seconds*1000)
+    elif source == "spotify" and not zipfile.is_zipfile(file):
         scrobble_log = from_spotify(file, username=import_name,
                                     min_duration_ms=min_duration_seconds*1000)
     else:

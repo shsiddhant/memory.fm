@@ -499,7 +499,15 @@ class ScrobbleLog:
             if self.meta.get('source') == "spotify":
                 listen = "listens"
             df = df.head(max_length)
-            bottom_text = f"Showing newest {max_length} out of {total} {listen}" 
+            if newest_first is None:
+                new_or_old = "first"
+            elif not isinstance(newest_first, bool):
+                raise TypeError("Expected boolean value for 'newest_first'")
+            elif new_or_old:
+                new_or_old = "latest"
+            else:
+                new_or_old = "first"
+            bottom_text = f"Showing {new_or_old} {max_length} out of {total} {listen}" 
         df["Timestamp"] = (
                         df["Timestamp"].dt.strftime(datetimefmt)
         )

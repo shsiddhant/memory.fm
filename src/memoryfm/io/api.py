@@ -3,6 +3,13 @@ Data IO api
 """
 
 from memoryfm.io.lastfmstats import from_lastfmstats
-from memoryfm.io.spotify import from_spotify
+from memoryfm.io.spotify import (
+    from_spotify,
+    from_spotify_zip,
+)
 
-__all__ = ["from_lastfmstats", "from_spotify"]
+__all__ = [
+    "from_lastfmstats", 
+    "from_spotify", 
+    "from_spotify_zip",
+]

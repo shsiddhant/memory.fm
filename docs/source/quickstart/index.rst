@@ -11,5 +11,5 @@ A quickstart guide for newcomers.
    :maxdepth: 2
 
    installation
-   library_usage
    cli_usage
+   library_usage
