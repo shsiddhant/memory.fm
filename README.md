@@ -42,7 +42,7 @@ The package should soon be available on PyPI. For now, you can install
 directly from the repository with pip. 
 
 ```shell
-$ pip install "memory.fm @ git+https://gitlab.com/sharmasiddhant/memory.fm.git"
+$ pip install "memory.fm @ git+https://github.com/shsiddhant/memory.fm.git"
 ```
 
 `ScrobbleLog` dates are timezone aware. If you want your timezone to be automatically
@@ -50,7 +50,7 @@ found from your system, you need to install the package with the optional depend
 group `timezone`.
 
 ```shell
-$ pip install "memory.fm[timezone] @ git+https://gitlab.com/sharmasiddhant/memory.fm.git"
+$ pip install "memory.fm[timezone] @ git+https://github.com/shsiddhant/memory.fm.git"
 ```
 
 Requires **Python>=3.10**
@@ -65,7 +65,7 @@ Requires **Python>=3.10**
 Installing memory.fm gives you access to a command line tool ``memoryfm``. 
 You can use it to manage your Last.fm scrobble data and Spotify listening data.
 
-**Note:** Support for Apple Music exports is also planned. Check issue tracker for updates.
+**Note:** Support for Apple Music exports is also planned. Check the [issue tracker](https://github.com/shsiddhant/memory.fm/issues) for updates.
 
 You can import your [Last.fm](https://www.last.fm.com>) data obtained from [lastfmstats](https://www.lastfmstats.com) like this:
 
@@ -196,7 +196,7 @@ In [5]: print(sclog.top_charts(kind="album",
 
 If you'd like to explore, improve, fix something, report bugs, or suggest any feature ideas  **memory.fm**, you are welcome to contribute.
 
-To get started, you can have a look at the [issues tracker](https://gitlab.com/sharmasiddhant/memory.fm/-/issues). If you want to report a bug or make a feature request or suggestions, please open a [new issue](https://gitlab.com/sharmasiddhant/memory.fm/-/issues/new?type=ISSUE) using an appropriate template.
+To get started, you can have a look at the [issue tracker](https://github.com/shsiddhant/memory.fm/issues). If you want to report a bug or make a feature request, please open a [new issue](https://github.com/shsiddhant/memory.fm/issues/new/choose) using an appropriate template.
 
 See [CONTRIBUTING](CONTRIBUTING.md) for a detailed overview of the contributing guidelines.
 
