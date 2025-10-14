@@ -32,7 +32,7 @@ def import_spotify(
     min_duration_seconds: int = 60,
 ) -> None:
     """
-    Import Spotify Listening History JSON
+    Import Spotify Listening History zip or JSON.
     """
     import_and_save(file, file_type="json", source="spotify",
                     import_name=username, overwrite=overwrite,

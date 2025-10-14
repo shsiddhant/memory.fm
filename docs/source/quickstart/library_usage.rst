@@ -30,7 +30,7 @@ Optionally, you can set a timezone using IANA strings.
 
 
 .. seealso::
-   See :func:`from_spotify` to read Spotify listening history.
+   See :func:`from_spotify` and :func:`from_spotify_zip` for reading Spotify listening history.
 
 
 Head and Tail

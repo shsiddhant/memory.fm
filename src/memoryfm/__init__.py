@@ -10,13 +10,17 @@ except PackageNotFoundError:
     __version__ = "0.0.0"    # Fallback value only
 
 from memoryfm.core.objects import ScrobbleLog, Scrobble
-from memoryfm.io.api import from_lastfmstats
-from memoryfm.io.spotify import from_spotify
+from memoryfm.io.api import (
+    from_lastfmstats,
+    from_spotify,
+    from_spotify_zip,
+)
 
 __all__ = [
-        "from_lastfmstats",
-        "from_spotify",
-        "ScrobbleLog",
-        "Scrobble"
+    "from_lastfmstats",
+    "from_spotify",
+    "from_spotify_zip",
+    "ScrobbleLog",
+    "Scrobble",
 ]
 

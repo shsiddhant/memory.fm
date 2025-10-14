@@ -61,7 +61,8 @@ def normalise_spotify(
         'ms_played',
         'master_metadata_album_artist_name',
         'master_metadata_album_artist_name',
-        'master_metadata_track_name'
+        'master_metadata_track_name',
+        'reason_end',
     ]
     column_map = {
         'ts': 'timestamp',
@@ -73,8 +74,12 @@ def normalise_spotify(
     for column in expected_cols:
         if column not in df.columns:
             raise SchemaError(f"Missing expected column: {column}", column)
-    if min_duration_ms is not None:
+    if min_duration_ms is not None and pd.api.types.is_numeric_dtype(df['ms_played']):
         df = df[df['ms_played'] >= min_duration_ms]
+    elif not pd.api.types.is_numeric_dtype(df['ms_played']):
+        raise SchemaError(
+            "Column expected to contain only numeric values: 'ms_played'", 'ms_played'
+        )
     df = df.rename(columns=column_map)
     df = df[df['reason_end'] == "trackdone"]
     df['timestamp'] = normalise_timestamps(df['timestamp'],

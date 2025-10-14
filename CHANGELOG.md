@@ -1,21 +1,9 @@
-## [Unreleased]
+## [v0.4.2] - 2025-10-14
 
 
 ### Added
 
--
--
-
-### Changed
-
--
--
-
-
-### Fixed
-
--
--
+- Add support for Spotify listening history zip instead of just the individual JSON files.
 
 ### Documentation
 
