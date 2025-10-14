@@ -61,6 +61,6 @@ memoryfm = "memoryfm.cli.main:app"
 where = ["src"]
 
 [project.urls]
-Repository = "https://gitlab.com/sharmasiddhant/memory.fm.git"
-Issues = "https://gitlab.com/sharmasiddhant/memory.fm/-/issues"
-Changelog = "https://gitlab.com/sharmasiddhant/memory.fm/-/blob/main/CHANGELOG.md"
+Repository = "https://github.com/shsiddhant/memory.fm"
+Issues = "https://github.com/shsiddhant/memory.fm/issues"
+Changelog = "https://github.com/shsiddhant/memory.fm/blob/main/CHANGELOG.md" 

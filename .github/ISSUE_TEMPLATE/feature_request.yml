@@ -1,0 +1,36 @@
+name: Feature Request
+description: Suggest an idea for memory.fm
+title: "enh: "
+labels: [enhancement]
+
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Feature Type
+      description: Please check what type of feature request you would like to propose.
+      options:
+        - label: >
+            Adding new functionality to memory.fm
+        - label: >
+            Changing existing functionality in memory.fm
+        - label: >
+            Removing existing functionality in memory.fm
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem Description
+      description: >
+        Please describe what problem the feature would solve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature Description
+      description: >
+        Please describe how the new feature would be implemented, using pseudocode if relevant.
+    validations:
+      required: true
