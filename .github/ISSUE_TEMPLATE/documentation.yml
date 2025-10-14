@@ -5,13 +5,13 @@ labels: [documentation]
 
 body:
 - type: textarea
-    id: location
-    attributes:
+  id: location
+  attributes:
       label: Location of the documentation
       description: >
         Please provide the location of the documentation, either with the
         dot notation or a url.
-    validations:
+  validations:
       required: true
 
 - type: textarea
