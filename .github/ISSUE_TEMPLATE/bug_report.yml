@@ -13,13 +13,13 @@ body:
     
 - type: textarea
   attributes: 
-    label: Describe the issue:
+    label: Describe the issue
   validations:
     required: true
 
 - type: textarea
   attributes:
-    label: Reproduce the code example:
+    label: Reproduce the code example
     description: >
       A short code example that reproduces the problem/missing feature. It
       should be self-contained, i.e., can be copy-pasted into the Python
@@ -33,7 +33,7 @@ body:
   
 - type: textarea
   attributes:
-    label: Error message:
+    label: Error message
     description: >
       Please include full error message, if any.
     placeholder: |
@@ -42,7 +42,7 @@ body:
 
 - type: textarea
   attributes:
-    label: Python and memory.fm versions:
+    label: Python and memory.fm versions
     description: >
       Output from `import sys, memoryfm; print(memoryfm.__version__); print(sys.version)`.
   validations:
@@ -50,7 +50,7 @@ body:
 
 - type: textarea
   attributes:
-    label: Context for the issue:
+    label: Context for the issue
     description: |
       Please explain how this issue affects your work or why it should be prioritized.
     placeholder: |

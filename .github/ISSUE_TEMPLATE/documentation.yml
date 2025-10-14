@@ -1,29 +1,29 @@
-ame: Documentation
+name: Documentation
 description: Report an issue related to the memory.fm documentation.
 title: "doc: "
 labels: [documentation]
 
 body:
 - type: textarea
-    id: location
-    attributes:
+  id: location
+  attributes:
       label: Location of the documentation
       description: >
         Please provide the location of the documentation, either with the
         dot notation or a url.
-    validations:
+  validations:
       required: true
 
 - type: textarea
   attributes: 
-    label: Issue with current documentation:
+    label: Issue with current documentation
     description: >
       Please make sure to leave a reference to the document/code you're
       referring to.
 
 - type: textarea
   attributes:
-    label: Idea or request for content:
+    label: Idea or request for content
     description: >
       Please describe as clearly as possible what topics you think are missing
       from the current documentation. 
