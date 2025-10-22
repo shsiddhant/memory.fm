@@ -74,10 +74,10 @@ $ memoryfm import lastfmstats ~/Downloads/lastfmstats-siddhant.json
 Imported and saved to /home/siddhant/.local/share/memoryfm/imports/siddhant
 ```
 
-Similarly, you can import spotify listening history like this:
+Similarly, you can import Spotify listening history like this:
 
 ```shell
-$ memoryfm import spotify ~/Downloads/Streaming_History_Audio_2025_2.json --username sid-spotify
+$ memoryfm import spotify ~/Downloads/my_spotify_data.zip --username sid-spotify
 Imported and saved to /home/siddhant/.local/share/memoryfm/imports/sid-spotify
 ```
 

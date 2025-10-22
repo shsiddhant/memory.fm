@@ -9,7 +9,7 @@ from memoryfm.errors import (
     SchemaError,
     ParseError,
     InvalidDataError,
-    #InvalidTypeError
+    # InvalidTypeError
 )
 
 data_dir = Path(__file__).resolve().parent.parent / "data"
@@ -17,66 +17,74 @@ json_dir = data_dir / "json"
 csv_dir = data_dir / "csv"
 json_files_list = [
     "empty.json",
-    "empty_json.json"
-    "invalid_json.json"
-    "sample.json"
-    "wrong_column.json"
-    "wrong_column_2.json"
+    "empty_json.json",
+    "invalid_json.json",
+    "sample.json",
+    "wrong_column.json",
+    "wrong_column_2.json",
 ]
+
 
 class TestLoaders:
     def test_valid_json(self):
-        expected_result = {"username":"lazulinoother",
-                           "scrobbles":[
-                               {"track":"Good Arms vs. Bad Arms",
-                               "artist":"Frightened Rabbit",
-                               "album":"The Midnight Organ Fight",
-                               "albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85",
-                               "date":1757468274000},
-                               {"track":"Floating in the Forth",
-                                "artist":"Frightened Rabbit",
-                                "album":"The Midnight Organ Fight",
-                                "albumId":"8bc361f4-0b80-35c9-8372-bb7c664d8d85",
-                                "date":1757514204000}]
-                           }
+        expected_result = {
+            "username": "lazulinoother",
+            "scrobbles": [
+                {
+                    "track": "Good Arms vs. Bad Arms",
+                    "artist": "Frightened Rabbit",
+                    "album": "The Midnight Organ Fight",
+                    "albumId": "8bc361f4-0b80-35c9-8372-bb7c664d8d85",
+                    "date": 1757468274000,
+                },
+                {
+                    "track": "Floating in the Forth",
+                    "artist": "Frightened Rabbit",
+                    "album": "The Midnight Organ Fight",
+                    "albumId": "8bc361f4-0b80-35c9-8372-bb7c664d8d85",
+                    "date": 1757514204000,
+                },
+            ],
+        }
         file = data_dir / "json" / "sample.json"
         data = load_json(file)
-    
+
         assert data == expected_result
-    
+
     def test_empty_file(self):
         msg = r".* at line 1 column 1"
         file = data_dir / "json" / "empty.json"
         with pytest.raises(ParseError, match=msg):
             return load_json(file)
-    
+
     def test_valid_csv(self):
         file = csv_dir / "valid_data.csv"
         expected_result = {
-                            "username": "lazulinoother",
-                            "scrobbles":[
-                                {"Artist": "LDR",
-                                 "Album": "UV",
-                                 "AlbumId": "a06",
-                                 "Track": "Shades of Cool",
-                                 "Date": 1594535082000
-                                 }
-                            ]
+            "username": "lazulinoother",
+            "scrobbles": [
+                {
+                    "Artist": "LDR",
+                    "Album": "UV",
+                    "AlbumId": "a06",
+                    "Track": "Shades of Cool",
+                    "Date": 1594535082000,
+                }
+            ],
         }
         assert load_csv(file) == expected_result
-    
+
     def test_mismatch_delimiter(self):
         file = csv_dir / "mismatch_delimiter.csv"
         msg = r"Expected delimiter ';' in line number 2: .*"
         with pytest.raises(ParseError, match=msg):
             load_csv(file)
-    
+
     def test_wrong_header_csv(self):
         file = csv_dir / "wrong_header.csv"
         msg = r"Expecting last column name: .*"
         with pytest.raises(ParseError, match=msg):
             return load_csv(file)
-    
+
     def test_no_username_csv(self):
         file = csv_dir / "no_username.csv"
         msg = "Blank or only whitespace username"
@@ -98,43 +106,33 @@ class TestFromLastfmstats:
             _validate_data(data)
 
     def test_lastfmstats_validate_keys(self):
-        data = {"user": "user",
-                "scrobbles": []
-                }
+        data = {"user": "user", "scrobbles": []}
         msg = "Key not found: 'username'"
         with pytest.raises(InvalidDataError, match=msg):
             _validate_data(data)
 
     def test_lastfmstats_validate_scrobble_type(self):
-        data = {"username": "sid",
-                "scrobbles": {"track", "name"}
-                }
+        data = {"username": "sid", "scrobbles": {"track", "name"}}
         msg = r"Expecting value of type 'list', 'dict', .*"
         with pytest.raises(InvalidDataError, match=msg):
             _validate_data(data)
 
     def test_lastfmstats_validata_username_type(self):
-        data = {"username": {0},
-                "scrobbles": []
-                }
+        data = {"username": {0}, "scrobbles": []}
         msg = r"Expecting string type value .*"
         with pytest.raises(InvalidDataError, match=msg):
             _validate_data(data)
 
-class TestNormaliseLastfmstats:
 
+class TestNormaliseLastfmstats:
     def test_fromlastfmstats_normalise_no_date(self):
-        df_data = {
-                    "track" : ["tr1", "tr2"]
-        }
+        df_data = {"track": ["tr1", "tr2"]}
         df = pd.DataFrame(df_data)
         with pytest.raises(SchemaError, match="Column not found"):
             normalise_lastfmstats(df=df, username="sid")
 
     def test_fromlastfmstats_normalise_bad_date(self):
-        df_data = {
-                    "date": ["2020-08-10", "dhj"]
-        }
+        df_data = {"date": ["2020-08-10", "dhj"]}
         df = pd.DataFrame(df_data)
         msg = r".* doesn't match format .*"
         with pytest.raises(InvalidDataError, match=msg):
@@ -142,12 +140,7 @@ class TestNormaliseLastfmstats:
 
     def test_fromlastfmstats_normalise(self):
         df_data = [
-                    {
-                        "track": "T1",
-                        "artist": "Ar1",
-                        "album": "Alb1",
-                        "date": 1758122054033
-                    }
+            {"track": "T1", "artist": "Ar1", "album": "Alb1", "date": 1758122054033}
         ]
         df = pd.DataFrame(df_data)
         dict_d = normalise_lastfmstats(

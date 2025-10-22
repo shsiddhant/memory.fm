@@ -9,17 +9,25 @@ import pandas as pd
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, overload
 from tabulate import tabulate
+from datetime import datetime
+import json
 
-from memoryfm._typing import PathLike
+
 from memoryfm.errors import (
     InvalidDataError,
     SchemaError,
     InvalidTypeError,
-    OperationNotAllowedError
+    OperationNotAllowedError,
 )
-from memoryfm.util.date_input_check import check_datetime
-from memoryfm.core._validation import(
+from memoryfm.util.date_input_check import (
+    check_datetime,
     validate_tz,
+)
+from memoryfm.util.duration_convert import ms_to_time
+from memoryfm.io._loaders import load_json
+from memoryfm.io._writers import _write_string
+from memoryfm.io._writers import _dict_to_csv
+from memoryfm.core._validation import (
     validate_meta,
     validate_df,
     validate_text,
@@ -27,16 +35,13 @@ from memoryfm.core._validation import(
 )
 
 if TYPE_CHECKING:
-    from typing import (
-        IO,
-        Self,
-        List
-    )
-    import datetime
+    from typing import IO, Self, List
+    from memoryfm._typing import PathLike
 
 
 # ---------------------------------------------------------------------
 # Scrobble class - represents a single scrobble
+
 
 @dataclass
 class Scrobble:
@@ -56,9 +61,11 @@ class Scrobble:
 
     See Also
     --------
-    Scrobble.from_dict: Constructor from a dictionary with keys corresponding to each parameter (album is optional).
+    Scrobble.from_dict
+        Constructor from a dictionary with keys corresponding to
+        each parameter (album is optional).
     """
-    
+
     timestamp: pd.Timestamp
     track: str
     artist: str
@@ -78,9 +85,9 @@ class Scrobble:
         )
         return string_repr
 
-    def validate_dict(data:dict) -> None:
+    def validate_dict(data: dict) -> None:
         """
-        Check if the dictionary contains the required keys before creating 
+        Check if the dictionary contains the required keys before creating
         a Scrobble from it.
         """
         if not isinstance(data, dict):
@@ -91,7 +98,6 @@ class Scrobble:
                 raise SchemaError(f"Missing key: {key}", key)
         check_datetime(data.get("timestamp"))
 
-    
     def __dict__(self) -> dict:
         """
         Returns the canonical dict representation of a Scrobble.
@@ -103,7 +109,7 @@ class Scrobble:
             "album": self.album,
         }
         return dict_repr
-    
+
     # ------------------------------------------------------------------
     # IO Methods
 
@@ -119,10 +125,10 @@ class Scrobble:
             artist=data["artist"],
             album=data.get("album"),
         )
- 
+
     def to_dict(self) -> dict:
         """
-         Returns the canonical dict representation of a Scrobble.
+        Returns the canonical dict representation of a Scrobble.
         """
         return self.__dict__()
 
@@ -131,17 +137,19 @@ class Scrobble:
         Returns a canonical pandas DataFrame representation of a Scrobble.
         """
         df_repr = pd.DataFrame(self.to_dict(), index=[0])
-        df_repr = df_repr.replace({None:pd.NA})
+        df_repr = df_repr.replace({None: pd.NA})
         return df_repr
-    
+
 
 # ---------------------------------------------------------------------
 # Iterator
+
 
 class ScrobbleLogIterator:
     """
     Iterator class to iterate over a ScrobbleLog.
     """
+
     def __init__(self, scrobble_log):
         self.scrobble_log = scrobble_log
         self.index = 0
@@ -158,18 +166,19 @@ class ScrobbleLogIterator:
 # ---------------------------------------------------------------------
 # ScrobbleLog class - represents a scrobble log
 
+
 class ScrobbleLog:
     """
-    Class representing a scrobble log, i.e. a sequence of scrobbles. 
-    
+    Class representing a scrobble log, i.e. a sequence of scrobbles.
+
     Parameters
     ----------
     df : pd.DataFrame
 
-        |  A pandas DataFrame containing the scrobbles. It must have the 
+        |  A pandas DataFrame containing the scrobbles. It must have the
            following columns:
         |  1. timestamp : ``str``, ``int``, ``datetime``, ``pd.Timestamp``
-        |   This column contains timestamps of scrobbles. If ``int``, then 
+        |   This column contains timestamps of scrobbles. If ``int``, then
             it will be assumed to be unix epoch (milliseconds).
         |  2. track : ``str``
         |   This column contains track names.
@@ -186,7 +195,7 @@ class ScrobbleLog:
         |  A dictionary containing metadata with the following schema:
         |  "username" (``str``, ``None``) : Username for the ScrobbleLog.
         |  "tz" (``str``) : Timezone IANA string
-        |  "num_scrobbles" (last.fm) or "num_listens" (``str``) : 
+        |  "num_scrobbles" (last.fm) or "num_listens" (``str``) :
            Number of scrobbles/listens.
         |  "date_range" (``dict``) : A dictionary with keys,
         |    1. "start" (``str``, ``None``) : Date of first scrobble in isoformat
@@ -208,9 +217,12 @@ class ScrobbleLog:
     See Also
     --------
     meta_generator : Generates ``meta`` from ``username``, ``tz``, and ``source``
-    
+
     """
-    
+
+    # Unhashable
+    __hash__ = None
+
     # ----------------------------------------------------------------
     # Constructor
     def __init__(
@@ -227,19 +239,20 @@ class ScrobbleLog:
             meta = validate_meta(meta)
         except (SchemaError, InvalidTypeError, InvalidDataError) as e:
             if meta is not None:
-                print(f"Invalid meta passed: {e.error}."
-                      "Generating meta from username, tz, and source.")
+                print(
+                    f"Invalid meta passed: {e.error}."
+                    "Generating meta from username, tz, and source."
+                )
             self._df = validate_df(df, validate_tz(tz))
             self._meta = meta_generator(self._df, username, tz, source)
         else:
             if not update_meta:
                 self._meta = meta
             else:
-                self._df = validate_df(df, meta['tz'])
-                self._meta = meta_generator(self._df,
-                                            meta['username'],
-                                            meta['tz'],
-                                            meta['source'])
+                self._df = validate_df(df, meta["tz"])
+                self._meta = meta_generator(
+                    self._df, meta["username"], meta["tz"], meta["source"]
+                )
 
     @property
     def df(self) -> pd.DataFrame:
@@ -255,7 +268,7 @@ class ScrobbleLog:
 
     @df.setter
     def df(self, value) -> pd.DataFrame:
-        self._df = validate_df(value, self._meta['tz'])
+        self._df = validate_df(value, self._meta["tz"])
 
     @property
     def meta(self) -> dict:
@@ -264,32 +277,32 @@ class ScrobbleLog:
     @meta.setter
     def meta(self, value) -> dict:
         self._meta = validate_meta(value)
-        if len(self._df) != self._meta['num_scrobbles']:
+        if len(self._df) != self._meta["num_scrobbles"]:
             raise InvalidDataError(
                 "meta['num_scrobbles'] cannot be different from len(df)"
             )
-        if self._meta['date_range']['start'] != self._df['timestamp'].min().isoformat():
+        if self._meta["date_range"]["start"] != self._df["timestamp"].min().isoformat():
             raise InvalidDataError(
                 "start date must be in iso format and"
                 "must not differ from the earliest scrobble date"
-            )                           
-        if self._meta['date_range']['end'] != self._df['timestamp'].max().isoformat():
+            )
+        if self._meta["date_range"]["end"] != self._df["timestamp"].max().isoformat():
             raise InvalidDataError(
                 "start date must be in iso format and"
                 "must not differ from the latest scrobble date"
             )
 
     @property
-    def username(self) ->str | None:
-        return self._meta['username']
+    def username(self) -> str | None:
+        return self._meta["username"]
 
     @username.setter
-    def username(self, value) ->str | None:
-        self._meta['username'] = validate_text(value, "username")
+    def username(self, value) -> str | None:
+        self._meta["username"] = validate_text(value, "username")
 
     @property
-    def tz(self) ->str:
-        return self._meta['tz']
+    def tz(self) -> str:
+        return self._meta["tz"]
 
     @tz.setter
     def tz(self, value) -> None:
@@ -298,11 +311,9 @@ class ScrobbleLog:
             "df['timestamp'] values to required tz. "
             "To do so, use self.tz_convert."
         )
-   
+
     def copy(self):
-        return ScrobbleLog(df=self._df.copy(),
-                           meta=dict(self._meta),
-                           update_meta=False)
+        return ScrobbleLog(df=self._df.copy(), meta=dict(self._meta), update_meta=False)
 
     # ------------------------------------------------------------------------
     # Rendering Methods
@@ -315,8 +326,12 @@ class ScrobbleLog:
         """
         Return String representation of ScrobbleLog
         """
-        return self.to_markdown(tablefmt="pipe", maxcolwidths=20,
-                                max_length=10, show_extra=False,)
+        return self.to_markdown(
+            tablefmt="pipe",
+            maxcolwidths=20,
+            max_length=10,
+            show_extra=False,
+        )
 
     def __bool__(self) -> bool:
         """Truth value"""
@@ -330,17 +345,11 @@ class ScrobbleLog:
     @overload
     def __getitem__(self, index: slice) -> ScrobbleLog: ...
 
-    def __getitem__(
-        self,
-        key: int | slice
-    ) -> Scrobble | ScrobbleLog:
-        """Access scrobbles by index or slice
-        """
+    def __getitem__(self, key: int | slice) -> Scrobble | ScrobbleLog:
+        """Access scrobbles by index or slice"""
         if isinstance(key, slice):
             return ScrobbleLog(
-                df=self.df.iloc[key],
-                meta=self.meta,
-                source=self.meta['source']
+                df=self.df.iloc[key], meta=self.meta, source=self.meta["source"]
             )
         elif isinstance(key, int):
             d = self.df.iloc[key].to_dict()
@@ -372,8 +381,7 @@ class ScrobbleLog:
         return False
 
     def __iter__(self):
-        """
-        """
+        """ """
         return ScrobbleLogIterator(self)
 
     # -----------------------------------------------------------------
@@ -388,48 +396,42 @@ class ScrobbleLog:
         tz: str | None,
     ) -> Self:
         if isinstance(scrobble, Scrobble):
-            return cls(df=scrobble.to_dataframe(), meta=meta,
-                       username=username, tz=tz)
+            return cls(df=scrobble.to_dataframe(), meta=meta, username=username, tz=tz)
 
     def to_dict(self, orient: str = "records") -> dict:
-        """Canonical dict representation of ScrobbleLog
-        """
+        """Canonical dict representation of ScrobbleLog"""
         if not len(self):
             scrobbles = self.df.to_dict(orient="list")
         else:
             scrobbles = self.df.to_dict(orient=orient)
-        data = {
-            "meta": self.meta,
-            "scrobbles": scrobbles
-        }
+        data = {"meta": self.meta, "scrobbles": scrobbles}
         return data
 
     @classmethod
     def from_dict(cls, data: dict, orient: str = "records") -> Self:
-        """Create a ScrobbleLog from a canonical dict representation
-        """
+        """Create a ScrobbleLog from a canonical dict representation"""
         if not isinstance(data, dict):
             raise InvalidTypeError("Expecting dict type value for 'data'")
         if "scrobbles" not in data.keys():
             raise SchemaError("Key 'scrobbles' not found", "scrobbles")
         df = pd.DataFrame(data["scrobbles"])
         return cls(
-                df=df,
-                meta=data.get("meta"),
-                username=data.get("username"),
-                tz=data.get("tz")
+            df=df,
+            meta=data.get("meta"),
+            username=data.get("username"),
+            tz=data.get("tz"),
         )
 
     def to_markdown(
         self,
         file: PathLike | IO[str] | None = None,
-        maxcolwidths: list[int] | None=None,
+        maxcolwidths: list[int] | None = None,
         tablefmt: str | None = "github",
         newest_first: bool | None = None,
         max_length: int | None = None,
         datetimefmt: str = "%Y-%m-%d %H:%M",
         showindex: bool = False,
-        show_extra: bool = True
+        show_extra: bool = True,
     ) -> str | None:
         """
         Print ScrobbleLog in a nice looking markdown format.
@@ -479,24 +481,19 @@ class ScrobbleLog:
         """
         df = self.df.copy()
         if newest_first is not None:
-            df = df.sort_values(by=['timestamp'],
-                                       ascending = not newest_first)
-        from memoryfm.util.duration_convert import ms_to_time
-        if 'duration' in df.columns:
+            df = df.sort_values(by=["timestamp"], ascending=not newest_first)
+        if "duration" in df.columns:
             df["duration"] = ms_to_time(df["duration"])
         df = df.rename(str.capitalize, axis=1)
         if (max_length is not None and max_length <= 0) or not len(self):
             df_table = "-----No scrobbles present-----"
             return df_table
-        elif (
-            max_length is None or
-            len(self) <= max_length
-        ):
+        elif max_length is None or len(self) <= max_length:
             bottom_text = ""
         else:
             total = len(self)
             listen = "scrobbles"
-            if self.meta.get('source') == "spotify":
+            if self.meta.get("source") == "spotify":
                 listen = "listens"
             df = df.head(max_length)
             if newest_first is None:
@@ -507,40 +504,39 @@ class ScrobbleLog:
                 new_or_old = "latest"
             else:
                 new_or_old = "first"
-            bottom_text = f"Showing {new_or_old} {max_length} out of {total} {listen}" 
-        df["Timestamp"] = (
-                        df["Timestamp"].dt.strftime(datetimefmt)
-        )
+            bottom_text = f"Showing {new_or_old} {max_length} out of {total} {listen}"
+        df["Timestamp"] = df["Timestamp"].dt.strftime(datetimefmt)
         if len(self):
-            df_table = tabulate(df, headers="keys",
-                                tablefmt=tablefmt,
-                                maxcolwidths=maxcolwidths,
-                                showindex=showindex)
+            df_table = tabulate(
+                df,
+                headers="keys",
+                tablefmt=tablefmt,
+                maxcolwidths=maxcolwidths,
+                showindex=showindex,
+            )
         df_table = df_table + "\n" + bottom_text
         if not show_extra:
             markdown = df_table
         else:
-            from datetime import datetime
             markdown = (
                 f"ScrobbleLog for username: {self.username}  \n"
                 f"From {datetime.strftime(self.df['timestamp'].min(), datetimefmt)} "
                 f"to {datetime.strftime(self.df['timestamp'].max(), datetimefmt)}\n\n"
                 f"{df_table}"
             )
-            
-        from memoryfm.io._writers import _write_string
+
         return _write_string(markdown, file)
 
     @classmethod
     def from_json(
-        cls, 
+        cls,
         file: PathLike | IO[str] | None = None,
     ) -> ScrobbleLog:
         """
         Create ScrobbleLog from a canonical JSON.
 
         Parameters
-        ---------- 
+        ----------
         file : PathLike or TextIOBase object.
             * A pathlib path, or
             * A string corresponding to a path, such as
@@ -559,7 +555,6 @@ class ScrobbleLog:
            Convert a ScrobbleLog to a canonical JSON.
 
         """
-        from memoryfm.io._loaders import load_json
         canonical_dict = load_json(file)
         return ScrobbleLog.from_dict(canonical_dict)
 
@@ -577,11 +572,11 @@ class ScrobbleLog:
         .. code-block:: python
            :caption: Canonical JSON format
            :name: canonical-json
-           
+
            # A canonical JSON
            {
-              "meta": ScrobbleLog.meta,
-              "scrobbles": ScrobbleLog.df.to_dict(orient=orient)
+               "meta": ScrobbleLog.meta,
+               "scrobbles": ScrobbleLog.df.to_dict(orient=orient),
            }
 
         Parameters
@@ -615,26 +610,20 @@ class ScrobbleLog:
             df_new = self.df.copy()
             df_new["timestamp"] = df_new["timestamp"].dt.strftime(datetimefmt)
             scrobbles = df_new.to_dict(orient=orient)
-        data = {
-            "meta": self.meta,
-            "scrobbles": scrobbles
-        }
-        import json
-        from memoryfm.io._writers import _write_string
+        data = {"meta": self.meta, "scrobbles": scrobbles}
         return _write_string(json.dumps(data), file)
-    
- 
+
     @classmethod
     def from_parquet(
         cls,
         meta_file: PathLike | IO[str],
-        df_file: PathLike | IO [str],
-        start: str | pd.Timestamp | datetime.datetime | None = None,
-        end: str | pd.Timestamp | datetime.datetime | None = None,
+        df_file: PathLike | IO[str],
+        start: str | pd.Timestamp | datetime | None = None,
+        end: str | pd.Timestamp | datetime | None = None,
         *,
         artists: List[str] | None = None,
         albums: List[str] | None = None,
-        tracks: List[str] | None = None
+        tracks: List[str] | None = None,
     ) -> Self:
         """
         Create a ScrobbleLog from a :ref:`canonical parquet export
@@ -650,7 +639,7 @@ class ScrobbleLog:
             * A string corresponding to a path, such as
               ``/home/username/Documents/filename``, or
             * A TextIOBase object having a ``read()`` method.
-        df_file : PathLike or TextIOBase object 
+        df_file : PathLike or TextIOBase object
             Parquet file containing the ScrobbleLog DataFrame.
             The following types are accepted
 
@@ -683,35 +672,32 @@ class ScrobbleLog:
            Write ScrobbleLog to canonical parquet.
 
         """
-        from pandas import read_parquet
-        from memoryfm.io._loaders import load_json
         kind = {"artists": artists, "album": albums, "tracks": tracks}
-        filter_df = [(k, 'in', v) for k, v in kind.items() if v is not None]
+        filter_df = [(k, "in", v) for k, v in kind.items() if v is not None]
         if filter_df:
-            df = read_parquet(df_file, filters=filter_df)
+            df = pd.read_parquet(df_file, filters=filter_df)
         else:
-            df = read_parquet(df_file)
+            df = pd.read_parquet(df_file)
         meta = load_json(meta_file)
         return cls(df=df, meta=meta).filter_by_date(start, end)
-            
 
     def to_parquet(
         self,
         meta_file: PathLike | IO[str],
-        df_file:  PathLike | IO[str],
+        df_file: PathLike | IO[str],
     ) -> None:
         """
         Write ScrobbleLog to canonical parquet.
 
         .. _canonical_parquet:
-        
+
         The canonical parquet refers to a pair of files.
 
         * A JSON file : contains the ScrobbleLog meta
         * A parquet file : contains the ScrobbleLog DataFrame
 
         Parameters
-        ---------- 
+        ----------
         meta_file : PathLike or TextIOBase object
             Path or file to save ScrobbleLog meta as a JSON string. The following
             types are accepted
@@ -720,7 +706,7 @@ class ScrobbleLog:
             * A string corresponding to a path, such as
               ``/home/username/Documents/filename``, or
             * A TextIOBase object having a ``read()`` method.
-        df_file : PathLike or TextIOBase object 
+        df_file : PathLike or TextIOBase object
             Path or file to save ScrobbleLog DataFrame as a parquet file.
             The following types are accepted
 
@@ -731,46 +717,33 @@ class ScrobbleLog:
 
 
         """
-        import json
-        from ..io._writers import _write_string
         _write_string(json.dumps(self.meta), meta_file)
         self.df.to_parquet(df_file)
 
-    def to_csv( 
-        self,
-        file: PathLike | IO[str] | None = None,
-        orient: str | None = "records"
+    def to_csv(
+        self, file: PathLike | IO[str] | None = None, orient: str | None = "records"
     ) -> str | None:
         """
         Write ScrobbleLog to CSV format.
         """
         data = self.to_dict(orient=orient)
-        from memoryfm.io._writers import _dict_to_csv
         return _dict_to_csv(data, file)
 
     # -----------------------------------------------------------------
     # Transform Methods
 
-    def append(
-        self,
-        scrobbles: Scrobble | list(Scrobble | dict) | ScrobbleLog
-    ) -> Self:
+    def append(self, scrobbles: Scrobble | list(Scrobble | dict) | ScrobbleLog) -> Self:
         if isinstance(scrobbles, Scrobble):
             df_2 = scrobbles.to_dataframe()
-        elif (
-            isinstance(scrobbles, list)
-        ):
+        elif isinstance(scrobbles, list):
             scrobbles_data = [dict(scrobble) for scrobble in scrobbles]
             df_2 = pd.DataFrame(scrobbles_data)
         elif isinstance(scrobbles, ScrobbleLog):
-            if (
-                scrobbles.username == self.username and
-                scrobbles.tz == self.tz
-            ):
+            if scrobbles.username == self.username and scrobbles.tz == self.tz:
                 df_2 = scrobbles.df.copy()
             elif scrobbles.tz != self.tz:
                 df_2 = scrobbles.df.copy()
-                df_2['timestamp'] = df_2['timestamp'].dt.tz_convert(self.tz)
+                df_2["timestamp"] = df_2["timestamp"].dt.tz_convert(self.tz)
             else:
                 raise InvalidDataError("The usernames don't match")
         else:
@@ -778,8 +751,7 @@ class ScrobbleLog:
                 "Expecting scrobbles value of type: "
                 "Scrobble, list(Scrobble) list(dict) or ScrobbleLog"
             )
-        self.df = pd.concat([self.df, df_2],
-                            ignore_index=True)
+        self.df = pd.concat([self.df, df_2], ignore_index=True)
         validate_df(self.df, self.tz)
         self.meta = meta_generator(self.df, self.username, self.tz)
         return self
@@ -787,28 +759,26 @@ class ScrobbleLog:
     def tz_convert(self, tz: str | None, inplace=True) -> Self:
         if not inplace:
             df = self._df.copy()
-            df['timestamp'] = df['timestamp'].dt.tz_convert(tz)
+            df["timestamp"] = df["timestamp"].dt.tz_convert(tz)
             meta = self._meta
-            meta['tz'] = tz
+            meta["tz"] = tz
             return ScrobbleLog(df, dict(self._meta))
         else:
-            self._meta['tz'] = tz
-            self._df = self._df['timestamps'].tz_convert(tz)
+            self._meta["tz"] = tz
+            self._df = self._df["timestamps"].tz_convert(tz)
             return self
 
     # ------------------------------------------------------------------------
     # Filtering Methods
 
     def head(self, n: int | None = None) -> Self:
-        """ Return ScrobbleLog for the first n scrobbles 
-        """
+        """Return ScrobbleLog for the first n scrobbles"""
         if n is None:
             n = 5
         return ScrobbleLog(self.df.head(n), meta=self.meta)
 
     def tail(self, n: int | None = None) -> Self:
-        """ Return ScrobbleLog for the last n scrobbles 
-        """
+        """Return ScrobbleLog for the last n scrobbles"""
         if n is None:
             n = 5
         return ScrobbleLog(self.df.tail(n), meta=self.meta)
@@ -817,8 +787,8 @@ class ScrobbleLog:
         self,
         start: str | pd.Timestamp | datetime.datetime | None = None,
         end: str | pd.Timestamp | datetime.datetime | None = None,
-        unit : str | None = None,
-        include_end: bool = True
+        unit: str | None = None,
+        include_end: bool = True,
     ) -> Self:
         """
         Filter ScrobbleLog by date.
@@ -830,39 +800,30 @@ class ScrobbleLog:
         start = check_datetime(start, tz=self.tz, unit=unit)
         end = check_datetime(end, tz=self.tz, unit=unit)
         # Consider the full day's data if no time (or 00:00) is passed
-        if include_end and end.normalize() == end:  
+        if include_end and end.normalize() == end:
             end = end + pd.Timedelta(days=1)
-        if 'timestamp' not in self.df.columns:
-            raise SchemaError("Expected column 'timestamp' missing",
-                                     'timestamp')
-        filter_start = self.df['timestamp'] >= start
-        filter_end = self.df['timestamp'] < end
+        if "timestamp" not in self.df.columns:
+            raise SchemaError("Expected column 'timestamp' missing", "timestamp")
+        filter_start = self.df["timestamp"] >= start
+        filter_end = self.df["timestamp"] < end
         filter_condition = filter_start & filter_end
         date_filtered_df = self.df[filter_condition]
-        return ScrobbleLog(df=date_filtered_df, username=self.username,
-                           tz=self.tz, source=self.meta.get("source"))
+        return ScrobbleLog(
+            df=date_filtered_df,
+            username=self.username,
+            tz=self.tz,
+            source=self.meta.get("source"),
+        )
 
     # -----------------------------------------------------------------
     # Charts Methods
 
-    def top_charts(
-        self: ScrobbleLog,
-        kind: str = "tracks",
-        n: int = 5
-    ) -> pd.Series:
+    def top_charts(self: ScrobbleLog, kind: str = "tracks", n: int = 5) -> pd.Series:
         """
         Get top n tracks/artists/albums by number of scrobbles.
-        """        
-        names_dict = {
-            "track": "Track",
-            "artist": "Artist",
-            "album": "Album"
-        }
-        allowed_names = [
-        'track(s)',
-        'artist(s)',
-        'album(s)'
-        ]
+        """
+        names_dict = {"track": "Track", "artist": "Artist", "album": "Album"}
+        allowed_names = ["track(s)", "artist(s)", "album(s)"]
         if not isinstance(kind, str):
             raise TypeError("Expecting string type value for 'kind'")
         kind = kind.lower().strip().rstrip("s")

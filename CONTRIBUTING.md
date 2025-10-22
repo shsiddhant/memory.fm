@@ -32,6 +32,7 @@ git fetch upstream
 
 1. The project uses [uv](https://docs.astral.sh/uv/) to manage dependencies. Follow the instructions on their website to install it to your system.
 2.  Create a virtual environment and sync dependencies.
+
 ```shell
 uv sync --all-groups --extra "dev" --extra "doc"
 ```
@@ -45,6 +46,12 @@ source .venv/bin/activate
 pip install -e ".[dev, doc]"
 ```
 
+It is recommended that you also install the pre-commit hook for linting.
+
+```shell
+pre-commit install
+```
+
 ### Create a new branch
 
 Always make sure to keep your local `main` branch up-to-date with the upstream.
@@ -55,7 +62,7 @@ git pull upstream main --ff-only
 git checkout -b your-new-branch
 ```
 
-### Make changes, commit and push to remote
+### Make changes and commit
 
 After making changes, you can check via `git status`. Please make sure you follow the [code guidelines](#code-guidelines).
 
@@ -75,21 +82,25 @@ Verify again, and once satisfied, commit the changes with a simple descriptive c
 git commit -m "commit message"
 ```
 
-Push your changes to remote.
-
-```shell
-git push origin your-new-branch
-```
 
 ### Run Tests
 
-Add new `pytest` tests in the `tests` directory, based on your changes and run the tests either using `uv` or directly.
+Add new `pytest` tests in the `tests` directory based on your changes, and run the tests either using `uv` or directly.
 
 ```shell
 uv run pytest
 # Or
 pytest
 ```
+
+### Push
+
+Push your changes to remote.
+
+```shell
+git push origin your-new-branch
+```
+
 
 ### Open a merge request
 
@@ -104,7 +115,7 @@ pytest
 
 ### Code guidelines
 
-1. Use Ruff for linting and formatting.
+1. Use Ruff for linting and formatting
 2. Follow PEP 8 and make sure line lengths don't go above 88 characters
 3. It is advised that you type-hint everything. See [PEP 484](https://peps.python.org/pep-0484/) for a general guideline.
 4. Follow NumPy style for docstrings.
