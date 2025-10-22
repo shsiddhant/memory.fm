@@ -1,2 +1,1 @@
-""" subpackage: memory.io
-"""
+"""subpackage: memory.io"""

@@ -9,7 +9,7 @@ from memoryfm.io.spotify import (
 )
 
 __all__ = [
-    "from_lastfmstats", 
-    "from_spotify", 
+    "from_lastfmstats",
+    "from_spotify",
     "from_spotify_zip",
 ]

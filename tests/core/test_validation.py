@@ -10,24 +10,22 @@ meta_valid = {
     "memory.fm_version": f"{version('memory.fm')}",
     "schema_version": 1,
     "num_scrobbles": 0,
-    "date_range": {
-        "start": None,
-        "end": None
-    },
-    "source": "manual"
+    "date_range": {"start": None, "end": None},
+    "source": "manual",
 }
+
 
 class TestValidateTZ:
     def test_tz_wrong_type(self):
         msg = r"Expecting string type value for .*"
         with pytest.raises(InvalidTypeError, match=msg):
             validate_tz(10)
-    
+
     def test_tz_invalid_iana(self):
         msg = "Invalid IANA timezone string"
         with pytest.raises(InvalidDataError, match=msg):
             validate_tz("Asia")
-    
+
     def test_tz_tzlocal(self):
         assert validate_tz()
 
@@ -44,20 +42,12 @@ class TestValidateMeta:
     def test_missing_meta_key(self):
         msg = r"Missing key: .*"
         with pytest.raises(SchemaError, match=msg):
-            validate_meta(
-                {"username": "sid"}
-            )
+            validate_meta({"username": "sid"})
 
     def test_key_value_wrong_type(self):
         msg = r"Expecting .* type value for .*"
         with pytest.raises(InvalidTypeError, match=msg):
-            validate_meta(
-                {"username": 10,
-                 "tz": "Etc/",
-                 "num_scrobbles": 0
-
-                 }
-            )
+            validate_meta({"username": 10, "tz": "Etc/", "num_scrobbles": 0})
 
     def test_whitespace_username(self):
         msg = "username cannot be just white-space"
@@ -67,15 +57,14 @@ class TestValidateMeta:
             validate_meta(meta)
 
     def test_negative_num_scrobbles(self):
-        msg = ("Expecting non-negative integer value for key: "
-               "num_scrobbles")
+        msg = "Expecting non-negative integer value for key: num_scrobbles"
         meta = meta_valid.copy()
         meta["num_scrobbles"] = -1
         with pytest.raises(InvalidDataError, match=msg):
             validate_meta(meta)
 
     def test_date_range_keys(self):
-        msg = '.* key not found: start'
+        msg = ".* key not found: start"
         meta = meta_valid.copy()
         meta["date_range"] = {}
         with pytest.raises(SchemaError, match=msg):

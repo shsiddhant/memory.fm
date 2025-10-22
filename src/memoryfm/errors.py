@@ -28,6 +28,7 @@ class SchemaError(InvalidDataError):
         self.obj = obj
         super().__init__(self.msg)
 
+
 class InvalidTypeError(InvalidDataError):
     pass
 

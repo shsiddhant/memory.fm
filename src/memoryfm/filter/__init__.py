@@ -1,1 +1,1 @@
-""" Subpackage memoryfm.filters"""
+"""Subpackage memoryfm.filters"""

@@ -8,27 +8,29 @@ on:
     branches:
       - main
   
-
 jobs:
-  unit-test:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - name: Checkout code
+      - name: Checkout code.
         uses: actions/checkout@v4
 
-      - name: Install uv
+      - name: Install uv.
         uses: astral-sh/setup-uv@v6
         with:
           # Install a specific version of uv.
           version: "0.9.2"
           python-version: ${{ matrix.python-version }}
 
-      - name: Install the project
+      - name: Install the project with all dependencies.
         run: uv sync --locked --all-groups --all-extras
 
-      - name: Run tests
+      - name: Lint with ruff.
+        run: uv run ruff check --output-format=github .
+
+      - name: Run tests.
         run: uv run pytest tests/
