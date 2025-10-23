@@ -1,7 +1,9 @@
 # memory.fm
 
-[![Python](https://img.shields.io/badge/python-3.10%2B-4B8BBE?style=for-the-badge&logo=python&logoColor=%23FFE873)](https://www.python.org/)
+![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fshsiddhant%2Fmemory.fm%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&style=for-the-badge&logo=python&logoColor=FFE873&color=4B8BBE)
 [![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/shsiddhant/memory.fm/ci.yml?style=for-the-badge&logo=github&label=CI%20Pipeline)](https://github.com/shsiddhant/memory.fm/actions/workflows/ci.yml)
+
 
 A small Python library and CLI tool for reading, analyzing, visualizing and exporting [Last.fm](https://www.last.fm) scrobble data.
 
@@ -9,7 +11,24 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
 
 **Inspired by my habit of repurposing music listening history as a medium to bring up memories.**
 
----
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+	- [CLI commands](#cli)
+		- [Import Data](#import-data)
+		- [List Imports](#list-imports)
+		- [Load and Print](#load-and-print)
+		- [Top Charts](#top-charts)
+	- [Library Usage](#library-usage)
+		- [Read and Parse](#read-and-parse)
+		- [Filter by Dates](#filter-by-dates)
+		- [Top Charts](#top-charts-1)
+- [Roadmap](#roadmap)
+- [Development](#development)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## Features
 
@@ -34,8 +53,6 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
     - Filter `ScrobbleLog` by date.
     - Get top charts for tracks, artists, and albums.
 
----
-
 ## Installation
 
 The package should soon be available on PyPI. For now, you can install 
@@ -55,8 +72,6 @@ $ pip install "memory.fm[timezone] @ git+https://github.com/shsiddhant/memory.fm
 
 Requires **Python>=3.10**
 
----
-
 ## Quick Start
 
 ### CLI
@@ -67,11 +82,12 @@ You can use it to manage your Last.fm scrobble data and Spotify listening data.
 
 **Note:** Support for Apple Music exports is also planned. Check the [issue tracker](https://github.com/shsiddhant/memory.fm/issues) for updates.
 
+##### Import Data
 You can import your [Last.fm](https://www.last.fm.com>) data obtained from [lastfmstats](https://www.lastfmstats.com) like this:
 
 ```shell
-$ memoryfm import lastfmstats ~/Downloads/lastfmstats-siddhant.json
-Imported and saved to /home/siddhant/.local/share/memoryfm/imports/siddhant
+$ memoryfm import lastfmstats /home/siddhant/Downloads/lastfmstats-lazulinoother.json --overwrite
+Imported and saved to /home/siddhant/.local/share/memoryfm/imports/lazulinoother
 ```
 
 Similarly, you can import Spotify listening history like this:
@@ -83,39 +99,57 @@ Imported and saved to /home/siddhant/.local/share/memoryfm/imports/sid-spotify
 
 **Note:** You can have multiple imports, with the caveat that each username may only have one import.
 
+##### List imports
 To see all import usernames, use the ``list`` command.
 
 ```shell
 $ memoryfm list
 Scrobble Logs:
-['siddhant', 'sid-spotify']
+['sid-spotify', 'lazulinoother']
 ```
 
+##### Load and Print
 Printing scrobbles/listens and top charts is very simple. First you use the ``load`` command to load one of your imports.
 
 ```shell
-$ memoryfm load sid-spotify
-Loaded: sid-spotify
+$ memoryfm load lazulinoother
+Loaded: lazulinoother
 ```
 
 Now you can print your latest listens using the ``print`` command.
 
 ```shell
-$ memoryfm print --max-length 5
-ScrobbleLog for username: sid-spotify
-From 2025-06-03 21:33 to 2025-09-14 02:31
+$ memoryfm print --max 5 --from '2024-05-05 3:30AM'
+ScrobbleLog for username: lazulinoother  
+From 2024-05-05 03:30 to 2025-10-23 09:40
 
-| Timestamp        | Track          | Artist          | Album             | Duration   |
-|:-----------------|:---------------|:----------------|:------------------|:-----------|
-| 2025-06-03 21:33 | These Days     | Nico            | Chelsea Girl      | 00:03:30   |
-| 2025-06-03 21:40 | Re: Stacks     | Bon Iver        | For Emma, Forever | 00:06:41   |
-|                  |                |                 | Ago               |            |
-| 2025-06-03 21:44 | And So It Goes | Billy Joel      | Storm Front       | 00:03:37   |
-| 2025-06-03 21:47 | Love Ridden    | Fiona Apple     | When The Pawn...  | 00:03:22   |
-| 2025-06-03 21:54 | The Moon       | The Microphones | The Glow, Pt. 2   | 00:05:16   |
-Showing newest 5 out of 3121 listens
+| Timestamp        | Track             | Artist         | Album             |
+|:-----------------|:------------------|:---------------|:------------------|
+| 2024-05-05 03:30 | Will Anybody Ever | Sufjan Stevens | Javelin           |
+|                  | Love Me?          |                |                   |
+| 2024-05-05 03:34 | Will Anybody Ever | Sufjan Stevens | Javelin           |
+|                  | Love Me?          |                |                   |
+| 2024-05-05 03:38 | Will Anybody Ever | Sufjan Stevens | Javelin           |
+|                  | Love Me?          |                |                   |
+| 2024-05-05 03:42 | All I Need        | Radiohead      | In Rainbows       |
+| 2024-05-05 03:45 | Asleep - 2011     | The Smiths     | Louder Than Bombs |
+|                  | Remaster          |                |                   |
+Showing first 5 out of 13483 scrobbles
 ```
 
+##### Top Charts
+The command `top` can be used to see your top tracks/artists/albums.
+
+```shell
+$ memoryfm top albums --max 5 --from 2024-05-05 --to 2024-05-10
+| Album               |   Scrobbles |
+|:--------------------|------------:|
+| Either/Or           |         114 |
+| The Glow, Pt. 2     |          85 |
+| Songs About Leaving |          68 |
+| Hospice             |          29 |
+| Depression Cherry   |          22 |
+```
 
 ### Library Usage
 
@@ -178,7 +212,7 @@ In [5]: print(sclog.top_charts(kind="album",
 | 69 Love Songs     |           4 |
 | Once Twice Melody |           2 |
 ```
----
+
 
 ## Roadmap
 
@@ -187,10 +221,10 @@ In [5]: print(sclog.top_charts(kind="album",
 - [ ] Apple Music support.
 - [ ] More analyses based on frequency, obsessive listens/streaks, duration (à la Spotify wrapped) etc.
 - [ ] Visualizations and Plots.
+- [ ] Spotify wrapped but make it nerdier.
 - [ ] API support for Last.fm and Spotify.
 
----
-
+Check the [issue tracker](https://github.com/shsiddhant/memory.fm/issues) for more details.
 
 ## Development
 
@@ -200,15 +234,11 @@ To get started, you can have a look at the [issue tracker](https://github.com/sh
 
 See [CONTRIBUTING](CONTRIBUTING.md) for a detailed overview of the contributing guidelines.
 
----
 
 ## License
 [![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 
----
 
-## Acknowledgments
+## Acknowledgements
 
 Thanks to Felix Hagemans (https://github.com/felhag) for the fantastic [lastfmstats](https://www.lastfmstats.com).
-
----

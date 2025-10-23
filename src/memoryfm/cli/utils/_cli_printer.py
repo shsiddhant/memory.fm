@@ -47,6 +47,8 @@ def print_scrobbles(
     by_artists: list[str] | None = None,
     by_albums: list[str] | None = None,
     by_tracks: list[str] | None = None,
+    sort_by_date: bool = False,
+    newest_first: bool | None = None,
 ) -> None:
     """Print ScrobbleLog"""
     start, end = date_filter(start=from_date, end=to_date, last=last)
@@ -61,15 +63,24 @@ def print_scrobbles(
             albums=by_albums,
             tracks=by_tracks,
         )
+    except FileNotFoundError:
+        print("No import found for the username:", import_name)
+        raise Exit(1)
     except DateParseError as e:
         print(e)
         raise Exit(2)
+    if not sort_by_date and newest_first:
+        print("If you want to sort, pass the --sort flag as well.")
+        raise Exit(3)
+    elif sort_by_date and newest_first is None:
+        newest_first = False
     print(
         scrobble_log.to_markdown(
             maxcolwidths=4 * [20],
             tablefmt="pipe",
             max_length=max_length,
             show_extra=not meta,
+            newest_first=newest_first,
         )
     )
     if meta:

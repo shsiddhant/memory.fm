@@ -35,7 +35,7 @@ from memoryfm.core._validation import (
 )
 
 if TYPE_CHECKING:
-    from typing import IO, Self, List
+    from typing import IO, Self
     from memoryfm._typing import PathLike
 
 
@@ -500,7 +500,7 @@ class ScrobbleLog:
                 new_or_old = "first"
             elif not isinstance(newest_first, bool):
                 raise TypeError("Expected boolean value for 'newest_first'")
-            elif new_or_old:
+            elif newest_first:
                 new_or_old = "latest"
             else:
                 new_or_old = "first"
@@ -621,9 +621,9 @@ class ScrobbleLog:
         start: str | pd.Timestamp | datetime | None = None,
         end: str | pd.Timestamp | datetime | None = None,
         *,
-        artists: List[str] | None = None,
-        albums: List[str] | None = None,
-        tracks: List[str] | None = None,
+        artists: list[str] | None = None,
+        albums: list[str] | None = None,
+        tracks: list[str] | None = None,
     ) -> Self:
         """
         Create a ScrobbleLog from a :ref:`canonical parquet export
@@ -672,7 +672,7 @@ class ScrobbleLog:
            Write ScrobbleLog to canonical parquet.
 
         """
-        kind = {"artists": artists, "album": albums, "tracks": tracks}
+        kind = {"artist": artists, "album": albums, "track": tracks}
         filter_df = [(k, "in", v) for k, v in kind.items() if v is not None]
         if filter_df:
             df = pd.read_parquet(df_file, filters=filter_df)

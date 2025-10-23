@@ -110,15 +110,23 @@ def print_md(
     ] = None,
     by_artists: Annotated[
         Optional[list[str]],
-        typer.Option("--artists", help=("Filter scrobbles by these artists.")),
+        typer.Option("--artist", help=("Filter scrobbles by artist.")),
     ] = None,
     by_albums: Annotated[
         Optional[list[str]],
-        typer.Option("--albums", help=("Filter scrobbles by these albums.")),
+        typer.Option("--album", help=("Filter scrobbles by album.")),
     ] = None,
     by_tracks: Annotated[
         Optional[list[str]],
-        typer.Option("--tracks", help=("Filter scrobbles by these tracks.")),
+        typer.Option("--track", help=("Filter scrobbles by track.")),
+    ] = None,
+    sort: Annotated[
+        Optional[bool],
+        typer.Option("--sort", help=("Sort by date (oldest to newest by default)")),
+    ] = None,
+    newest_first: Annotated[
+        Optional[bool],
+        typer.Option("--newest", help=("Show newest scrobbles first.")),
     ] = None,
 ) -> None:
     """Print ScrobbleLog."""
@@ -132,6 +140,8 @@ def print_md(
         by_artists,
         by_albums,
         by_tracks,
+        sort_by_date=sort,
+        newest_first=newest_first,
     )
 
 

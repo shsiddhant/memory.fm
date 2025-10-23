@@ -1,8 +1,13 @@
 ## [Unreleased]
 
+## Added
+
+- Add CLI option to sort scrobbles by date.
+
 ## Changed
 
 - Move the functions `validate_tz` and `normalise_timestamps` to a  different module (`util.date_input_check`) to prevent circular imports.
+- Replace exception raising in the CLI printer with printed error instead.
 
 ---
 
