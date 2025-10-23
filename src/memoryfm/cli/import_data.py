@@ -40,7 +40,9 @@ def import_spotify(
     overwrite: bool = False,
     min_dur: Annotated[
         int,
-        typer.Option(help="Minimum duration below which the scrobbles are discarded"),
+        typer.Option(
+            help="Minimum duration in seconds below which the scrobbles are discarded"
+        ),
     ] = 60,
 ) -> None:
     """

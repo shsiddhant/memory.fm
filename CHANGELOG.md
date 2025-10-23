@@ -1,15 +1,20 @@
 ## [Unreleased]
 
+## Added
+
+- Add CLI option to sort scrobbles by date.
+
 ## Changed
 
 - Move the functions `validate_tz` and `normalise_timestamps` to a  different module (`util.date_input_check`) to prevent circular imports.
+- Replace exception raising in the CLI printer with printed error instead.
 
 ---
 
 ## Build
 
 - Setup ruff and configure it in the `pyproject.toml`.
-- Setup pre-commit hook for linting and formatting.
+- Setup pre-commit hooks for linting and formatting.
 - Update the code to make sure it passes ruff checks.
 
 ---

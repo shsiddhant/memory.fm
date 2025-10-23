@@ -46,7 +46,7 @@ source .venv/bin/activate
 pip install -e ".[dev, doc]"
 ```
 
-It is recommended that you also install the pre-commit hook for linting.
+It is recommended that you also install the pre-commit hooks for linting and formatting.
 
 ```shell
 pre-commit install
