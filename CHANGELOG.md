@@ -14,7 +14,7 @@
 ## Build
 
 - Setup ruff and configure it in the `pyproject.toml`.
-- Setup pre-commit hooks for linting and formatting.
+- Setup pre-commit hook for linting and formatting.
 - Update the code to make sure it passes ruff checks.
 
 ---
