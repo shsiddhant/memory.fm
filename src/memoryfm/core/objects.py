@@ -67,9 +67,13 @@ class Scrobble:
     """
 
     timestamp: pd.Timestamp
+    """Timestamp at which the track was scrobbled."""
     track: str
+    """Name/title of the scrobbled track."""
     artist: str
+    """Artist name for the scrobbled track."""
     album: str | None = None
+    """(Optional) Album name for the scrobbled track."""
 
     def __str__(self) -> str:
         """
@@ -117,6 +121,16 @@ class Scrobble:
     def from_dict(cls, data: dict) -> Self:
         """
         Construct a Scrobble from a dictionary.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary containing keys: timestamp, track, artist, and (optional)album.
+
+        Returns
+        -------
+        Scrobble
+
         """
         cls.validate_dict(data)
         return cls(
@@ -129,12 +143,23 @@ class Scrobble:
     def to_dict(self) -> dict:
         """
         Returns the canonical dict representation of a Scrobble.
+
+        Returns
+        -------
+        dict
+            A dictionary with attributes as keys.
+
         """
         return self.__dict__()
 
     def to_dataframe(self) -> pd.DataFrame:
         """
         Returns a canonical pandas DataFrame representation of a Scrobble.
+
+        Returns
+        -------
+        pd.DataFrame
+
         """
         df_repr = pd.DataFrame(self.to_dict(), index=[0])
         df_repr = df_repr.replace({None: pd.NA})
@@ -263,6 +288,7 @@ class ScrobbleLog:
         Returns
         -------
         pd.DataFrame
+
         """
         return self._df
 
@@ -272,6 +298,31 @@ class ScrobbleLog:
 
     @property
     def meta(self) -> dict:
+        """
+        A dictionary containing the following metadata:
+
+        .. code-block::
+           :caption: Metadata
+           :name: meta
+
+            "username": username for the ScrobbleLog
+            "tz": IANA Timezone string
+            listens: number of scrobbles (lastfmstats) or listens (spotify)
+            "date_range": {
+                    "start": date of first scrobble in ISO format,
+                    "end": date of last scrobble in ISO format
+                    },
+            "source": source (like lastfmstats, spotify, manual etc)
+            "duration_present": whether duration column is present or not,
+            "memory.fm_version": version of memory.fm when the meta was generated.
+            "schema_version": schema version of meta.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the following metadata:
+
+        """
         return self._meta
 
     @meta.setter
@@ -296,6 +347,15 @@ class ScrobbleLog:
 
     @property
     def username(self) -> str | None:
+        """
+        The username for the ScrobbleLog
+
+        Returns
+        -------
+        str, None
+            The username for the ScrobbleLog. ``None`` is also a value username value.
+
+        """
         return self._meta["username"]
 
     @username.setter
@@ -304,6 +364,17 @@ class ScrobbleLog:
 
     @property
     def tz(self) -> str:
+        """
+        The timezone for the ScrobbleLog.
+
+        Always a valid IANA Timezone string.
+
+        Returns
+        -------
+        str
+            The timezone for the ScrobbleLog.
+
+        """
         return self._meta["tz"]
 
     @tz.setter
@@ -397,6 +468,27 @@ class ScrobbleLog:
         username: str,
         tz: str | None,
     ) -> Self:
+        """
+        Create a ScrobbleLog from a Scrobble.
+
+        Parameters
+        ----------
+        scrobble: Scrobble
+            A Scrobble instance.
+        meta: dict, default None
+            A dictionary containing metadata. If ``None``, then it is generated from
+            username and timezone.
+        username: str
+            A username for the ScrobbleLog
+        tz: str, default None,
+            An IANA Timezone string. If none passed, tz is calculated.
+            See :class: ``ScrobbleLog`` for more.
+
+        Returns
+        -------
+        ScrobbleLog
+
+        """
         if isinstance(scrobble, Scrobble):
             return cls(df=scrobble.to_dataframe(), meta=meta, username=username, tz=tz)
 
