@@ -277,10 +277,12 @@ class ScrobbleLog:
     @meta.setter
     def meta(self, value) -> dict:
         self._meta = validate_meta(value)
-        if len(self._df) != self._meta["num_scrobbles"]:
-            raise InvalidDataError(
-                "meta['num_scrobbles'] cannot be different from len(df)"
-            )
+        if self._meta["source"] == "spotify":
+            listens = "num_listens"
+        else:
+            listens = "num_scrobbles"
+        if len(self._df) != self._meta[listens]:
+            raise InvalidDataError(f"meta[{listens}] cannot be different from len(df)")
         if self._meta["date_range"]["start"] != self._df["timestamp"].min().isoformat():
             raise InvalidDataError(
                 "start date must be in iso format and"
@@ -751,9 +753,10 @@ class ScrobbleLog:
                 "Expecting scrobbles value of type: "
                 "Scrobble, list(Scrobble) list(dict) or ScrobbleLog"
             )
+        source = self.meta["source"]
         self.df = pd.concat([self.df, df_2], ignore_index=True)
         validate_df(self.df, self.tz)
-        self.meta = meta_generator(self.df, self.username, self.tz)
+        self.meta = meta_generator(self.df, self.username, self.tz, source)
         return self
 
     def tz_convert(self, tz: str | None, inplace=True) -> Self:

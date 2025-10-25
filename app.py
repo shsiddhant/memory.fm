@@ -2,28 +2,17 @@ from __future__ import annotations
 import streamlit as st
 
 from memoryfm.cli.utils._import_utils import get_imported_names
-from memoryfm.streamlit.util import print_scrobbles, manage_imports, set_session_data
+from memoryfm.streamlit.util import print_scrobbles, set_session_data
+from memoryfm.streamlit.index import overview_pg, new_imports_pg, delete_import_pg
+
+st.set_page_config(layout="wide")
 
 if "imports" not in st.session_state:
-    st.session_state["imports"] = get_imported_names()
-
-
-def overview():
-    with st.container():
-        st.title("memory.fm")
-        st.write("Manage your Last.fm scrobble data.")
-
-    username = st.selectbox(
-        "Please select your username",
-        st.session_state["imports"],
-        index=None,
-        placeholder="username",
-    )
-    if st.button("Load import"):
-        set_session_data(username)
-    st.write("**Loaded import:**", st.session_state.get("username"))
-    if st.session_state.get("username") is not None:
-        st.json(body=st.session_state["meta"])
+    st.session_state.imports = get_imported_names()
+if "delete" not in st.session_state:
+    st.session_state.delete = None
+if "deleted_user" not in st.session_state:
+    st.session_state.deleted_user = None
 
 
 def show_scrobbles():
@@ -71,19 +60,13 @@ def load_import(username: str):
         st.stop()
 
 
-pg = st.navigation(
-    [
-        st.Page(overview, title="Overview"),
-        st.Page(manage_imports, title="Manage Imports"),
-    ]
-)
+pages = {
+    "Overview": [overview_pg],
+    "Manage Imports": [
+        new_imports_pg,
+        delete_import_pg,
+    ],
+}
+
+pg = st.navigation(pages)
 pg.run()
-# with st.sidebar:
-#    st.write("## Welcome to memory.fm")
-#    sidebar_option = st.radio(label = "", options = ["Manage Imports", "Load Import"])
-# if sidebar_option == "Manage Imports":
-#    manage_imports()
-# elif sidebar_option == "Load Import":
-#    load_import()
-# else:
-#    st.write("Placeholder")

@@ -97,7 +97,7 @@ def import_and_save(
     overwrite: bool,
     import_name: str | None = None,
     min_duration_seconds: int = 60,
-) -> None:
+) -> Path | None:
     """
     Import Last.fm scrobble data or Spotify Listening History.
     """
@@ -128,6 +128,7 @@ def import_and_save(
         write_import_files(import_name, scrobble_log)
         add_to_imports(import_name, overwrite=overwrite)
         print("Imported and saved to", import_name_dir)
+        return import_name_dir
 
 
 def read_imports(check_exist=True) -> list:
