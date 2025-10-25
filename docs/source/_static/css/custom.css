@@ -15,13 +15,20 @@ html[data-theme="light"] {
     --pst-color-primary: #B40B08;
     --pst-color-secondary: #236763;
     --pst-color-accent: #B40B08;
+    --pst-color-inline-code-links: var(--pst-color-primary);
+    --pst-color-link: var(--pst-color-primary);
+    --pst-color-link-hover: var(--pst-color-secondary);
 }
 
 html[data-theme="dark"] {
     --pst-color-primary: #FB9E98;
     --pst-color-secondary:#4DC5B6;
     --pst-color-accent: #FB9E98;
+    --pst-color-inline-code-links: var(--pst-color-primary);
+    --pst-color-link: var(--pst-color-primary);
+    --pst-color-link-hover: var(--pst-color-secondary);
 }
+
 
 
 /* -------------------------------------- Fonts ------------------------------------- */
