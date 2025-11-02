@@ -17,6 +17,10 @@ __pycache__/
 *.egg-info/
 build/
 
+# Cython compiled
+*.so
+*.pyd
+
 # Venv
 venv/
 .venv/

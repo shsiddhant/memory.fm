@@ -1,8 +1,8 @@
 from __future__ import annotations
-
-# from typing import TYPE_CHECKING
 import pytest
+from pathlib import Path
 import numpy as np
+
 from memoryfm.stats.attachment import (
     renyi_entropy,
     attachment_index_counts,
@@ -12,7 +12,6 @@ from memoryfm.stats.attachment import (
     # hill_number_counts,
     # hillnumber,
 )
-from pathlib import Path
 import memoryfm as mfm
 
 

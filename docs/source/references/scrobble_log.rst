@@ -65,8 +65,13 @@ Transform
 
    ScrobbleLog.tz_convert
 
-Indexing, Filtering, and Iterating
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autosummary::
+   :toctree: api/
+
+   ScrobbleLog.to_dict
+
+Indexing and Filtering
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api/

@@ -1656,6 +1656,7 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "cython" },
     { name = "mypy" },
     { name = "pandas-stubs" },
     { name = "pre-commit" },
@@ -1688,6 +1689,7 @@ timezone = [
 
 [package.metadata]
 requires-dist = [
+    { name = "cython", marker = "extra == 'dev'", specifier = ">=3.1.6" },
     { name = "cython", marker = "extra == 'notebook'", specifier = ">=3.1.6" },
     { name = "ipykernel", marker = "extra == 'notebook'", specifier = ">=7.0.1" },
     { name = "ipython", marker = "extra == 'doc'", specifier = ">=8.37.0" },
