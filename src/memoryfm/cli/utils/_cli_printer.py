@@ -98,5 +98,7 @@ def cli_top_charts(
         import_name = check_loaded()
     if n is None:
         n = 5
-    charts = read_cache_from_name(import_name, start=start, end=end).top_charts(kind, n)
+    charts = (
+        read_cache_from_name(import_name, start=start, end=end).top_charts(kind).head(n)
+    )
     print(charts.to_markdown())

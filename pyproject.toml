@@ -14,6 +14,7 @@ dependencies = [
 	"pyarrow>=21.0,<22.0",
 	"wcwidth>=0.2.14,<0.3",
 	"platformdirs>=4.4.0",
+	"matplotlib>=3.10.7",
 ]
 requires-python = ">=3.10"
 authors = [
@@ -60,6 +61,11 @@ timezone = [
 ]
 gui = [
     "streamlit>=1.50.0",
+]
+notebook = [
+    "cython>=3.1.6",
+    "ipykernel>=7.0.1",
+    "jupyter>=1.1.1",
 ]
 
 [project.scripts]

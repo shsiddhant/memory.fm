@@ -888,6 +888,8 @@ class ScrobbleLog:
         """
         Filter ScrobbleLog by date.
         """
+        if start is None and end is None:
+            return self
         if start is None:
             start = self.df["timestamp"].min()
         if end is None:
@@ -913,7 +915,7 @@ class ScrobbleLog:
     # -----------------------------------------------------------------
     # Charts Methods
 
-    def top_charts(self: ScrobbleLog, kind: str = "tracks", n: int = 5) -> pd.Series:
+    def top_charts(self: ScrobbleLog, kind: str = "tracks") -> pd.Series:
         """
         Get top n tracks/artists/albums by number of scrobbles.
         """
@@ -926,10 +928,8 @@ class ScrobbleLog:
             raise ValueError(
                 f"'kind' must be a case-insensitive match for: {allowed_names}"
             )
-        if not isinstance(n, int) or n < 0:
-            raise ValueError("'n' must be a non-negative integer")
-        df_new = self.df.copy()
+        df_new = self.df
         count_series = df_new[kind].value_counts()
         count_series.index.name = names_dict.get(kind)
         count_series.name = "Scrobbles"
-        return count_series.head(n)
+        return count_series
