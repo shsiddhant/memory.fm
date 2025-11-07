@@ -110,7 +110,7 @@ def attachment_index_list(
 def attachment(
     sclog: ScrobbleLog,
     by: Literal["track", "artist", "album"] = "track",
-    freq: str | pd.Period = "W",
+    freq: str | pd.Period = "D",
     year: int | None = None,
     alpha: np.float64 = 1,
 ) -> np.NDArray[np.float64 | np.nan] | None:
@@ -123,17 +123,17 @@ def attachment(
     ----------
     sclog : ScrobbleLog
         a memoryfm ScrobbleLog
-    by : track, artist, album
+    by : track, artist, album, default track
         The field to use for calculating Attachment Index.
-    freq: str, pd.Period
-        The time frequency to use for attachment index. For instance,
-        "2W" means a attachment index is calculated bi-weekly i.e.
+    freq : str, pd.Period, default D
+        The time frequency to use for the weighted attachment index. For instance,
+        "3D" means a attachment index is calculated once for every 3 days.
         one value for every two weeks.
         For a full description,
         see `pandas period aliases <https://pandas.pydata.org/docs/user_guide/timeseries.html#period-aliases>`_
     year : int, Optional
         The year to use for filtering. If ``None`` or not passed, no filtering is done.
-    alpha : np.float64
+    alpha : np.float64, default 1
         A positive floating point value, representing the order of Attachment Index.
 
     Returns
@@ -142,7 +142,7 @@ def attachment(
         Returns a pandas series containing Attachment Index for each period.
 
     """
-    series = sclog.df[by]
+    series = sclog.df[by].copy()
     # series.index = sclog.df["timestamp"].dt.to_period(freq=freq)
     series.index = sclog.df["timestamp"]
     series = series.dropna()
@@ -192,7 +192,7 @@ def weighted_attachment(
         Returns a pandas Series containing weighted Attachment Index for each period.
 
     """
-    series = sclog.df[by]
+    series = sclog.df[by].copy()
     series.index = sclog.df["timestamp"]
     series = series.dropna()
     scrobblecounts = series.resample(rule=freq, closed="left", label="left").agg(len)
@@ -269,4 +269,4 @@ def hillnumber(
         Return a pandas Series containing the Hill numbers for each period.
 
     """
-    return 1 / attachment(sclog, by, freq, year, alpha)
+    return 100 / attachment(sclog, by, freq, year, alpha)

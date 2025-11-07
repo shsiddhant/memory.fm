@@ -1,17 +1,23 @@
 ## [Unreleased]
 
-## Added
+---
+
+## [v0.5.0] - 2025-11-08
+
+### Added
 
 - Add CLI option to sort scrobbles by date.
+- Add *Attachment Index* computer.
+- Add *Streaks* computer.
+- Add *Streaks Timeline* static and interactive plots.
+- Add *Weighted Attachment Index* plots.
 
-## Changed
+### Changed
 
 - Move the functions `validate_tz` and `normalise_timestamps` to a  different module (`util.date_input_check`) to prevent circular imports.
 - Replace exception raising in the CLI printer with printed error instead.
 
----
-
-## Build
+### Build
 
 - Setup ruff and configure it in the `pyproject.toml`.
 - Setup pre-commit hook for linting and formatting.
@@ -20,7 +26,6 @@
 ---
 
 ## [v0.4.2] - 2025-10-14
-
 
 ### Added
 
