@@ -41,7 +41,7 @@ class TestAttachment:
         assert np.isnan(attachment_index_list(sample))
 
     def test_attachment(self):
-        assert attachment(sclog, by="album").iloc[0] == pytest.approx(
+        assert attachment(sclog, by="album", freq="7D").iloc[0] == pytest.approx(
             attachment_index_counts([5, 1])
         )
 

@@ -36,3 +36,4 @@ env/
 /docs/build/
 
 notebooks/
+*.ipynb_checkpoints/

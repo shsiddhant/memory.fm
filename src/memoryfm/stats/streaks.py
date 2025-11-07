@@ -66,6 +66,7 @@ def streaks(
         df = sclog.filter_by_date(start, end).df
     streak_start = gen_streak_bool(df.loc[:, kind])
     streaks_arr = np.array(streak_gen(streak_start, minlength))
+    streaks_arr = streaks_arr[streaks_arr[:, 2] >= minlength]
     streaks = pd.DataFrame(streaks_arr, columns=["start", "end", "length"])
     streaks[kind] = streaks.start.map(lambda x: df.iloc[x, col])
     streaks["start"] = streaks.start.map(lambda x: df.iloc[x, 0])
