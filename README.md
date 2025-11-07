@@ -32,14 +32,48 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
 
 ## Features
 
-- Read and parse
-    - [Last.fm](https://last.fm/)  JSON/CSV obtained from [lastfmstats](https://www.lastfmstats.com)
-    - Spotify listening history exports.
-- Use command line tool to
-    - import Last.fm data.
-    - import Spotify listening history.
-    - see list of scrobbles/listens in any given period.
-    - see top charts for tracks/artists/albums in any given period. 
+### 1. Read, Normalize and View Listening Data
+
+- Read and parse listening data from
+	- [Last.fm](https://last.fm/)  JSON/CSV obtained from [lastfmstats](https://www.lastfmstats.com)
+	- Spotify listening history exports
+- Filter the data by dates and time periods.
+- View your scrobbles/listens during any period.
+
+### 2. Stats and Analytics
+
+- **Top Charts:** View your top artists/albums/tracks for any period.
+- **Attachment Index:** Calculate *Attachment Index* to see whether you were attached to few artists/albums/tracks or not.
+- **Obsessive Streaks:** Detect *Obsessive Streaks* of listening to a single artist, album, or track to find intense listening moments and periods.
+
+### 3. Visuals
+
+- **Streaks Timeline**
+	- Create a color coded *Streaks Timeline* to see your streaks throughout any year.
+	- For more exploration, you can create an interactive *Streaks Timeline*.
+- **Attachment Graph:** Find out how your attachment to artists, albums and tracks varied throughout any period.
+
+### 4. Memory Attachments
+
+- Attach memories to different moments and time periods, in the style of journal entries.
+- Annotate the memories with markdown notes and tags.
+- See how your memories intertwine with your music listening patterns by using the interactive *Streaks Timeline* and more.
+
+### 5. Export
+
+- Export your listening data in JSON/CSV or markdown tables.
+- Save Top Charts as markdown tables, or images.
+- Save your *Attachment Graph* and *Streaks Timeline* as images, or interactive HTML pages.
+-  Export memories to JSON which can be imported into DayOne/Journey.Cloud as journal entries.
+
+### 6. Interface
+
+Access all the features mentioned above using either of the two:
+- **Graphical Dashboard:** A user friendly graphical dashboard that runs inside your web browser.
+- **CLI:** A command line tool with more granular control for power users.
+
+### 7. Library
+
 - Library API loosely modeled after [pandas](https://pypi.org/project/pandas/).
 - Core object classes.
     - `Scrobble` - instance represents a single scrobble.
@@ -52,6 +86,7 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
     - Export to nice-looking markdown using [tabulate](https://pypi.org/project/tabulate/).
     - Filter `ScrobbleLog` by date.
     - Get top charts for tracks, artists, and albums.
+    - Compute *Attachment Index* and *Obsessive Streaks* for any `ScrobbleLog`.
 
 ## Installation
 
@@ -82,7 +117,7 @@ You can use it to manage your Last.fm scrobble data and Spotify listening data.
 
 **Note:** Support for Apple Music exports is also planned. Check the [issue tracker](https://github.com/shsiddhant/memory.fm/issues) for updates.
 
-##### Import Data
+#### Import Data
 You can import your [Last.fm](https://www.last.fm.com>) data obtained from [lastfmstats](https://www.lastfmstats.com) like this:
 
 ```shell
@@ -99,7 +134,7 @@ Imported and saved to /home/siddhant/.local/share/memoryfm/imports/sid-spotify
 
 **Note:** You can have multiple imports, with the caveat that each username may only have one import.
 
-##### List imports
+#### List imports
 To see all import usernames, use the ``list`` command.
 
 ```shell
@@ -108,7 +143,7 @@ Scrobble Logs:
 ['sid-spotify', 'lazulinoother']
 ```
 
-##### Load and Print
+#### Load and Print
 Printing scrobbles/listens and top charts is very simple. First you use the ``load`` command to load one of your imports.
 
 ```shell
@@ -137,7 +172,7 @@ From 2024-05-05 03:30 to 2025-10-23 09:40
 Showing first 5 out of 13483 scrobbles
 ```
 
-##### Top Charts
+#### Top Charts
 The command `top` can be used to see your top tracks/artists/albums.
 
 ```shell

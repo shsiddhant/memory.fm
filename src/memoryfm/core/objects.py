@@ -67,9 +67,13 @@ class Scrobble:
     """
 
     timestamp: pd.Timestamp
+    """Timestamp at which the track was scrobbled."""
     track: str
+    """Name/title of the scrobbled track."""
     artist: str
+    """Artist name for the scrobbled track."""
     album: str | None = None
+    """(Optional) Album name for the scrobbled track."""
 
     def __str__(self) -> str:
         """
@@ -117,6 +121,16 @@ class Scrobble:
     def from_dict(cls, data: dict) -> Self:
         """
         Construct a Scrobble from a dictionary.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary containing keys: timestamp, track, artist, and (optional)album.
+
+        Returns
+        -------
+        Scrobble
+
         """
         cls.validate_dict(data)
         return cls(
@@ -129,12 +143,23 @@ class Scrobble:
     def to_dict(self) -> dict:
         """
         Returns the canonical dict representation of a Scrobble.
+
+        Returns
+        -------
+        dict
+            A dictionary with attributes as keys.
+
         """
         return self.__dict__()
 
     def to_dataframe(self) -> pd.DataFrame:
         """
         Returns a canonical pandas DataFrame representation of a Scrobble.
+
+        Returns
+        -------
+        pd.DataFrame
+
         """
         df_repr = pd.DataFrame(self.to_dict(), index=[0])
         df_repr = df_repr.replace({None: pd.NA})
@@ -263,6 +288,7 @@ class ScrobbleLog:
         Returns
         -------
         pd.DataFrame
+
         """
         return self._df
 
@@ -272,6 +298,31 @@ class ScrobbleLog:
 
     @property
     def meta(self) -> dict:
+        """
+        A dictionary containing the following metadata:
+
+        .. code-block::
+           :caption: Metadata
+           :name: meta
+
+            "username": username for the ScrobbleLog
+            "tz": IANA Timezone string
+            listens: number of scrobbles (lastfmstats) or listens (spotify)
+            "date_range": {
+                    "start": date of first scrobble in ISO format,
+                    "end": date of last scrobble in ISO format
+                    },
+            "source": source (like lastfmstats, spotify, manual etc)
+            "duration_present": whether duration column is present or not,
+            "memory.fm_version": version of memory.fm when the meta was generated.
+            "schema_version": schema version of meta.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the following metadata:
+
+        """
         return self._meta
 
     @meta.setter
@@ -296,6 +347,15 @@ class ScrobbleLog:
 
     @property
     def username(self) -> str | None:
+        """
+        The username for the ScrobbleLog
+
+        Returns
+        -------
+        str, None
+            The username for the ScrobbleLog. ``None`` is also a value username value.
+
+        """
         return self._meta["username"]
 
     @username.setter
@@ -304,6 +364,17 @@ class ScrobbleLog:
 
     @property
     def tz(self) -> str:
+        """
+        The timezone for the ScrobbleLog.
+
+        Always a valid IANA Timezone string.
+
+        Returns
+        -------
+        str
+            The timezone for the ScrobbleLog.
+
+        """
         return self._meta["tz"]
 
     @tz.setter
@@ -397,11 +468,45 @@ class ScrobbleLog:
         username: str,
         tz: str | None,
     ) -> Self:
+        """
+        Create a ScrobbleLog from a Scrobble.
+
+        Parameters
+        ----------
+        scrobble: Scrobble
+            A Scrobble instance.
+        meta: dict, default None
+            A dictionary containing metadata. If ``None``, then it is generated from
+            username and timezone.
+        username: str
+            A username for the ScrobbleLog
+        tz: str, default None,
+            An IANA Timezone string. If none passed, tz is calculated.
+            See :class: ``ScrobbleLog`` for more.
+
+        Returns
+        -------
+        ScrobbleLog
+
+        """
         if isinstance(scrobble, Scrobble):
             return cls(df=scrobble.to_dataframe(), meta=meta, username=username, tz=tz)
 
     def to_dict(self, orient: str = "records") -> dict:
-        """Canonical dict representation of ScrobbleLog"""
+        """
+        Canonical dict representation of the ScrobbleLog
+
+        Parameters
+        ----------
+        orient : str, default "records"
+            Orientation to use for converting ScrobbleLog DataFrame to dict.
+
+        Returns
+        -------
+        dict
+            Returns the canonical dict representation of the ScrobbleLog.
+
+        """
         if not len(self):
             scrobbles = self.df.to_dict(orient="list")
         else:
@@ -411,7 +516,23 @@ class ScrobbleLog:
 
     @classmethod
     def from_dict(cls, data: dict, orient: str = "records") -> Self:
-        """Create a ScrobbleLog from a canonical dict representation"""
+        """
+        Create a ScrobbleLog from a canonical dict representation.
+
+        Parameters
+        ----------
+        data : dict
+            Dictionary containing a canonical representation of a ScrobbleLog.
+        orient : str, default "records"
+            Orientation to use for converting scrobbles from dict to
+            ScrobbleLog DataFrame.
+
+        Returns
+        -------
+        ScrobbleLog
+            Returns a ScrobbleLog from a canonical dict representation.
+
+        """
         if not isinstance(data, dict):
             raise InvalidTypeError("Expecting dict type value for 'data'")
         if "scrobbles" not in data.keys():
@@ -735,6 +856,23 @@ class ScrobbleLog:
     # Transform Methods
 
     def append(self, scrobbles: Scrobble | list(Scrobble | dict) | ScrobbleLog) -> Self:
+        """
+        Append scrobble(s) to a ScrobbleLog.
+
+        This mutates the original ScrobbleLog.
+
+        Parameters
+        ----------
+        scrobbles : Scrobble, list(Scrobbles), ScrobbleLog
+            Scrobbles to append to the ScrobbleLog. It can either be a Scrobble,
+            a list of Scrobbles, or a ScrobbleLog.
+
+        Returns
+        -------
+        ScrobbleLog
+            Returns the ScrobbleLog with appended scrobbles.
+
+        """
         if isinstance(scrobbles, Scrobble):
             df_2 = scrobbles.to_dataframe()
         elif isinstance(scrobbles, list):
@@ -760,6 +898,23 @@ class ScrobbleLog:
         return self
 
     def tz_convert(self, tz: str | None, inplace=True) -> Self:
+        """
+        Convert ScrobbleLog timezone to another timezone.
+
+
+        Parameters
+        ----------
+        tz : str, default None
+            A valid IANA timezone string.
+        inplace : bool
+            If ``inplace`` is ``True``, then the original ScrobbeLog is mutated.
+
+        Returns
+        -------
+        ScrobbleLog
+            Returns ScrobbleLog with converted timezone.
+
+        """
         if not inplace:
             df = self._df.copy()
             df["timestamp"] = df["timestamp"].dt.tz_convert(tz)
@@ -775,13 +930,45 @@ class ScrobbleLog:
     # Filtering Methods
 
     def head(self, n: int | None = None) -> Self:
-        """Return ScrobbleLog for the first n scrobbles"""
+        """
+        Create a ScrobbleLog containing the first n scrobbles from
+        the original.
+
+        Parameters
+        ----------
+        n : int, default None
+            The number of Scrobbles to use in the new ScrobbleLog.
+            If None, then the first 5 Scrobbles will be used.
+
+        Returns
+        -------
+        ScrobbleLog
+            Returns a new ScrobbleLog containing the first n scrobbles from
+            the original.
+
+        """
         if n is None:
             n = 5
         return ScrobbleLog(self.df.head(n), meta=self.meta)
 
     def tail(self, n: int | None = None) -> Self:
-        """Return ScrobbleLog for the last n scrobbles"""
+        """
+        Create a ScrobbleLog containing the last n scrobbles from
+        the original.
+
+        Parameters
+        ----------
+        n : int, default None
+            The number of Scrobbles to use in the new ScrobbleLog.
+            If None, then the last 5 Scrobbles will be used.
+
+        Returns
+        -------
+        ScrobbleLog
+            Returns a new ScrobbleLog containing the last(latest) n scrobbles from
+            the original.
+
+        """
         if n is None:
             n = 5
         return ScrobbleLog(self.df.tail(n), meta=self.meta)
@@ -794,8 +981,28 @@ class ScrobbleLog:
         include_end: bool = True,
     ) -> Self:
         """
-        Filter ScrobbleLog by date.
+        Create a ScrobbleLog filtered by date.
+
+        Parameters
+        ----------
+        start : str, pd.Timestamp, datetime.datetime, default None.
+            Start date for filtering the ScrobbleLog.
+        end : str, pd.Timestamp, datetime.datetime, default None.
+            End date for filtering the ScrobbleLog.
+        unit : str, default None
+            The unit to use for reading the start and end dates.
+        include_end : bool, default True
+            If ``True``, the end date scrobbles will be included in the filtered
+            ScrobbleLog.
+
+        Returns
+        -------
+        ScrobbleLog
+            Returns the filtered ScrobbleLog.
+
         """
+        if start is None and end is None:
+            return self
         if start is None:
             start = self.df["timestamp"].min()
         if end is None:
@@ -821,9 +1028,21 @@ class ScrobbleLog:
     # -----------------------------------------------------------------
     # Charts Methods
 
-    def top_charts(self: ScrobbleLog, kind: str = "tracks", n: int = 5) -> pd.Series:
+    def top_charts(self: ScrobbleLog, kind: str = "tracks") -> pd.Series:
         """
         Get top n tracks/artists/albums by number of scrobbles.
+
+        Parameters
+        ----------
+        kind : str, default tracks
+            Top charts parameter : artist(s), album(s), track(s)
+
+        Returns
+        -------
+        pd.Series
+            Returns a pandas Series containing top n tracks/artists/albums
+            with number of scrobbles.
+
         """
         names_dict = {"track": "Track", "artist": "Artist", "album": "Album"}
         allowed_names = ["track(s)", "artist(s)", "album(s)"]
@@ -834,10 +1053,8 @@ class ScrobbleLog:
             raise ValueError(
                 f"'kind' must be a case-insensitive match for: {allowed_names}"
             )
-        if not isinstance(n, int) or n < 0:
-            raise ValueError("'n' must be a non-negative integer")
-        df_new = self.df.copy()
+        df_new = self.df
         count_series = df_new[kind].value_counts()
         count_series.index.name = names_dict.get(kind)
         count_series.name = "Scrobbles"
-        return count_series.head(n)
+        return count_series

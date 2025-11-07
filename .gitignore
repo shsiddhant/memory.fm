@@ -17,6 +17,10 @@ __pycache__/
 *.egg-info/
 build/
 
+# Cython compiled
+*.so
+*.pyd
+
 # Venv
 venv/
 .venv/
@@ -30,3 +34,6 @@ env/
 
 */docs/build/
 /docs/build/
+
+notebooks/
+*.ipynb_checkpoints/
