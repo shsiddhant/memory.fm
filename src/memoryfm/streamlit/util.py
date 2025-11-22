@@ -1,56 +1,12 @@
 from __future__ import annotations
 import streamlit as st
-from io import TextIOWrapper
-from typer import Exit
 import json
+from datetime import datetime
 
 from memoryfm.cli.utils._loader_utils import read_cache_from_name
-from memoryfm.cli.utils._import_utils import import_and_save, read_imports
+from memoryfm.cli.utils._import_utils import read_imports
 from memoryfm.cli.utils._common_utils import check_loaded
 from memoryfm.cli import imports_dir, imports_file, loaded_file
-
-
-def manage_imports():
-    st.write("Manage your Lastfmstats/Spotify imports.")
-    choice = st.radio(
-        "Choose from the following.",
-        options=["New import", "List imports", "Delete import"],
-    )
-    if choice == "New import":
-        new_imports()
-    elif choice == "List imports":
-        st.write("List of all imports")
-    elif choice == "Delete import":
-        st.write("Delete an existing import")
-
-
-def new_imports():
-    st.write("### Import from lastfmstats/Spotify")
-    source = st.selectbox(
-        "Select a source", options=["Lastfmstats", "Spotify"], key="source"
-    )
-    file_upload = st.file_uploader("Upload the file", label_visibility="hidden")
-    if source == "Lastfmstats" and file_upload is not None:
-        file_type = st.radio("File Type", options=["json", "csv"])
-        file = TextIOWrapper(file_upload, encoding="utf-8")
-    elif source == "Spotify":
-        file_type = None
-        file = file_upload
-    overwrite = st.checkbox("Overwrite existing import", value=False)
-    username = st.text_input("Save with this username", value="None")
-    import_but = st.button("Import")
-    if import_but and file_upload is not None:
-        try:
-            import_and_save(file, file_type, source.lower(), overwrite, username)
-        except Exit:
-            st.error(
-                "Username already exists. Please select overwrite if you wish"
-                " to overwrite the existing import."
-            )
-        else:
-            st.write("Imported and saved to", imports_dir / username)
-    elif import_but and file_upload is None:
-        st.error("Please upload a file first.")
 
 
 def _delete_import(username: str):
@@ -82,10 +38,12 @@ def set_session_data(
         st.session_state["sc_log"] = read_cache_from_name(
             username, start=from_date, end=to_date
         )
-        st.session_state["from"] = st.session_state["sc_log"].meta["date_range"][
-            "start"
-        ]
-        st.session_state["to"] = st.session_state["sc_log"].meta["date_range"]["end"]
+        st.session_state["from"] = datetime.fromisoformat(
+            st.session_state["sc_log"].meta["date_range"]["start"]
+        )
+        st.session_state["to"] = datetime.fromisoformat(
+            st.session_state["sc_log"].meta["date_range"]["end"]
+        )
         if from_date is None and to_date is None:
             st.session_state["date_range"] = "All Time"
         else:
@@ -96,6 +54,35 @@ def set_session_data(
         st.session_state["meta"] = st.session_state["sc_log"].meta
     else:
         raise RuntimeError
+
+
+def summary(scrobble_log) -> str:
+    meta = scrobble_log.meta
+    if meta["source"] == "spotify":
+        listens = "num_listens"
+        listens_key = "Listen"
+    else:
+        listens = "num_scrobbles"
+        listens_key = "Scrobble"
+
+    summary = f"""
+**Username:** {meta["username"]}
+
+**Timezone:** {meta["tz"]}
+
+**Platform:** {meta["source"].capitalize()}
+
+**{listens_key}s:** {meta[listens]}
+
+**First {listens_key}:**
+
+{scrobble_log[0:1].to_markdown(show_extra=False)}
+
+**Last {listens_key}:**
+
+{scrobble_log[-1:].to_markdown(show_extra=False)}
+    """
+    return summary
 
 
 def print_scrobbles(

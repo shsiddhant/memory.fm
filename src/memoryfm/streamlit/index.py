@@ -1,7 +1,14 @@
 import streamlit as st
-from memoryfm.streamlit.pages.manage_imports import new_imports, delete_import
-from memoryfm.streamlit.pages.overview import overview
+from pathlib import Path
 
-new_imports_pg = st.Page(new_imports, title="New Import")
-delete_import_pg = st.Page(delete_import, title="Delete Import")
-overview_pg = st.Page(overview, title="Dashboard")
+pages = Path("src/memoryfm/streamlit/pages/").resolve()
+home = st.Page(
+    page=pages / "home.py",
+    title="Home",
+    icon=":material/home:",
+)
+overview = st.Page(
+    page=pages / "overview.py",
+    title="Overview",
+    icon=":material/list_alt:",
+)
