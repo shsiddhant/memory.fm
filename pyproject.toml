@@ -86,6 +86,7 @@ viz = [
 
 [project.scripts]
 memoryfm = "memoryfm.cli.main:app"
+memoryfm-gui = "memoryfm.streamlit.runner:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

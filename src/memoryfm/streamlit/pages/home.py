@@ -14,14 +14,17 @@ if st.session_state.get("username"):
 def users_list():
     for username in st.session_state.imports:
         with st.container():
-            user, delete = st.columns([2, 1])
+            user, delete = st.columns([1, 1])
         with user:
             if st.button(
                 f"**:material/person: {username}**",
                 help="Load user",
             ):
-                set_session_data(username)
-                st.switch_page(overview)
+                with st.spinner(
+                    text="Loading your data...",
+                ):
+                    set_session_data(username)
+                    st.switch_page(overview)
         with delete:
             if st.button(
                 ":primary[:material/delete:]",
