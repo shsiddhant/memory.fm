@@ -51,7 +51,7 @@ def add_user():
         "Overwrite", value=False, help="Overwrite if username already exists."
     )
     if submit and file is not None:
-        if not username:
+        if source == "spotify" and not username:
             st.error("Username cannot be blank")
             st.stop()
         try:
@@ -65,7 +65,7 @@ def add_user():
             )
         else:
             st.session_state.imports = get_imported_names()
-            succesful(f"User '{username}' was successfully added..")
+            succesful(f"User was successfully added: {import_name_dir.name}")
             file_upload = None
             return import_name_dir
     elif submit and file is None:

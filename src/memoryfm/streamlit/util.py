@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 import streamlit as st
 import json
 from datetime import datetime
@@ -7,6 +8,11 @@ from memoryfm.cli.utils._loader_utils import read_cache_from_name
 from memoryfm.cli.utils._import_utils import read_imports
 from memoryfm.cli.utils._common_utils import check_loaded
 from memoryfm.cli import imports_dir, imports_file, loaded_file
+
+
+if TYPE_CHECKING:
+    from memoryfm import ScrobbleLog
+    import pandas as pd
 
 
 def _delete_import(username: str):
@@ -65,24 +71,40 @@ def summary(scrobble_log) -> str:
         listens = "num_scrobbles"
         listens_key = "Scrobble"
 
-    summary = f"""
-**Username:** {meta["username"]}
+    card = {
+        f"{listens_key}count": len(scrobble_log),
+    }
+    for kind in ("track", "artist", "album"):
+        card[f"{kind}scount"] = scrobble_log.df[kind].nunique()
+    first = scrobble_log[0:1]  # .to_markdown(show_extra=False)
+    last = scrobble_log[-1:]  # .to_markdown(show_extra=False)
+    card["first"] = first
+    card["last"] = last
+    card["listens"] = listens
+    card["listens_key"] = listens_key
+    timerng = (last.df.loc[0, "timestamp"] - first.df.loc[0, "timestamp"]).days
+    if not timerng:
+        timerng = 1
+    card["average"] = len(scrobble_log) / timerng
 
-**Timezone:** {meta["tz"]}
-
-**Platform:** {meta["source"].capitalize()}
-
-**{listens_key}s:** {meta[listens]}
-
-**First {listens_key}:**
-
-{scrobble_log[0:1].to_markdown(show_extra=False)}
-
-**Last {listens_key}:**
-
-{scrobble_log[-1:].to_markdown(show_extra=False)}
-    """
-    return summary
+    #    summary = f"""
+    # **Username:** {meta["username"]}
+    #
+    # **Timezone:** {meta["tz"]}
+    #
+    # **Platform:** {meta["source"].capitalize()}
+    #
+    # **{listens_key}s:** {meta[listens]}
+    #
+    # **First {listens_key}:**
+    #
+    # {first}
+    #
+    # **Last {listens_key}:**
+    #
+    # {last}
+    #    """
+    return card
 
 
 def print_scrobbles(
@@ -102,3 +124,15 @@ def print_scrobbles(
             row_height=70,
             hide_index=True,
         )
+
+
+def scrobbles_count(
+    sc_log: ScrobbleLog,
+) -> pd.DataFrame:
+    ts = sc_log.df.timestamp.copy()
+    ts.index = ts.dt.year
+    count = ts.groupby(level=0).count()
+    count.name = "Scrobbles"
+    count.index.name = "Year"
+    count = count.reset_index()
+    return count
