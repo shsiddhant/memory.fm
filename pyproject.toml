@@ -83,6 +83,14 @@ viz = [
     "kaleido>=1.2.0",
     "plotly[express]>=6.3.1",
 ]
+all = [
+  "memory.fm[dev]",
+  "memory.fm[doc]",
+  "memory.fm[timezone]",
+  "memory.fm[gui]",
+  "memory.fm[notebook]",
+  "memory.fm[viz]"
+]
 
 [project.scripts]
 memoryfm = "memoryfm.cli.main:app"
