@@ -10,12 +10,15 @@ from memoryfm.util.date_input_check import (
 
 
 def normalise_lastfmstats(
-    df: pd.DataFrame, username: str, tz: str | None = None
+    df: pd.DataFrame,
+    username: str,
+    tz: str | None = None,
+    unit: str | None = "ms",
 ) -> ScrobbleLog:
     """ """
     df = df.rename(str.lower, axis=1)
     if "date" in df.columns:
-        df["date"] = normalise_timestamps(df["date"], tz=tz, unit="ms")
+        df["date"] = normalise_timestamps(df["date"], tz=tz, unit=unit)
     else:
         raise SchemaError("Column not found", "date")
     df = df.rename(columns={"date": "timestamp"})
