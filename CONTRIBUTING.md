@@ -104,7 +104,7 @@ git push origin your-new-branch
 
 ### Open a merge request
 
-1. Make sure that your changes have followed the [code guidelines](#code-guidelines). Also ensure that the CI pipeline jobs run successfully. Once everything looks good, go over to your fork on GitLab. 
+1. Make sure that your changes have followed the [code guidelines](#code-guidelines). Also ensure that the CI pipeline jobs run successfully. Once everything looks good, go over to your fork on Github. 
 2. Create a new merge request, with `your-new-branch` as the source branch, and the upstream/original `main` as the target branch.
 3. Please write a descriptive title with prefixes such as:
 	- `bug` : If you fix something. Please include the issue # if you fix a bug that's open in the issues tracker.
