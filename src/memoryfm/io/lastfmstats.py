@@ -69,7 +69,7 @@ def from_lastfmstats(
     _validate_data(data)
     username = data["username"]
     df = pd.DataFrame(data["scrobbles"])
-    scrobble_log = normalise_lastfmstats(df, username, tz)
+    scrobble_log = normalise_lastfmstats(df, username, tz, unit="ms")
     return scrobble_log
 
 
