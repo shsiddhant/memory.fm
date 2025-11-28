@@ -1,15 +1,15 @@
-# memory.fm
+<h1 style="text-align: center;">memory.fm</h1>
+
+<center><i>Music meets Memory</i></center>
 
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fshsiddhant%2Fmemory.fm%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&style=for-the-badge&logo=python&logoColor=FFE873&color=4B8BBE)
 [![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/shsiddhant/memory.fm/ci.yml?style=for-the-badge&logo=github&label=CI%20Pipeline)](https://github.com/shsiddhant/memory.fm/actions/workflows/ci.yml)
 
+**memory.fm** is an introspective application for exploring your music listening history.  
 
-A small Python library and CLI tool for reading, analyzing, visualizing and exporting [Last.fm](https://www.last.fm) scrobble data.
-
-Meant for anyone who obsesses over their music listening. Even if you aren't as obsessed, you are still welcome and encouraged to try it out.
-
-**Inspired by my habit of repurposing music listening history as a medium to bring up memories.**
+The app's focus is the interplay of your music listening patterns and the emotional current behind it.
+Think of it as your **listening diary** for self-reflection and connecting moments/phases of your life with the music that accompanied them. 
 
 ## Table of Contents
 
@@ -32,51 +32,83 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
 
 ## Features
 
-### 1. Importing
+### Import Your Complete Listening History
 
-- Import your [Last.fm](https://last.fm/) scrobbling history.
-	- Fast first import.
-	- Fetch only the new scrobbles after the first import.
-	- View progress.
-- Also supports
-	-   JSON/CSV obtained from [lastfmstats](https://www.lastfmstats.com)
-	- Spotify listening history exports
-- Filter the data by dates and time periods.
-- View your scrobbles/listens during any period.
+#### 1. Last.fm
 
-### 2. Stats and Analytics
+Quickly fetch your entire scrobble history.
+- Imports are saved locally, so the subsequent imports are blazing fast.
+- If you use [lastfmstats](https://lastfmstats.com/), you can also import using their JSON/CSV exports.	
 
-- **Top Charts:** View your top artists/albums/tracks for any period.
-- **Attachment Index:** Calculate *Attachment Index* to see whether you were attached to few artists/albums/tracks or not.
-- **Obsessive Streaks:** Detect *Obsessive Streaks* of listening to a single artist, album, or track to find intense listening moments and periods.
+#### 2. Spotify
+Import your entire Spotify listening history using the official exports.
 
-### 3. Visuals
+### Explore Your Listening Life
 
-- **Streaks Timeline**
-	- Create a color coded *Streaks Timeline* to see your streaks throughout any year.
-	- For more exploration, you can create an interactive *Streaks Timeline*.
-- **Attachment Graph:** Find out how your attachment to artists, albums and tracks varied throughout any period.
+Explore your music listening patterns. You get a variety of stats - from basic top charts to more interesting and novel ways to understand your listening.
 
-### 4. Memory Attachments
+#### 1. Top Artists / Albums / Tracks
+
+- See your top artists, albums, and tracks for any period.
+- Apply filters.
+
+#### 2. Attachment Index
+
+- Do you get attached to a few familiar artists, albums, and tracks *or* do you prefer to keep your horizons broad?
+- Which periods of you life were you an explorer?
+
+Use *Attachment Index* to find out.
+
+#### 3. Streaks
+
+Are there stretches of days where you obsessively listen to a single artist, album or track?
+Maybe it was a newly out album, or maybe it was one of your all time favourites. 
+
+Find out with *Streaks*.
+
+### Visualize Your Patterns
+
+#### 1. Attachment Graphs
+
+- See how your attachment to artists, albums, and tracks has evolved over time.
+- Peaks and dips, phases and seasons of your life.
+
+#### 2. Streaks Timeline
+
+- A color coded *Streaks Timeline* to see your streaks throughout any year.
+- Save your *Streaks Timelines* as high quality images.
+- Print, share, compare. 
+
+If you like exploring, you can also use interactive *Attachment Graphs* and *Streaks Timelines*, and go down the rabbit hole of numbers and patterns.
+
+### Connect Your Music and Memories
 
 - Attach memories to different moments and time periods, in the style of journal entries.
 - Annotate the memories with markdown notes and tags.
 - See how your memories intertwine with your music listening patterns by using the interactive *Streaks Timeline* and more.
 
-### 5. Export
+Everything is saved locally, so you add memories without any worries about privacy.
+
+### Export
 
 - Export your listening data in JSON/CSV or markdown tables.
 - Save Top Charts as markdown tables, or images.
 - Save your *Attachment Graph* and *Streaks Timeline* as images, or interactive HTML pages.
 -  Export memories to JSON which can be imported into DayOne/Journey.Cloud as journal entries.
 
-### 6. Interface
+### Interface
 
-Access all the features mentioned above using either of the two:
-- **Graphical Dashboard:** A user friendly graphical dashboard that runs inside your web browser.
-- **CLI:** A command line tool with more granular control for power users.
+You have to options. Use whichever style suits you.
 
-### 7. Library
+#### 1. Graphical Dashboard
+
+A user friendly graphical dashboard that runs inside your web browser. 
+
+#### 2. CLI
+
+A command line tool if you are more of a terminal and keyboard user. 
+
+### Library
 
 - Library API loosely modeled after [pandas](https://pypi.org/project/pandas/).
 - Core object classes.
@@ -104,9 +136,10 @@ $ pip install "memory.fm @ git+https://github.com/shsiddhant/memory.fm.git"
 `ScrobbleLog` dates are timezone aware. If you want your timezone to be automatically
 found from your system, you need to install the package with the optional dependency 
 group `timezone`.
+For most people, I would recommend installing `memory.fm[all]` to get a full experience.
 
 ```shell
-$ pip install "memory.fm[timezone] @ git+https://github.com/shsiddhant/memory.fm.git"
+$ pip install "memory.fm[all] @ git+https://github.com/shsiddhant/memory.fm.git"
 ```
 
 Requires **Python>=3.10**
@@ -281,3 +314,4 @@ See [CONTRIBUTING](CONTRIBUTING.md) for a detailed overview of the contributing 
 ## Acknowledgements
 
 Thanks to Felix Hagemans (https://github.com/felhag) for the fantastic [lastfmstats](https://www.lastfmstats.com).
+****

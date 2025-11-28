@@ -12,6 +12,8 @@ from memoryfm.cli.utils._import_utils import (
     _delete_saved_import,
 )
 from memoryfm.cli.utils._common_utils import _normalise_username
+from memoryfm.cli.utils._sync_utils import sync_import_with_api
+from memoryfm.cli import API_KEY
 
 app = typer.Typer()
 
@@ -31,6 +33,16 @@ def import_lastfmstats(
     Import JSON/CSV export obtained from lastfmstats.com
     """
     import_and_save(file, file_type, "lastfmstats", overwrite=overwrite)
+
+
+@app.command("last.fm")
+def import_lastfm(
+    username: Annotated[str, typer.Argument(help="Last.fm username")],
+) -> None:
+    """
+    Import Last.fm user data.
+    """
+    sync_import_with_api(username, API_KEY)
 
 
 @app.command("spotify")

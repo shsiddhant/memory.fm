@@ -129,7 +129,7 @@ with name: ``Scrobbles``.
 .. ipython::
   
    In [8]: print(sclog.top_charts(kind="album",
-      ...:                        n=3).to_markdown())
+      ...: ).to_markdown())
    | Album             |   Scrobbles |
    |:------------------|------------:|
    | Come In           |           7 |
