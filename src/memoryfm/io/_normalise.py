@@ -14,6 +14,7 @@ def normalise_lastfmstats(
     username: str,
     tz: str | None = None,
     unit: str | None = "ms",
+    source: str | None = "lastfmstats.com",
 ) -> ScrobbleLog:
     """ """
     df = df.rename(str.lower, axis=1)
@@ -22,7 +23,11 @@ def normalise_lastfmstats(
     else:
         raise SchemaError("Column not found", "date")
     df = df.rename(columns={"date": "timestamp"})
-    log = ScrobbleLog(df=df, username=username, tz=tz, source="lastfmstats.com")
+    df = df.sort_values(by="timestamp")
+    df = df.drop_duplicates(
+        subset=["timestamp", "track", "artist", "album"], ignore_index=True
+    )
+    log = ScrobbleLog(df=df, username=username, tz=tz, source=source)
     return log
 
 

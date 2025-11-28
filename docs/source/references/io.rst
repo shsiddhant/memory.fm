@@ -12,8 +12,9 @@ External Sources
 ~~~~~~~~~~~~~~~~
 
 .. autosummary::
-    :toctree: api
-    
+    :toctree: api/
+
+    from_lastfm_api
     from_lastfmstats
     from_spotify
     from_spotify_zip

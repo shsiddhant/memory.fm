@@ -1,8 +1,9 @@
 """Package: memoryfm"""
 
 from memoryfm.core.objects import ScrobbleLog, Scrobble
-from memoryfm.io.lastfmstats import from_lastfmstats
-from memoryfm.io.spotify import (
+from memoryfm.io.api import (
+    from_lastfm_api,
+    from_lastfmstats,
     from_spotify,
     from_spotify_zip,
 )
@@ -10,6 +11,7 @@ from memoryfm.io.spotify import (
 __all__ = [
     "Scrobble",
     "ScrobbleLog",
+    "from_lastfm_api",
     "from_lastfmstats",
     "from_spotify",
     "from_spotify_zip",

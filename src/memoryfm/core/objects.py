@@ -855,7 +855,11 @@ class ScrobbleLog:
     # -----------------------------------------------------------------
     # Transform Methods
 
-    def append(self, scrobbles: Scrobble | list(Scrobble | dict) | ScrobbleLog) -> Self:
+    def append(
+        self,
+        scrobbles: Scrobble | list(Scrobble | dict) | ScrobbleLog,
+        drop_duplicates: bool = False,
+    ) -> Self:
         """
         Append scrobble(s) to a ScrobbleLog.
 
@@ -893,6 +897,8 @@ class ScrobbleLog:
             )
         source = self.meta["source"]
         self.df = pd.concat([self.df, df_2], ignore_index=True)
+        if drop_duplicates:
+            self.df = self.df.drop_duplicates(ignore_index=True)
         validate_df(self.df, self.tz)
         self.meta = meta_generator(self.df, self.username, self.tz, source)
         return self

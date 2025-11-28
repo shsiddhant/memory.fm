@@ -69,5 +69,5 @@ with userslist:
 # Add new user
 with adduser:
     st.header(":material/person_add: New User", help="Add new user")
-    st.write("### :material/download: Import from lastfmstats/Spotify")
+    st.write("### :material/download: Import from Last.fm/lastfmstats/Spotify")
     add_user()

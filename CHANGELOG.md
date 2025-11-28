@@ -1,5 +1,28 @@
 ## [Unreleased]
 
+### Added
+
+- Add a basic Streamlit app with
+	- a "Home" page to add, view, load, or delete imports.
+	- an "Overview" page to view basic stats:
+		- total/average scrobbles, tracks/artists/albums count
+		- a bar graph showing scrobbles count by year
+		- top 3 tracks/artists/albums
+- Add support for importing using Last.fm username and API.
+    - Add corresponding `import` subcommand `last.fm USERNAME` in CLI.
+    - Add the same option to Streamlit app.
+    - Show progress bar.
+
+### Changed
+
+- Add optional parameters `unit` and `source` to `normalise_lastfmstats`.
+- Drop duplicates in `normalise_lastfmstats`.
+- Add option to drop duplicates while appending scrobbles to a ScrobbleLog.
+
+### Build
+
+- Add a new dependency group 'all' to include all optional dependencies.
+
 ---
 
 ## [v0.5.0] - 2025-11-08
