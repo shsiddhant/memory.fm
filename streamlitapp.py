@@ -3,7 +3,7 @@ import streamlit as st
 
 from memoryfm.cli.utils._import_utils import get_imported_names
 from memoryfm.streamlit.util import print_scrobbles, set_session_data
-from memoryfm.streamlit.index import home, overview
+from memoryfm.streamlit.index import all_pages, home
 
 st.set_page_config(layout="wide")
 
@@ -57,12 +57,7 @@ def date_popover():
 
 if st.session_state.get("username"):
     scrobbles = st.Page(show_scrobbles, title="Scrobbles")
-    pages = [
-        home,
-        overview,
-        scrobbles,
-    ]
-    pg = st.navigation(pages)
+    pg = st.navigation(all_pages)
     pg.run()
 else:
     pages = [

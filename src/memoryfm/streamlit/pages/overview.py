@@ -28,7 +28,7 @@ st.markdown(
 
 # Header
 if st.session_state.get("username") is not None:
-    st.title(f":primary[{st.session_state.username}]")
+    st.title(f":primary[:material/person: {st.session_state.username}]")
     ""
     set_session_data(st.session_state.username)
     # Summary Badges
