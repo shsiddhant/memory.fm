@@ -12,3 +12,14 @@ overview = st.Page(
     title="Overview",
     icon=":material/list_alt:",
 )
+top_charts = st.Page(
+    page=pages / "top_charts.py",
+    title="Top Charts",
+    icon=":material/bar_chart:",
+)
+
+all_pages = [
+    home,
+    overview,
+    top_charts,
+]

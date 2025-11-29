@@ -37,19 +37,26 @@ def set_session_data(
     max_length: int = 10,
     from_date: str | None = None,
     to_date: str | None = None,
+    **kwargs,
 ) -> None:
     if username is not None:
         st.session_state["username"] = username
         st.session_state["max"] = max_length
         st.session_state["sc_log"] = read_cache_from_name(
-            username, start=from_date, end=to_date
+            username, start=from_date, end=to_date, **kwargs
         )
-        st.session_state["from"] = datetime.fromisoformat(
-            st.session_state["sc_log"].meta["date_range"]["start"]
-        )
-        st.session_state["to"] = datetime.fromisoformat(
-            st.session_state["sc_log"].meta["date_range"]["end"]
-        )
+        if from_date is None:
+            st.session_state["from"] = datetime.fromisoformat(
+                st.session_state["sc_log"].meta["date_range"]["start"]
+            )
+        else:
+            st.session_state["from"] = from_date
+        if to_date is None:
+            st.session_state["to"] = datetime.fromisoformat(
+                st.session_state["sc_log"].meta["date_range"]["end"]
+            )
+        else:
+            st.session_state["to"] = to_date
         if from_date is None and to_date is None:
             st.session_state["date_range"] = "All Time"
         else:
@@ -105,6 +112,25 @@ def summary(scrobble_log) -> str:
     # {last}
     #    """
     return card
+
+
+def date_popover():
+    with st.popover(
+        st.session_state.get("date_range"),
+        icon=":material/calendar_today:",
+    ):
+        st.write("Select a date range")
+        from_date = st.date_input(
+            label="From",
+            value=st.session_state.get("from"),
+            format="DD-MM-YYYY",
+        )
+        to_date = st.date_input(
+            label="To",
+            value=st.session_state.get("to"),
+            format="DD-MM-YYYY",
+        )
+        return from_date, to_date
 
 
 def print_scrobbles(
