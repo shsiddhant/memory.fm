@@ -2,19 +2,23 @@ from __future__ import annotations
 import streamlit as st
 from memoryfm.cli.utils._import_utils import get_imported_names
 from memoryfm.streamlit.util import set_session_data
-from memoryfm.streamlit.manage_imports import add_user, confirm_delete
+from memoryfm.streamlit.manage_imports import add_user, confirm_delete, sync_with_api
 from memoryfm.streamlit.index import overview
 
 if "imports" not in st.session_state or st.session_state.imports is None:
     st.session_state["imports"] = get_imported_names()
+    st.session_state.imports.sort()
 if st.session_state.get("username"):
     set_session_data(st.session_state.username)
 
 
 def users_list():
+    st.session_state.imports.sort()
     for username in st.session_state.imports:
         with st.container():
-            user, delete = st.columns([1, 1])
+            user, modify = st.columns([1, 1])
+            with modify:
+                sync, delete = st.columns([1, 5])
         with user:
             if st.button(
                 f"**:material/person: {username}**",
@@ -25,6 +29,18 @@ def users_list():
                 ):
                     set_session_data(username)
                     st.switch_page(overview)
+        with sync:
+            sync_scrobbles = False
+            set_session_data(username)
+            if st.session_state["meta"]["source"] == "last.fm":
+                if st.button(
+                    "**:green[:material/sync:]**",
+                    key=f"sync {username}",
+                    type="tertiary",
+                    help="Sync scrobbles",
+                ):
+                    sync_scrobbles = True
+            st.session_state["username"] = None
         with delete:
             if st.button(
                 ":primary[:material/delete:]",
@@ -35,6 +51,8 @@ def users_list():
                 confirm_delete(username)
         if st.session_state.deleted_user:
             st.session_state.deleted_user = None
+        if sync_scrobbles:
+            sync_with_api(username)
 
 
 st.markdown(
