@@ -17,9 +17,15 @@ top_charts = st.Page(
     title="Top Charts",
     icon=":material/bar_chart:",
 )
+attachment = st.Page(
+    page=pages / "attachment.py",
+    title="Attachment Index",
+    icon=":material/person_heart:",
+)
 
 all_pages = [
     home,
     overview,
     top_charts,
+    attachment,
 ]

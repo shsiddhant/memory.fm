@@ -6,6 +6,7 @@ from datetime import datetime
 
 from memoryfm.cli.utils._loader_utils import read_cache_from_name
 from memoryfm.cli.utils._import_utils import read_imports
+from memoryfm.cli.utils._cli_printer import date_filter
 from memoryfm.cli.utils._common_utils import check_loaded
 from memoryfm.cli import imports_dir, imports_file, loaded_file
 
@@ -13,6 +14,7 @@ from memoryfm.cli import imports_dir, imports_file, loaded_file
 if TYPE_CHECKING:
     from memoryfm import ScrobbleLog
     import pandas as pd
+    from typing import Literal
 
 
 def _delete_import(username: str):
@@ -32,6 +34,9 @@ def _delete_import(username: str):
         loaded_file.unlink()
 
 
+from memoryfm.cli.utils._loader_utils import _load_saved_log
+
+
 def set_session_data(
     username: str,
     max_length: int = 10,
@@ -45,6 +50,7 @@ def set_session_data(
         st.session_state["sc_log"] = read_cache_from_name(
             username, start=from_date, end=to_date, **kwargs
         )
+        _load_saved_log(username)
         if from_date is None:
             st.session_state["from"] = datetime.fromisoformat(
                 st.session_state["sc_log"].meta["date_range"]["start"]
@@ -162,3 +168,71 @@ def scrobbles_count(
     count.index.name = "Year"
     count = count.reset_index()
     return count
+
+
+# Time Periods
+# ---------------------------------------------------------------------------
+def time_periods():
+    st.markdown("#### :material/calendar_today: Time Period")
+    time_period = st.radio(
+        "Time period",
+        options=["week", "month", "year", "all time", "custom date range"],
+        horizontal=True,
+        label_visibility="hidden",
+        format_func=str.title,
+    )
+    if time_period in ["week", "month", "year"]:
+        from_date, to_date = date_filter(last=time_period)
+    elif time_period == "all time":
+        from_date, to_date = None, None
+    elif time_period == "custom date range":
+        from_date_col, to_date_col = st.columns([1, 1])
+        with from_date_col:
+            from_date = st.date_input(
+                label="**From**",
+                value=st.session_state.get("from"),
+                format="DD-MM-YYYY",
+            )
+        with to_date_col:
+            to_date = st.date_input(
+                label="**To**",
+                value=st.session_state.get("to"),
+                format="DD-MM-YYYY",
+            )
+    return from_date, to_date
+
+
+icons = {"artists": "artist", "albums": "album", "tracks": "music_note"}
+colors = {"artists": "blue", "albums": "green", "tracks": "orange"}
+filters_allowed = {
+    "artists": None,
+    "albums": ["artists"],
+    "tracks": ["artists", "albums"],
+}
+
+
+def format_chart_type(text: Literal["artists", "albums", "tracks"]):
+    return f":material/{icons[text]}: {text.capitalize()}"
+
+
+def analytics_base_layout(page_name: str):
+    # Date Range
+    if "date_range" not in st.session_state:
+        st.session_state["date_range"] = "All Time"
+    with st.container():
+        kind_col, dates_col = st.columns([3, 3], border=True)
+    with dates_col:
+        from_date, to_date = time_periods()
+    # Update Session State
+    dates = {"from_date": from_date, "to_date": to_date}
+    # Select Chart Type
+    with kind_col:
+        st.markdown("#### :material/view_list: Chart Type")
+        kind = st.radio(
+            "Pick a chart type",
+            ["artists", "albums", "tracks"],
+            key=page_name,
+            horizontal=True,
+            format_func=format_chart_type,
+        )
+    return {"dates": dates, "kind": kind}
