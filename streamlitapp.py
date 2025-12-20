@@ -1,7 +1,9 @@
 from __future__ import annotations
 import streamlit as st
+from typer import Exit
 
 from memoryfm.cli.utils._import_utils import get_imported_names
+from memoryfm.cli.utils._common_utils import check_loaded
 from memoryfm.streamlit.util import print_scrobbles, set_session_data
 from memoryfm.streamlit.index import all_pages, home
 
@@ -13,8 +15,13 @@ if "delete" not in st.session_state:
     st.session_state.delete = None
 if "deleted_user" not in st.session_state:
     st.session_state.deleted_user = None
-if "username" not in st.session_state:
-    st.session_state.username = None
+if "username" not in st.session_state or st.session_state.username is None:
+    try:
+        st.session_state.username = check_loaded()
+    except Exit:
+        st.session_state.username = None
+if st.session_state.username:
+    set_session_data(st.session_state.username)
 
 
 def show_scrobbles():

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import streamlit as st
+
 from memoryfm.cli.utils._import_utils import get_imported_names
 from memoryfm.streamlit.util import set_session_data
 from memoryfm.streamlit.manage_imports import add_user, confirm_delete, sync_with_api
@@ -8,8 +9,6 @@ from memoryfm.streamlit.index import overview
 if "imports" not in st.session_state or st.session_state.imports is None:
     st.session_state["imports"] = get_imported_names()
     st.session_state.imports.sort()
-if st.session_state.get("username"):
-    set_session_data(st.session_state.username)
 
 
 def users_list():
@@ -31,7 +30,6 @@ def users_list():
                     st.switch_page(overview)
         with sync:
             sync_scrobbles = False
-            set_session_data(username)
             if st.session_state["meta"]["source"] == "last.fm":
                 if st.button(
                     "**:green[:material/sync:]**",
@@ -40,7 +38,6 @@ def users_list():
                     help="Sync scrobbles",
                 ):
                     sync_scrobbles = True
-            st.session_state["username"] = None
         with delete:
             if st.button(
                 ":primary[:material/delete:]",

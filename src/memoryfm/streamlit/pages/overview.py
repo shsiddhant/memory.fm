@@ -3,13 +3,11 @@ from __future__ import annotations
 # from typing import TYPE_CHECKING
 import streamlit as st
 
-from memoryfm.streamlit.util import summary, set_session_data, scrobbles_count
+from memoryfm.streamlit.util import summary, scrobbles_count
 from memoryfm.cli.utils._import_utils import get_imported_names
-
 
 if "imports" not in st.session_state or st.session_state.imports is None:
     st.session_state["imports"] = get_imported_names()
-
 
 # Reduce whitespace above header.
 st.markdown(
@@ -30,7 +28,7 @@ st.markdown(
 if st.session_state.get("username") is not None:
     st.title(f":primary[:material/person: {st.session_state.username}]")
     ""
-    set_session_data(st.session_state.username)
+    # set_session_data(st.session_state.username)
     # Summary Badges
     card = summary(st.session_state["sc_log"])
     listens_key = card["listens_key"]
