@@ -172,17 +172,29 @@ def scrobbles_count(
 
 # Time Periods
 # ---------------------------------------------------------------------------
-def time_periods():
+def time_periods(
+    value: Literal["week", "month", "year", "all time", "custom date range"] = "week",
+):
+    index_dict = {
+        "week": 0,
+        "month": 1,
+        "year": 2,
+        "all time": 3,
+        "custom date range": 4,
+    }
     st.markdown("#### :material/calendar_today: Time Period")
     time_period = st.radio(
         "Time period",
-        options=["week", "month", "year", "all time", "custom date range"],
+        options=index_dict.keys(),
+        index=index_dict[value],
         horizontal=True,
-        label_visibility="hidden",
+        label_visibility="collapsed",
         format_func=str.title,
     )
     if time_period in ["week", "month", "year"]:
         from_date, to_date = date_filter(last=time_period)
+        from_date = from_date.date()
+        to_date = to_date.date()
     elif time_period == "all time":
         from_date, to_date = None, None
     elif time_period == "custom date range":
@@ -215,22 +227,23 @@ def format_chart_type(text: Literal["artists", "albums", "tracks"]):
     return f":material/{icons[text]}: {text.capitalize()}"
 
 
-def analytics_base_layout(page_name: str):
+def analytics_base_layout(page_name: str, **kwargs):
     # Date Range
     if "date_range" not in st.session_state:
         st.session_state["date_range"] = "All Time"
     with st.container():
         kind_col, dates_col = st.columns([3, 3], border=True)
     with dates_col:
-        from_date, to_date = time_periods()
+        from_date, to_date = time_periods(**kwargs)
     # Update Session State
     dates = {"from_date": from_date, "to_date": to_date}
     # Select Chart Type
     with kind_col:
-        st.markdown("#### :material/view_list: Chart Type")
+        st.markdown("#### :material/view_list: Type")
         kind = st.radio(
-            "Pick a chart type",
-            ["artists", "albums", "tracks"],
+            label="Type",
+            options=["artists", "albums", "tracks"],
+            label_visibility="collapsed",
             key=page_name,
             horizontal=True,
             format_func=format_chart_type,

@@ -1,4 +1,27 @@
-## [Unreleased]
+## [0.8.0] - 2025-12-23
+
+### Added
+ 
+- Add an "Attachment Index" page with
+    - a simple and clean summary.
+    - a line chart of Attachment Index over time.
+- Add a "Streaks" page with
+    - longest streak details.
+    - a timeline chart with color coded bands, each representing a streak.
+
+### Changed
+
+- Clean up the nested blocks on the "Top Charts" page.
+- Remove unused code from the Streamlit app script.
+
+### Fixed
+
+- Fix disappearing sync scrobbles button and only display it when source is "last.fm".
+- Fix mismatched bases for logarithm and exponent function in attachment index calculations.
+
+---
+
+## [v0.7.0] - 2025-12-06
 
 ### Added
 
@@ -8,10 +31,12 @@
 		- total/average scrobbles, tracks/artists/albums count
 		- a bar graph showing scrobbles count by year
 		- top 3 tracks/artists/albums
+- Add a "Top Charts" tables with date filters and artist/album/track filters.
 - Add support for importing using Last.fm username and API.
     - Add corresponding `import` subcommand `last.fm USERNAME` in CLI.
     - Add the same option to Streamlit app.
     - Show progress bar.
+    - Add a sync button to update scrobbles for existing users. 
 
 ### Changed
 

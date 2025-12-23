@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from math import log10, exp
+from math import log, exp
 import numpy as np
 import pandas as pd
 
@@ -48,9 +48,9 @@ def renyi_entropy(
         raise ValueError("There must be atleast one non-zero value.")
     prop = counts / np.sum(counts)
     if alpha != 1:
-        renyi = (1 / (1 - alpha)) * log10(np.sum(prop**alpha))
+        renyi = (1 / (1 - alpha)) * log(np.sum(prop**alpha))
     elif alpha == 1:
-        renyi = -np.sum(prop * np.log10(prop))
+        renyi = -np.sum(prop * np.log(prop))
     return renyi
 
 
@@ -113,7 +113,7 @@ def attachment(
     freq: str | pd.Period = "D",
     year: int | None = None,
     alpha: np.float64 = 1,
-) -> np.NDArray[np.float64 | np.nan] | None:
+) -> pd.Series:
     """
     Compute Attachment Index from a ScrobbeLog
 
@@ -161,7 +161,7 @@ def weighted_attachment(
     freq: str | pd.Period = "W",
     year: int | None = None,
     alpha: np.float64 = 1,
-) -> np.NDArray[np.float64 | np.nan] | None:
+) -> pd.Series:
     """
     Calculate weighted attachment index.
 
