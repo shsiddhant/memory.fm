@@ -22,10 +22,10 @@ attachment = st.Page(
     title="Attachment Index",
     icon=":material/person_heart:",
 )
+streaks = st.Page(
+    page=pages / "streaks.py",
+    title="Streaks",
+    icon=":material/bolt:",
+)
 
-all_pages = [
-    home,
-    overview,
-    top_charts,
-    attachment,
-]
+all_pages = [home, overview, top_charts, attachment, streaks]

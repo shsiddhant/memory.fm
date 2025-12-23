@@ -69,6 +69,8 @@ def sync_with_api(username, api_key=API_KEY):
         write_import_files(username, scrobble_log)
         add_to_imports(username, overwrite=True)
         st.session_state.imports = get_imported_names()
+        st.session_state["imports_source"] = dict.fromkeys(st.session_state["imports"])
+        st.session_state["imports_source"][username] = "last.fm"
         succesful(info)
         return import_name_dir
 

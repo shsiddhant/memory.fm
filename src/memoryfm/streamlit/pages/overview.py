@@ -28,7 +28,6 @@ st.markdown(
 if st.session_state.get("username") is not None:
     st.title(f":primary[:material/person: {st.session_state.username}]")
     ""
-    # set_session_data(st.session_state.username)
     # Summary Badges
     card = summary(st.session_state["sc_log"])
     listens_key = card["listens_key"]

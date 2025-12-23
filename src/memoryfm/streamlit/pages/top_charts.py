@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 import streamlit as st
 
 from memoryfm.cli.utils._cli_printer import date_filter
-from memoryfm.streamlit.util import set_session_data
+from memoryfm.streamlit.util import set_session_data, analytics_base_layout
+from memoryfm.stats.attachment import weighted_attachment
 import plotly.express as px
 
 if TYPE_CHECKING:
@@ -23,6 +24,8 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+page_name = "top_charts"
 
 if "filter_kwargs" not in st.session_state:
     st.session_state["filter_kwargs"] = {
@@ -152,31 +155,22 @@ st.write("---")
 st.markdown(f"### :material/person: {st.session_state.username}")
 ""
 
-# Date Range
-if "date_range" not in st.session_state:
-    st.session_state["date_range"] = "All Time"
-
-with st.container():
-    kind_col, dates_col = st.columns([3, 3], border=True)
-with dates_col:
-    from_date, to_date = time_periods()
-
 # Update Session State
-dates = {"from_date": from_date, "to_date": to_date}
 username = st.session_state["username"]
-set_session_data(st.session_state["username"], **dates)
+set_session_data(
+    st.session_state["username"],
+)
+sc_log: ScrobbleLog
 sc_log = st.session_state["sc_log"]
 
+# Date Filter
+data = analytics_base_layout(page_name, value="year")
+dates = data["dates"]
+
 # Select Chart Type
-with kind_col:
-    st.markdown("#### :material/view_list: Chart Type")
-    kind = st.radio(
-        "Pick a chart type",
-        ["artists", "albums", "tracks"],
-        horizontal=True,
-        format_func=format_chart_type,
-    )
-""
+kind = data["kind"]
+kind_2 = kind.rstrip("s")
+attachment_index = weighted_attachment(sc_log, by=kind_2, freq="D")
 ""
 
 # Subheader

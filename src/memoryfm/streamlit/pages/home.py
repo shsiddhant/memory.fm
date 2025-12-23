@@ -1,5 +1,7 @@
 from __future__ import annotations
 import streamlit as st
+import json
+from memoryfm.cli import imports_dir
 
 from memoryfm.cli.utils._import_utils import get_imported_names
 from memoryfm.streamlit.util import set_session_data
@@ -9,6 +11,12 @@ from memoryfm.streamlit.index import overview
 if "imports" not in st.session_state or st.session_state.imports is None:
     st.session_state["imports"] = get_imported_names()
     st.session_state.imports.sort()
+
+if "imports_source" not in st.session_state:
+    st.session_state["imports_source"] = dict.fromkeys(st.session_state["imports"])
+for username in st.session_state["imports"]:
+    with open(imports_dir / username / f"{username}-meta.json", "r") as fp:
+        st.session_state["imports_source"][username] = json.load(fp)["source"]
 
 
 def users_list():
@@ -30,7 +38,7 @@ def users_list():
                     st.switch_page(overview)
         with sync:
             sync_scrobbles = False
-            if st.session_state["meta"]["source"] == "last.fm":
+            if st.session_state["imports_source"][username] == "last.fm":
                 if st.button(
                     "**:green[:material/sync:]**",
                     key=f"sync {username}",
