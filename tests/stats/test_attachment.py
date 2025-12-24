@@ -22,7 +22,7 @@ sclog = mfm.ScrobbleLog.from_json(json_file)
 class TestRenyiEntropy:
     def test_renyi_entropy(self):
         counts = [10, 10, 10]
-        assert renyi_entropy(counts) == pytest.approx(np.log10(3))
+        assert renyi_entropy(counts) == pytest.approx(np.log(3))
 
 
 class TestAttachment:
@@ -32,9 +32,7 @@ class TestAttachment:
 
     def test_attachment_index_list(self):
         sample = [1, 2, 1, 3, 2, 3]
-        assert attachment_index_list(sample) == pytest.approx(
-            100 * np.exp(-np.log10(3))
-        )
+        assert attachment_index_list(sample) == pytest.approx(100 * np.exp(-np.log(3)))
 
     def test_attachment_index_list_empty(self):
         sample = []
