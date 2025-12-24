@@ -3,27 +3,14 @@ from typing import TYPE_CHECKING
 import streamlit as st
 
 from memoryfm.cli.utils._cli_printer import date_filter
-from memoryfm.streamlit.util import set_session_data, analytics_base_layout
-from memoryfm.stats.attachment import weighted_attachment
+from memoryfm.streamlit.util import set_session_data, analytics_base_layout, PADDING
 import plotly.express as px
 
 if TYPE_CHECKING:
     from typing import Literal
     from memoryfm import ScrobbleLog
 
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 3rem;
-        padding-left: 5rem;
-        padding-right: 5rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+st.markdown(PADDING, unsafe_allow_html=True)
 
 page_name = "top_charts"
 
@@ -105,6 +92,7 @@ def bar_chart(
     fig.update_xaxes(
         title=ser.name,
     )
+    fig.update_layout(title_text=f"Top 5 {kind.capitalize()}", title_x=0.46)
     st.plotly_chart(fig)
 
 
@@ -151,17 +139,9 @@ def show_filters():
 # Header
 # ------------------------------------------------------
 st.title(":primary[:material/bar_chart: Top Charts]")
-st.write("---")
-st.markdown(f"### :material/person: {st.session_state.username}")
+# st.write("---")
 ""
 
-# Update Session State
-username = st.session_state["username"]
-set_session_data(
-    st.session_state["username"],
-)
-sc_log: ScrobbleLog
-sc_log = st.session_state["sc_log"]
 
 # Date Filter
 data = analytics_base_layout(page_name, value="year")
@@ -170,11 +150,11 @@ dates = data["dates"]
 # Select Chart Type
 kind = data["kind"]
 kind_2 = kind.rstrip("s")
-attachment_index = weighted_attachment(sc_log, by=kind_2, freq="D")
-""
 
-# Subheader
-st.subheader(f":material/{icons[kind]}: Your Top {kind.capitalize()}")
+# Update Session State
+set_session_data(st.session_state["username"], **dates)
+sc_log: ScrobbleLog
+sc_log = st.session_state["sc_log"]
 
 # Bar Chart
 if sc_log:
@@ -184,11 +164,15 @@ if sc_log:
     with st.container(border=True):
         bar_chart(sc_log, kind)
 
+# Subheader
+st.subheader(f":material/{icons[kind]}: Your Top {kind.capitalize()}")
+
 # Tabular Chart
 with st.container(border=False):
     filters, max_length_col = st.columns(
         [1, 1],
         gap="large",
+        border=True,
         vertical_alignment="top",
     )
     with max_length_col:
@@ -211,6 +195,9 @@ with st.container(border=False):
         ""
         ser = sc_log.top_charts(kind)
 if sc_log:
-    st.write(ser.head(max_l).to_markdown())
+    st.table(
+        ser.head(max_l),
+    )
+    # st.write(ser.head(max_l).to_markdown())
 else:
     st.info("No scrobbles found within the specified date range.")
