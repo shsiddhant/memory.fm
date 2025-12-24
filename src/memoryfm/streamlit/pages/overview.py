@@ -81,16 +81,25 @@ if st.session_state.get("username") is not None:
     # Scrobbles count plot
     sclog = st.session_state["sc_log"]
     count = scrobbles_count(sclog)
-    st.bar_chart(
+    count["Year"] = count["Year"].apply(lambda x: f"{x}")
+    import plotly.express as px
+
+    fig = px.bar(
         count,
-        x="Year",
-        y="Scrobbles",
-        x_label="Scrobbles",
-        y_label="Year",
-        horizontal=True,
-        color="#B40B08",
-        height=300,
+        "Scrobbles",
+        "Year",
+        orientation="h",
+        color="Year",
+        text="Scrobbles",
+        color_discrete_sequence=px.colors.qualitative.D3,
     )
+    fig.update_layout(yaxis_type="category", title_text="Yearly Scrobbles")
+    fig.update_traces(
+        width=0.6, textfont={"size": 14, "weight": "bold"}, textposition="outside"
+    )
+    fig.update_xaxes(tickformat=".0f")
+    with st.container(border=True):
+        st.plotly_chart(fig)
 
     # Top Charts preview
     top_tracks, top_artists, top_albums = st.columns(3, border=True)

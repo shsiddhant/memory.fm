@@ -25,7 +25,6 @@ def _load_saved_log(import_name: str | None):
         )
     with open(loaded_file, "w") as fp:
         json.dump(data, fp, indent=4)
-    print("Loaded:", import_name)
 
 
 def check_cache():

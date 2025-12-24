@@ -16,6 +16,17 @@ if TYPE_CHECKING:
     import pandas as pd
     from typing import Literal
 
+PADDING = """
+    <style>
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 3rem;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+    </style>
+    """
+
 
 def _delete_import(username: str):
     imports_list = read_imports()
@@ -232,7 +243,7 @@ def analytics_base_layout(page_name: str, **kwargs):
     if "date_range" not in st.session_state:
         st.session_state["date_range"] = "All Time"
     with st.container():
-        kind_col, dates_col = st.columns([3, 3], border=True)
+        kind_col, dates_col = st.columns([3, 3], border=True, gap="large")
     with dates_col:
         from_date, to_date = time_periods(**kwargs)
     # Update Session State
