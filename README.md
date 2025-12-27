@@ -23,19 +23,41 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 
 **memory.fm** focuses on *how* you listened, not just *what* you listened to.
 
+#### Overview
+
+Get a clean summary of your music listening history.
+
+<p align="center">
+  <img src="screenshots/overview.png" height="600">
+</p>
+
 #### Top Charts
 
-View your top artists, albums, and tracks. Filter them by weekly, monthly, and yearly periods, or a custom date range.
+- View your top artists, albums, and tracks.
+- Filter them by weekly, monthly, and yearly periods, or a custom date range.
+
+<p align="center">
+  <img src="screenshots/top_charts.png" height="600">
+</p>
 
 #### Attachment Index
 
-The **Attachment Index** is a measure of how concentrated your listening was during a given period - whether you were deeply attached to a few tracks, albums, or artists, or broadly exploring.
+- See how concentrated your listening was during a given period using **Attachment Index**.
+- Find out whether you were deeply attached to a few tracks, albums, or artists, or broadly exploring.
+
+<p align="center">
+  <img src="screenshots/attachment_index.png" height="600">
+</p>
 
 #### Streaks
 
-Detect periods of intense, repeated listening to a single artist, album, or track. These streaks often correspond to emotionally significant moments or phases.
+- Detect periods of intense, repeated listening to a single artist, album, or track. Streaks often correspond to emotionally significant moments or phases.
 
-With **Streaks Timeline**, you can view an interactive, color-coded timeline of your listening streaks. 
+- With **Streaks Timeline**, you can view an interactive, color-coded timeline of your listening streaks. 
+
+<p align="center">
+  <img src="screenshots/streaks.png" height="600">
+</p>
 
 
 ### Interface
