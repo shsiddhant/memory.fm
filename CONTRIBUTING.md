@@ -16,7 +16,7 @@ This guide explains how to setup the project locally, make changes, and submit t
 
 ### Fork the repository
 
-1. The project is hosted on [GitHub](https://github.com/shsiddhant/memory.fm.git). Fork the project from there.
+1. Fork the project from the GitHub.
 2. Clone the fork to your machine.
 ```shell
 git clone https://github.com/your-username/memory.fm.git
@@ -34,7 +34,7 @@ git fetch upstream
 2.  Create a virtual environment and sync dependencies.
 
 ```shell
-uv sync --all-groups --extra "dev" --extra "doc"
+uv sync --all-groups --all-extras
 ```
 
 #### B. Using pip
@@ -43,7 +43,7 @@ Create a virtual environment and install the project with dev and doc dependenci
 ```shell
 python -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev, doc]"
+pip install -e ".[all]"
 ```
 
 It is recommended that you also install the pre-commit hooks for linting and formatting.

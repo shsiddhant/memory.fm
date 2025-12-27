@@ -1,7 +1,8 @@
 import streamlit as st
 from pathlib import Path
 
-pages = Path("src/memoryfm/streamlit/pages/").resolve()
+# pages = Path("pages/").resolve()
+pages = Path(__file__).parent / "pages"
 home = st.Page(
     page=pages / "home.py",
     title="Home",
