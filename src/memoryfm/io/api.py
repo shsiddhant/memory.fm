@@ -1,5 +1,5 @@
 """
-Data IO api
+Data IO API
 """
 
 from memoryfm.io.lastfmstats import from_lastfmstats

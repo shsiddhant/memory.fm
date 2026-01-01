@@ -57,6 +57,12 @@ def streaks(
         An optional end date to filter the ScrobbleLog. Either a string representing
         a datetime,  a datetime object or a pandas Timestamp object.
 
+    Returns
+    -------
+    pd.DataFrame
+        A pandas DataFrame with columns ``start``, ``end``, and ``length``,
+        with each row representing a streak.
+
     """
     kinds = {"track": 1, "artist": 2, "album": 3}
     col = kinds[kind]
