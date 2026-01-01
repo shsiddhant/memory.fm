@@ -11,5 +11,7 @@ A quickstart guide for newcomers.
    :maxdepth: 2
 
    installation
+   dashboard
+   stats/index
    cli_usage
    library_usage

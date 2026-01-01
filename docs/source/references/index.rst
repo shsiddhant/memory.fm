@@ -12,3 +12,4 @@ Overview of all objects, functions and methods.
    io
    scrobble
    scrobble_log
+   stats
