@@ -57,28 +57,28 @@ html_css_files = [
     "css/custom.css",
 ]
 html_theme_options = {
-    "external_links": [
-        {
-            "url": "https://pandas.pydata.org/",
-            "name": "pandas",
-        },
-    ],
+    #    "external_links": [
+    #        {
+    #            "url": "https://pandas.pydata.org/",
+    #            "name": "pandas",
+    #        },
+    #    ],
     "icon_links": [
         {
             "name": "GitHub",
             "url": "https://github.com/shsiddhant/memory.fm",
             "icon": "fa-brands fa-github",
         },
-        {
-            "name": "GitLab",
-            "url": "https://gitlab.com/sharmasiddhant/memory.fm",
-            "icon": "fa-brands fa-gitlab",
-        },
+        #        {
+        #            "name": "GitLab",
+        #            "url": "https://gitlab.com/sharmasiddhant/memory.fm",
+        #            "icon": "fa-brands fa-gitlab",
+        #        },
     ],
     "show_toc_level": 1,
     "navbar_align": "left",
     "collapse_navigation": True,
-    "show_nav_level": 2,
+    "show_nav_level": 3,
     "navbar_center": ["navbar-nav"],
 }
 html_sidebars = {"index.rst": []}

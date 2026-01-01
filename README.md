@@ -76,12 +76,62 @@ pip install "memory.fm @ git+https://github.com/shsiddhant/memory.fm.git"
 
 Requires **Python>=3.10**
 
+## Quick Start
+
+### Dashboard (Recommended for First-Time Users)
+
+Launch the interactive web dashboard:
+```bash
+memoryfm-gui
+```
+
+This opens a browser interface at `http://localhost:8501` where you can:
+- Import your listening history from Last.fm or Spotify
+- Explore visualizations and analytics
+- View your attachment patterns and listening streaks
+
+### Command Line Interface
+
+For power users, the CLI offers more granular control:
+```bash
+# Import data from Last.fm
+memoryfm import last.fm <your_username>
+
+# Import from Spotify export
+memoryfm import spotify path/to/my_spotify_data.zip --username <use_any_username>
+
+# Load your import
+memoryfm load <your_username>
+
+# View top artists for the last month
+memoryfm top artists --last month
+
+```
+
+See the [CLI documentation](https://memory-fm.readthedocs.io/quickstart/cli_usage.html) for all available commands.
+
+### Python Library
+
+Use memory.fm programmatically in your own projects:
+```python
+import memoryfm as mfm
+
+# Load your listening history
+sclog = mfm.from_lastfm_api(username="your_username",
+                            tz="Asia/Kolkata")
+
+# Filter by dates
+filtered_sclog = sclog.filter_by_date("2025-09-12 10 PM", end="2025-09-13 10:40 AM")
+
+# Calculate attachment index of order alpha
+attachment = mfm.attachment(sclog, by="album", year=2024, alpha=2)
+```
+
+See the [API documentation](https://memory-fm.readthedocs.io/references/) for more examples.
+
 ## Documentation
 
-Full documentation for the Python library, and CLI will soon be
-available at:
-
-https://memory-fm.readthedocs.io
+Full documentation will soon be available at: https://memory-fm.readthedocs.io
 
 
 ## Roadmap

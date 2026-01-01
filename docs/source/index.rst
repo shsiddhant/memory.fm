@@ -1,19 +1,35 @@
 
-.. memory.fm documentation
 
-.. module:: memoryfm
-
-=========
 memory.fm
 =========
 
-A small Python library and CLI tool for reading, analyzing, visualizing and exporting `Last.fm <https://www.last.fm>`_ scrobble data.
+**memory.fm** is a Python library, CLI tool, and web-based dashboard for exploring your music listening history from Last.fm and Spotify.
 
-Meant for anyone who obsesses over their music listening. Even if you aren't as obsessed, you are still welcome and encouraged to try it out.
+.. admonition:: What makes it different?
+   :class: tip
+   
+   Instead of just showing *what* you listened to, memory.fm reveals *how* you listened - surfacing patterns like attachment, repetition, and obsessive listening to help you revisit periods of your life through music.
 
-**Inspired by my habit of repurposing music listening history as a medium to bring up memories.**
 
-.. grid:: 1 2 2 2
+Key Features
+------------
+
+**Attachment Index**
+   Measure listening concentration during any period
+
+**Streaks**  
+   Find periods of obsessive or repetitive listening
+
+**Interactive Analytics**
+   Explore patterns through visual dashboards and timelines
+
+**Flexible Access**
+   Python library, CLI, or web dashboard
+
+Getting Started
+---------------
+
+.. grid:: 3
    :gutter: 4
    :padding: 2 2 0 0
    :class-container: sd-text-center
@@ -45,25 +61,27 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
          :expand:
 
          Go to API Reference
+   
+   .. grid-item-card:: Dashboard Guide
+      
+      Using the interactive web interface
 
-   .. grid-item-card:: User Guide
-      
-      User guide for more detailed information and explanation.
-      
       +++
 
-      .. button-ref:: user_guide
+      .. button-ref:: quickstart.dashboard
          :ref-type: ref
          :click-parent:
          :color: secondary
          :expand:
 
-         Go to user guide
+         Go to Dashboard Guide
+      
+      
 
 
 .. toctree::
    :hidden:
-   :maxdepth: 2
+   :maxdepth: 3
 
    quickstart/index
 
@@ -72,10 +90,3 @@ Meant for anyone who obsesses over their music listening. Even if you aren't as 
    :maxdepth: 2
 
    references/index
-
-.. toctree::
-   :hidden:
-   :maxdepth: 2
-
-   user_guide/index
-

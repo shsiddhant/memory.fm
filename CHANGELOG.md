@@ -1,3 +1,29 @@
+## [Unreleased]
+
+### Added
+
+
+### Changed
+
+
+### Fixed
+
+
+---
+
+## [0.8.1] - 2026-01-01
+
+### Changed
+
+- Expose stats and viz modules to library's public API.
+
+### Documentation
+
+- Update and finish docstrings for the public API.
+- Complete the docs with Quickstart Guide and API Reference.
+
+---
+
 ## [0.8.0] - 2025-12-23
 
 ### Added
