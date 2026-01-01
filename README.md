@@ -108,7 +108,7 @@ memoryfm top artists --last month
 
 ```
 
-See the [CLI documentation](https://memory-fm.readthedocs.io/quickstart/cli_usage.html) for all available commands.
+See the [CLI documentation](https://memoryfm.readthedocs.io/en/stable/quickstart/cli_usage.html) for all available commands.
 
 ### Python Library
 
@@ -127,11 +127,11 @@ filtered_sclog = sclog.filter_by_date("2025-09-12 10 PM", end="2025-09-13 10:40 
 attachment = mfm.attachment(sclog, by="album", year=2024, alpha=2)
 ```
 
-See the [API documentation](https://memory-fm.readthedocs.io/references/) for more examples.
+See the [API documentation](https://memoryfm.readthedocs.io/en/stable/references/index.html#api) for more examples.
 
 ## Documentation
 
-Full documentation will soon be available at: https://memory-fm.readthedocs.io
+Full documentation is available at: https://memoryfm.readthedocs.io
 
 
 ## Roadmap
