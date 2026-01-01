@@ -20,7 +20,7 @@ You can use :func:`from_lastfmstats` to read JSON/CSV downloads from
 `lastfmstats <https://lastfmstats.com>`_ to create a ``ScrobbleLog`` instance.
 Optionally, you can set a timezone using IANA strings.
 
-.. ipython::
+.. ipython:: :okexcept:
    
    In [1]: import memoryfm as mfm
    
