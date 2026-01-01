@@ -24,7 +24,8 @@ def weighted_attachment_plot(
     rollingcolor: str = "red",
 ) -> go.Figure:
     """
-    Plot Attachment Index
+    Plot Attachment and Weighted Attachment Indices.
+
     Parameters
     ----------
     sclog : ScrobbleLog
