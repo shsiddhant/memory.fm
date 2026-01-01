@@ -24,7 +24,7 @@ Optionally, you can set a timezone using IANA strings.
    
    In [1]: import memoryfm as mfm
    
-   In [2]: sclog = mfm.from_lastfmstats("../examples/lastfmstats-demo.csv",
+   In [2]: sclog = mfm.from_lastfmstats("lastfmstats-demo.csv",
       ...:                              file_type="csv",
       ...:                              tz="Asia/Kolkata")
 
