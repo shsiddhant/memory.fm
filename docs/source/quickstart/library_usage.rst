@@ -40,7 +40,7 @@ methods: :func:`ScrobbleLog.head` and :func:`ScrobbleLog.tail`.
 If no argument is passed, the first (``head``) or last (``tail``) 5 
 scrobbles are extracted.
 
-.. ipython::
+.. ipython:: :okexcept:
 
    In [3]: print(sclog.tail())
    | Timestamp        | Track         | Artist      | Album             |
@@ -59,7 +59,7 @@ If you are familiar with pandas, the slicing works exactly like ``pd.DataFrame.i
 Like most slicing in Python, index starts with 0. The start bound is *included*,
 while the end bound is *excluded*.
 
-.. ipython::
+.. ipython:: :okexcept:
    
    In [4]: print(sclog[6:9])
    | Timestamp        | Track            | Artist         | Album       |
@@ -72,7 +72,7 @@ while the end bound is *excluded*.
 When start or end is omitted, the the corresponding bound doesn't apply.
 So if you omit end, all scrobbles from start are included.
 
-.. ipython::
+.. ipython:: :okexcept:
    
    In [5]: print(sclog[16:])
    | Timestamp        | Track         | Artist      | Album             |
@@ -89,7 +89,7 @@ You can filter a ``ScrobbleLog`` by dates using the method
 :func:`ScrobbleLog.filter_by_date`. You may pass the time alongside the date. 
 The end date is included by default.
 
-.. ipython::
+.. ipython:: :okexcept:
 
    In [6]: print(sclog.filter_by_date("2025-09-12 10 PM", end="2025-09-13 10:40 AM"))
    | Timestamp        | Track                | Artist              | Album            |
@@ -103,7 +103,7 @@ The end date is included by default.
 
 If you'd like to exclude the end date, pass ``include_end = False`` to the method.
 
-.. ipython::
+.. ipython:: :okexcept:
    
 
    In [7]: print(sclog.filter_by_date(start="2025-09-12 10 PM", end="2025-09-13", include_end = False))
@@ -122,7 +122,7 @@ tracks/artists/albums from a ``ScrobbleLog``. The method returns a pandas Series
 with name: ``Scrobbles``. 
 
 
-.. ipython::
+.. ipython:: :okexcept:
   
    In [8]: print(sclog.top_charts(kind="album").to_markdown())
    | Album             |   Scrobbles |
