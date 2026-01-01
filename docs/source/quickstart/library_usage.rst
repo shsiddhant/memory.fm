@@ -24,9 +24,7 @@ Optionally, you can set a timezone using IANA strings.
    
    In [1]: import memoryfm as mfm
    
-   In [2]: sclog = mfm.from_lastfmstats("lastfmstats-demo.csv",
-      ...:                              file_type="csv",
-      ...:                              tz="Asia/Kolkata")
+   In [2]: sclog = mfm.from_lastfmstats("lastfmstats-demo.csv", file_type="csv", tz="Asia/Kolkata")
 
 
 .. seealso::
@@ -108,9 +106,7 @@ If you'd like to exclude the end date, pass ``include_end = False`` to the metho
 .. ipython::
    
 
-   In [7]: print(sclog.filter_by_date(start="2025-09-12 10 PM",
-      ...:                            end="2025-09-13",
-      ...:                            include_end = False))
+   In [7]: print(sclog.filter_by_date(start="2025-09-12 10 PM", end="2025-09-13", include_end = False))
    | Timestamp        | Track            | Artist         | Album            |
    |:-----------------|:-----------------|:---------------|:-----------------|
    | 2025-09-12 22:53 | So You Are Tired | Sufjan Stevens | Javelin          |
@@ -128,8 +124,7 @@ with name: ``Scrobbles``.
 
 .. ipython::
   
-   In [8]: print(sclog.top_charts(kind="album",
-      ...: ).to_markdown())
+   In [8]: print(sclog.top_charts(kind="album").to_markdown())
    | Album             |   Scrobbles |
    |:------------------|------------:|
    | Come In           |           7 |
