@@ -36,4 +36,4 @@ jobs:
         run: uv run pytest tests/
 
       - name: Create CSV of commit history.
-        uses: some-natalie/gitlog-to-csv@v1
+        uses: some-natalie/gitlog-to-csv@v2
