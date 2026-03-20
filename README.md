@@ -9,7 +9,9 @@
 
 Instead of focusing only on aggregate stats, it surfaces long-term and local patterns such as attachment, repetition, and obsessive listening, to help you revisit periods of your life through music.
 
-*Inspired by the idea of using music as a way to revisit memories.*
+>*✨Inspired by the idea of using music as a way to revisit memories.✨*
+
+**[🔗 Check out the demo](https://memoryfm-demo.streamlit.app/)** to quickly test the stats and visuals dashboard.
 
 ## Features
 

@@ -34,10 +34,19 @@ if st.session_state.username:
 
 if st.session_state.get("username"):
     pg = st.navigation(all_pages)
-    pg.run()
 else:
     pages = [
         home,
     ]
     pg = st.navigation(pages)
-    pg.run()
+with st.sidebar:
+    st.markdown("**Links**")
+    st.markdown(
+        "[![Github Repo](https://img.shields.io/badge/Github-black?logo=github&style=plastic)]"
+        "(https://github.com/shsiddhant/memory.fm/)"
+    )
+    st.markdown(
+        "[![Documentation](https://img.shields.io/badge/Docs-grey?logo=readthedocs&style=plastic)]"
+        "(https://memoryfm.readthedocs.io/en/stable/)"
+    )
+pg.run()

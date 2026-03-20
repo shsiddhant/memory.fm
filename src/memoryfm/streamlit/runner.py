@@ -10,9 +10,19 @@ app_file = files(memoryfm) / "streamlit" / "streamlitapp.py"
 dashboard_dir = base_dir / "dashboard"
 dashboard_dir.mkdir(exist_ok=True)
 local_streamlit_app = dashboard_dir / f"streamlitapp_{__version__}.py"
+theme_config = """
+    [theme]
+    base="light"
+    primaryColor="#b40b08"
+    """
 
 
 def main():
+    streamlit_theme = dashboard_dir / ".streamlit"
+    streamlit_theme.mkdir(exist_ok=True)
+    config = streamlit_theme / "config.toml"
+    if not config.is_file() or not config.read_text():
+        config.write_text(theme_config)
     if not local_streamlit_app.is_file():
         app_code = app_file.read_text()
         for file in dashboard_dir.glob("streamlitapp_*.py"):
