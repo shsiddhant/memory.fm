@@ -75,7 +75,7 @@ st.markdown(
 )
 
 # Header
-st.title(":red[memory.fm]")
+st.title(":primary[memory.fm]")
 "##### *music meets memory*"
 "---"
 
