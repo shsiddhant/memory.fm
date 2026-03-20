@@ -30,7 +30,7 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 Get a clean summary of your music listening history.
 
 <p align="center">
-  <img src="screenshots/overview.png" height="600">
+  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/overview.png" height="600">
 </p>
 
 #### Top Charts
@@ -39,7 +39,7 @@ Get a clean summary of your music listening history.
 - Filter them by weekly, monthly, and yearly periods, or a custom date range.
 
 <p align="center">
-  <img src="screenshots/top_charts.png" height="600">
+  <img src=""https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/top_charts.png height="600">
 </p>
 
 #### Attachment Index
@@ -48,7 +48,7 @@ Get a clean summary of your music listening history.
 - Find out whether you were deeply attached to a few tracks, albums, or artists, or broadly exploring.
 
 <p align="center">
-  <img src="screenshots/attachment_index.png" height="600">
+  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/attachment_index.png" height="600">
 </p>
 
 #### Streaks
@@ -58,7 +58,7 @@ Get a clean summary of your music listening history.
 - With **Streaks Timeline**, you can view an interactive, color-coded timeline of your listening streaks. 
 
 <p align="center">
-  <img src="screenshots/streaks.png" height="600">
+  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/streaks.png" height="600">
 </p>
 
 
