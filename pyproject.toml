@@ -30,13 +30,16 @@ description = "A small Python library and CLI tool for reading, analyzing, visua
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-keywords = ["lastfm", "last.fm", "music", "dataset", "data nalysis"]
+keywords = ["lastfm", "last.fm", "music", "dataset", "data analysis", "dashboard", "scrobble"]
 classifiers = [
-"Development Status :: 2 - Pre-Alpha",
+"Development Status :: 3 - Alpha",
 "Intended Audience :: End Users/Desktop",
 "Intended Audience :: Developers",
+"Topic :: Scientific/Engineering :: Information Analysis",
 "Topic :: Software Development :: Libraries :: Python Modules",
-"Topic :: Internet :: Log Analysis",
+"Topic :: Software Development :: User Interfaces",
+"Topic :: Internet",
+"Topic :: Documentation :: Sphinx",
 ]
 
 [tool.setuptools_scm]
