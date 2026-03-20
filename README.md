@@ -39,7 +39,7 @@ Get a clean summary of your music listening history.
 - Filter them by weekly, monthly, and yearly periods, or a custom date range.
 
 <p align="center">
-  <img src=""https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/top_charts.png height="600">
+  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/top_charts.png" height="600">
 </p>
 
 #### Attachment Index
@@ -70,10 +70,10 @@ You have two UI options:
 
 ## Installation
 
-The package should soon be available on PyPI. For now, you can install it directly from the repository using pip:
+You can install the package from PyPI.
 
 ```shell
-pip install "memory.fm @ git+https://github.com/shsiddhant/memory.fm.git"
+pip install memory.fm
 ```
 
 Requires **Python>=3.10**
