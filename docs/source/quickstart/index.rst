@@ -12,6 +12,5 @@ A quickstart guide for newcomers.
 
    installation
    dashboard
-   stats/index
    cli_usage
    library_usage

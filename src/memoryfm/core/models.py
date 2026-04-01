@@ -1,6 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import DateTime, ForeignKey, UniqueConstraint, String
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -8,8 +7,8 @@ from sqlalchemy.orm import (
     relationship,
 )
 
-if TYPE_CHECKING:
-    import datetime
+
+import datetime  # noqa: TC003
 
 
 class Base(DeclarativeBase):
@@ -17,29 +16,68 @@ class Base(DeclarativeBase):
 
 
 class User(Base):
-    __tablename__ = "user"
+    """
+    Represents a user in the database.
+    """
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True, nullable=False)
-    tz: Mapped[str] = mapped_column(default="Etc/UTC")
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True, doc="Unique integer id of the user."
+    )
+    username: Mapped[str] = mapped_column(
+        unique=True,
+        nullable=False,
+        doc="Username of the user. Must be unique and not null.",
+    )
+    tz: Mapped[str] = mapped_column(
+        server_default="Etc/UTC",
+        doc="Timezone of the user. All time of the day analytics are based on it.",
+    )
     scrobbles: Mapped[list["Scrobble"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+        back_populates="user",
+        cascade="all, delete-orphan",
+        doc="List of scrobbles of the user.",
     )
 
 
 class Scrobble(Base):
-    __tablename__ = "scrobble"
+    """
+    Represents a single scrobble entry in the database.
+    """
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    timestamp: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), index=True
+    __tablename__ = "scrobbles"
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True,
+        doc="Unique id for the scrobble. "
+        "It serves as the primary key of scrobble table.",
     )
-    track: Mapped[str]
-    artist: Mapped[str]
-    album: Mapped[str] = mapped_column(default="")
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(back_populates="scrobbles")
+    timestamp: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True),
+        index=True,
+        doc="Timestamp at which the track was scrobbled. "
+        "Stored as UTC with timezone awareness.",
+    )
+    track: Mapped[str] = mapped_column(
+        String(), doc="Name/title of the scrobbled track."
+    )
+    artist: Mapped[str] = mapped_column(
+        String(), doc="Artist name for the scrobbled track."
+    )
+    album: Mapped[str] = mapped_column(
+        String(),
+        server_default="",
+        doc="(Optional) Album name for the scrobbled track.",
+    )
+    """Album"""
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), doc="User id of the scrobble."
+    )
+    user: Mapped["User"] = relationship(
+        back_populates="scrobbles", doc="User of the scrobble in the user table."
+    )
 
-    __table_args__ = UniqueConstraint(
-        "timestamp", "track", "artist", "album", "user_id"
+    __table_args__ = (
+        UniqueConstraint("timestamp", "track", "artist", "album", "user_id"),
     )
