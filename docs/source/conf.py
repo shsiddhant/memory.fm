@@ -32,21 +32,24 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.autosummary",
     "sphinx_design",
-    "numpydoc",
+    "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",
+    "sphinx_sqlalchemy",
 ]
 
+
+# Napoleon settings to support Numpy style
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_use_ivar = True  # This helps attributes look like "Variables"
 
 templates_path = ["_templates"]
 exclude_patterns = []
 
-autodoc_typehints = "none"
+autodoc_typehints = "description"
 autosummary_generate = True
+# autodoc_typehints_format = "short"
 
-# -- numpydoc ---
-
-# numpydoc_attributes_as_param_list = False
-numpydoc_show_class_members = False
-numpydoc_show_inherited_class_members = False
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -57,12 +60,6 @@ html_css_files = [
     "css/custom.css",
 ]
 html_theme_options = {
-    #    "external_links": [
-    #        {
-    #            "url": "https://pandas.pydata.org/",
-    #            "name": "pandas",
-    #        },
-    #    ],
     "icon_links": [
         {
             "name": "GitHub",

@@ -1,15 +1,14 @@
-﻿memoryfm.Scrobble
-=================
+{{ fullname | escape | underline }}
 
-.. currentmodule:: memoryfm
+.. currentmodule:: {{ module }}
 
-.. sqla-model:: ~memoryfm.Scrobble
+.. sqla-model:: ~{{ fullname }}
 
 ~~~~~~~~~~~~~~
 Relationships
 ~~~~~~~~~~~~~~
 
-.. autoclass:: memoryfm.Scrobble
+.. autoclass:: {{ fullname }}
    :noindex:
    :members:
    :exclude-members: id, username, tz, timestamp, track, artist, album, user_id
