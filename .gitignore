@@ -30,6 +30,8 @@ env/
 
 .obsidian/
 
+**/Roadmap.md
+
 # Full lastfmstats JSON export
 */data/lastfmstats-lazulinoother.json
 
