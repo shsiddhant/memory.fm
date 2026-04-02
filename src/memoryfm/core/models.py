@@ -37,6 +37,7 @@ class User(Base):
     scrobbles: Mapped[list["Scrobble"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         doc="List of scrobbles of the user.",
     )
 
@@ -72,7 +73,7 @@ class Scrobble(Base):
     )
     """Album"""
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), doc="User id of the scrobble."
+        ForeignKey("users.id", ondelete="CASCADE"), doc="User id of the scrobble."
     )
     user: Mapped["User"] = relationship(
         back_populates="scrobbles", doc="User of the scrobble in the user table."
