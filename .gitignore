@@ -32,6 +32,9 @@ env/
 
 **/Roadmap.md
 
+# vscode
+**/.vscode/
+
 # Full lastfmstats JSON export
 */data/lastfmstats-lazulinoother.json
 
