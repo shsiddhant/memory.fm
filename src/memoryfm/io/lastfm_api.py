@@ -5,15 +5,10 @@ import json
 import datetime
 import logging
 from zoneinfo import ZoneInfo
+
 from memoryfm.errors import InvalidDataError
-from memoryfm.util.datetime_util import validate_tz
-from memoryfm.db_services.basic_fetch import (
-    get_userid_from_username,
-    get_user_tz,
-    create_user,
-    insert_scrobbles,
-)
-from memoryfm.db_services.stats import get_max_timestamp
+import memoryfm.services.user_service as userv
+import memoryfm.services.scrobble_service as scserv
 
 task_status: dict[str, Any] = {}
 
@@ -111,6 +106,7 @@ def from_recenttracks_response(response: requests.Response) -> list[tuple]:
 def from_timestamp(
     username: str,
     api_key: str,
+    task_status: dict[str, Any],
     timestamp: int | datetime.datetime | None = None,
     tz: str | None = "Etc/UTC",
     limit: int = 180,
@@ -135,12 +131,12 @@ def from_timestamp(
         (Max 200) A rate limit for number of scrobbles per page.
 
     """
-    user_id = get_userid_from_username(username)
-    if user_id:
-        tz = get_user_tz(user_id)
-    tz = validate_tz(tz)
-    create_user(username, tz)
-    user_id = get_userid_from_username(username)
+    context = userv.get_user_context(username)
+    user_id = None
+    if context:
+        user_id = context.get("user_id")
+        tz = context.get("tz")
+        userv.create_user(username, tz)
     if timestamp is None or isinstance(timestamp, int):
         from_ts = timestamp
     elif isinstance(timestamp, datetime.datetime):
@@ -174,7 +170,7 @@ def from_timestamp(
                 task_status["status"] = "completed"
                 logger.info(task_status)
                 return
-            elif user_id:
+            elif user_id and tz:
                 batch = [
                     {
                         "timestamp": datetime.datetime.fromtimestamp(
@@ -186,7 +182,7 @@ def from_timestamp(
                     }
                     for s in data_page
                 ]
-                insert_scrobbles(user_id, batch, limit)
+                scserv.insert_scrobbles(user_id, batch, limit)
                 task_status["total_scrobbles"] = int(
                     response.json()["recenttracks"]["@attr"]["total"]
                 )
@@ -202,7 +198,9 @@ def from_timestamp(
 def sync_lastfm_api(
     username: str,
     api_key: str,
+    task_status: dict[str, Any],
     tz: str | None = None,
+    limit: int = 180,
 ):
     """
     Fetch and sync scrobbles from a last.fm username using last.fm API.
@@ -217,9 +215,10 @@ def sync_lastfm_api(
         If not ``None``, ``tz`` must be a valid IANA Timezone string.
 
     """
-    user_id = get_userid_from_username(username)
+    context = userv.get_user_context(username)
+    user_id = context.get("user_id") if context else None
     if user_id:
-        timestamp = get_max_timestamp(user_id)
+        timestamp = scserv.get_max_timestamp(user_id)
     else:
         timestamp = None
-    from_timestamp(username, api_key, timestamp, tz)
+    from_timestamp(username, api_key, task_status, timestamp, tz, limit)
