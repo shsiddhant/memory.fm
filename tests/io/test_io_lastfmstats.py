@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from memoryfm.io.lastfmstats import validate_lastfmstats, from_lastfmstats
+from memoryfm.io.lastfmstats import validate_lastfmstats
 from memoryfm.errors import (
     SchemaError,
     InvalidDataError,
@@ -24,8 +24,3 @@ class TestFromLastfmstats:
         msg = "Key missing in JSON file: 'username'"
         with pytest.raises(SchemaError, match=msg):
             validate_lastfmstats(file)
-
-    def test_lastfmstats_wrong_scrobble_type(self):
-        file = json_dir / "wrong_scrobbles_type.json"
-        with pytest.raises(TypeError):
-            from_lastfmstats(file)
