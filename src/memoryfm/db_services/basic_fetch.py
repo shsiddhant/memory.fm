@@ -51,6 +51,12 @@ def get_userid_from_username(username: str) -> int | None:
         return user_id
 
 
+def get_user_tz(user_id: int) -> str | None:
+    with get_db_session() as session:
+        tz = session.scalar(select(User.tz).where(User.id == user_id))
+        return tz
+
+
 def delete_user(user_id: int):
     with get_db_session() as session:
         stmt = delete(User).where(User.id == user_id)
