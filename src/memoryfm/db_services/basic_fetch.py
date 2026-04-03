@@ -18,20 +18,19 @@ def create_user(
     tz: str | None = "Etc/UTC",
     overwrite: bool = False,
 ):
+    user_id = get_userid_from_username(username)
     data = {"username": username, "tz": tz}
     with get_db_session() as session:
-        if overwrite:
-            get_id_stmt = select(User.id).where(User.username == username)
-            user_id = session.scalar(get_id_stmt)
-            if user_id:
-                delete_user(user_id)
-        stmt = insert(User).values(data)
-        try:
-            session.execute(stmt)
-            session.commit()
-        except (IntegrityError, SQLAlchemyError):
-            session.rollback()
-            raise
+        if overwrite and user_id:
+            delete_user(user_id)
+        elif not user_id:
+            stmt = insert(User).values(data)
+            try:
+                session.execute(stmt)
+                session.commit()
+            except (IntegrityError, SQLAlchemyError):
+                session.rollback()
+                raise
 
 
 def get_user(user_id: int) -> User | None:

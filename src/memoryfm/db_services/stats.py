@@ -30,6 +30,14 @@ def get_user_summary(username: str):
                 }
 
 
+def get_max_timestamp(user_id: int):
+    with get_db_session() as session:
+        timestamp = session.scalar(
+            select(func.max(Scrobble.timestamp)).where(Scrobble.user_id == user_id)
+        )
+        return timestamp
+
+
 def get_top_charts(
     username: str,
     kind: Literal["artist", "album", "track"],
