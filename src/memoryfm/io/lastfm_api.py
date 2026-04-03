@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any
 import requests
 import json
 import datetime
@@ -8,12 +9,13 @@ from memoryfm.errors import InvalidDataError
 from memoryfm.util.datetime_util import validate_tz
 from memoryfm.db_services.basic_fetch import (
     get_userid_from_username,
+    get_user_tz,
     create_user,
     insert_scrobbles,
 )
 from memoryfm.db_services.stats import get_max_timestamp
 
-task_status = {}
+task_status: dict[str, Any] = {}
 
 logging.basicConfig()
 logger = logging.getLogger("sqlalchemy.engine")
@@ -133,6 +135,9 @@ def from_timestamp(
         (Max 200) A rate limit for number of scrobbles per page.
 
     """
+    user_id = get_userid_from_username(username)
+    if user_id:
+        tz = get_user_tz(user_id)
     tz = validate_tz(tz)
     create_user(username, tz)
     user_id = get_userid_from_username(username)
@@ -166,6 +171,8 @@ def from_timestamp(
                 raise
         else:
             if not data_page:
+                task_status["status"] = "completed"
+                logger.info(task_status)
                 return
             elif user_id:
                 batch = [
