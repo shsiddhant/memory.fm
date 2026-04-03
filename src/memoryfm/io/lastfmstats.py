@@ -6,7 +6,11 @@ from zoneinfo import ZoneInfo
 from memoryfm.errors import SchemaError, InvalidDataError
 from memoryfm.io._loaders import load_json
 from memoryfm.util.datetime_util import validate_tz
-from memoryfm.db_services import create_user, get_userid_from_username, insert_scrobbles
+from memoryfm.db_services.basic_fetch import (
+    create_user,
+    get_userid_from_username,
+    insert_scrobbles,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
