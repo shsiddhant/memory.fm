@@ -7,6 +7,7 @@ name = "memory.fm"
 dynamic = ["version"]
 dependencies = [
     "fastapi[standard]>=0.135.3",
+    "requests>=2.33.1",
     "sqlalchemy>=2.0.48",
     "tzlocal>=5.3.1",
 ]
@@ -42,6 +43,7 @@ dev = [
     "pre-commit>=4.5.1",
     "pytest>=9.0.2",
     "ruff>=0.15.8",
+    "types-requests>=2.33.0.20260402",
 ]
 doc = [
     "pydata-sphinx-theme>=0.16.1",
