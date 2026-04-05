@@ -22,7 +22,7 @@ def get_top_charts_by_username(
     kind: Literal["artist", "album", "track"],
     period: int | Literal["all_time"] = 7,
     limit: int | None = 10,
-) -> dict | None:
+) -> list | None:
     with get_db_session() as session:
         user = get_user_by_username(session, username)
         if user:
