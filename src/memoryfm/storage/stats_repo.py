@@ -25,10 +25,15 @@ def get_summary_by_user(session: Session, user_id: int) -> dict | None:
         if first_date and last_date:
             days = (last_date - first_date).days
             return {
-                "user_id": user_id,
-                "username": username,
-                "count": count,
-                "days": days,
+                "user": {
+                    "user_id": user_id,
+                    "username": username,
+                },
+                "summary": {
+                    "total_scrobbles": count,
+                    "days": days,
+                    "scrobbles_per_day": count // days,
+                },
             }
     return None
 
@@ -39,7 +44,7 @@ def get_top_charts_by_user(
     kind: Literal["artist", "album", "track"],
     period: int | Literal["all_time"] = 7,
     limit: int | None = 10,
-) -> dict:
+) -> list:
     if period != "all_time":
         now = datetime.datetime.now()
         datelimit = now - datetime.timedelta(days=period)
@@ -54,14 +59,11 @@ def get_top_charts_by_user(
     else:
         raise ValueError("Kind must be one of: 'tracks', 'artists', 'albums'")
     data = session.execute(
-        select(col, func.count(Scrobble.id).label("scrobbles"))
+        select(col.label("name"), func.count(Scrobble.id).label("scrobbles"))
         .where(Scrobble.user_id == user_id, Scrobble.timestamp >= datelimit)
         .group_by(col)
         .order_by(func.count(Scrobble.id).desc())
         .limit(limit)
-    ).fetchall()
-    top = {
-        kind: [row._mapping[kind] for row in data],
-        "scrobbles": [row.scrobbles for row in data],
-    }
+    )
+    top = list(data.mappings())
     return top
