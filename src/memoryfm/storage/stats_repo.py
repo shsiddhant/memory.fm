@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import datetime
-from sqlalchemy import select, func
+from sqlalchemy import distinct, select, func
 from memoryfm.core.models import Scrobble
 from memoryfm.storage.user_repo import get_user_by_id
 
@@ -13,17 +13,26 @@ if TYPE_CHECKING:
 def get_summary_by_user(session: Session, user_id: int) -> dict | None:
     user = get_user_by_id(session, user_id)
     username = user.username if user else None
-    data = session.execute(
-        select(
-            func.count(Scrobble.id).label("count"),
-            func.min(Scrobble.timestamp).label("first_scrobble"),
-            func.max(Scrobble.timestamp).label("last_scrobble"),
-        ).where(Scrobble.user_id == user_id)
-    ).fetchone()
+    data = (
+        session.execute(
+            select(
+                func.count(Scrobble.id).label("count"),
+                func.min(Scrobble.timestamp).label("first_scrobble"),
+                func.max(Scrobble.timestamp).label("last_scrobble"),
+                func.count(distinct(Scrobble.track)).label("tracks"),
+                func.count(distinct(Scrobble.artist)).label("artists"),
+                func.count(distinct(Scrobble.album)).label("albums"),
+            ).where(Scrobble.user_id == user_id)
+        )
+        .mappings()
+        .fetchone()
+    )
     if data:
-        count, first_date, last_date = data
+        first_date: datetime.datetime | None = data.get("first_scrobble")
+        last_date: datetime.datetime | None = data.get("last_scrobble")
+        count = data.get("count")
         if first_date and last_date:
-            days = (last_date - first_date).days
+            days = (last_date.date() - first_date.date()).days + 1
             return {
                 "user": {
                     "user_id": user_id,
@@ -32,7 +41,11 @@ def get_summary_by_user(session: Session, user_id: int) -> dict | None:
                 "summary": {
                     "total_scrobbles": count,
                     "days": days,
-                    "scrobbles_per_day": count // days,
+                    "scrobbling_since": first_date.date().strftime("%B %d, %Y"),
+                    "scrobbles_per_day": count // days if count else None,
+                    "tracks": data.get("tracks"),
+                    "artists": data.get("artists"),
+                    "albums": data.get("albums"),
                 },
             }
     return None
