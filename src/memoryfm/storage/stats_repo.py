@@ -6,7 +6,7 @@ from memoryfm.core.models import Scrobble
 from memoryfm.storage.user_repo import get_user_by_id
 
 if TYPE_CHECKING:
-    from typing import Literal
+    from typing import Literal, Sequence
     from sqlalchemy.orm import Session
 
 
@@ -80,3 +80,24 @@ def get_top_charts_by_user(
     )
     top = list(data.mappings())
     return top
+
+
+def get_daily_scrobbles_count(
+    session: Session,
+    user_id: int,
+    till: datetime.date | None = None,
+    limit: int = 56,
+) -> Sequence:
+    datelimit = till if till else datetime.date.today()
+    stmt = (
+        select(
+            func.date(Scrobble.timestamp).label("Date"),
+            func.count(Scrobble.id).label("Scrobbles"),
+        )
+        .where(Scrobble.user_id == user_id, func.date(Scrobble.timestamp) <= datelimit)
+        .order_by(Scrobble.timestamp.desc())
+        .group_by("Date")
+        .limit(limit)
+    )
+    data = session.execute(stmt).mappings().all()
+    return data
