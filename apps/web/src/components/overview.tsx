@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
-import { Badge, Stack, VStack} from "@chakra-ui/react"
+import { MdCalendarMonth } from "react-icons/md";
+import { Badge, Icon, VStack} from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
+import SummaryBadges from "./summarybadges";
 
-export default function Summary () {
+export default function Overview () {
     const { username } = useParams();
     const [userData, setUserData] = useState<null | {
         user: {
-            user_id: Number,
-            username: String
+            user_id: number,
+            username: string
         },
         summary: {
-            total_scrobbles: Number,
-            days: Number,
-            scrobbles_per_day: Number,
+            total_scrobbles: number,
+            days: number,
+            scrobbling_since: string,
+            scrobbles_per_day: number,
+            tracks: number,
+            artists: number,
+            albums: number,
         },
     }>(null);
     const [loading, setLoading] = useState(true);
@@ -48,23 +54,20 @@ export default function Summary () {
         return <div>No data found.</div>;
     }
     const summary = userData.summary;
-    const { total_scrobbles, days, scrobbles_per_day } = summary
     return (
         <>
         <section id="center">
-          <div>
-            <h1>memory.fm</h1>
-          </div>
-        </section>
-        <section id="main-content">
-          <VStack>
-            <h2>{username}</h2>
-            <Stack direction={"row"} gap={"5"}>
-              <Badge bg={"yellow.subtle"} color={"yellow.fg"}>{`${total_scrobbles} Scrobbles`}</Badge>
-              <Badge bg={"purple.subtle"} color={"purple.fg"}>{`Scrobbling for ${days} days`}</Badge>
-              <Badge bg={"green.subtle"} color={"green.fg"}>{`${scrobbles_per_day} Scrobbles a day`}</Badge>
-            </Stack>
+          <VStack gap={5}>
+            <h1>{username}</h1>
+            <Badge bg={"purple.subtle"} color={"purple.fg"} size={"lg"}>
+                <Icon as={MdCalendarMonth} mr={1}></Icon>
+                {`Scrobbling since ${summary.scrobbling_since}`}
+            </Badge>
           </VStack>
+        </section>
+        <section className="ticks"></section>
+        <section id="main-content" >
+            <SummaryBadges {...summary} />
         </section>
         </>
     )
