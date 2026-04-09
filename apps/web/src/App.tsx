@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './components/homepage';
-import Summary from './components/summary';
+import Overview from './components/overview';
 
 function App() {
 
@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/user/:username/summary" element={<Summary />} />
+      <Route path="/user/:username/overview" element={<Overview />} />
     </Routes>
     </BrowserRouter>
   )
