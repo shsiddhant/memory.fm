@@ -10,6 +10,14 @@
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  
+  /* Recent Activity Heatmap Colors*/
+  --scrobble-empty: #fbe0e0;
+  --scrobble-0: #f7bdbc;
+  --scrobble-1: #d87270;
+  --scrobble-2: #B40B08;
+  --scrobble-3: #a80502;
+  --scrobble-4: #922020;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -43,6 +51,14 @@
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    
+    /* Recent Activity Heatmap Colors*/
+    --scrobble-empty: #65241f;
+    --scrobble-0: #9d453d;
+    --scrobble-1: #d77068;
+    --scrobble-2: #FB9E98;
+    --scrobble-3: #fdbeb8;
+    --scrobble-4: #f8d2cf;
   }
 
   #social .button-icon {
