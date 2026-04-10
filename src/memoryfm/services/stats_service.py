@@ -7,6 +7,7 @@ import memoryfm.storage.stats_repo as strepo
 if TYPE_CHECKING:
     from typing import Literal, Sequence
     import datetime
+    from sqlalchemy import RowMapping
 
 
 def get_summary_by_username(username: str) -> dict | None:
@@ -36,7 +37,7 @@ def get_daily_scrobbles_count(
     username: str,
     till: datetime.date | None = None,
     limit: int = 56,
-) -> Sequence | None:
+) -> Sequence[RowMapping] | None:
     with get_db_session() as session:
         user = get_user_by_username(session, username)
         if user:

@@ -8,6 +8,7 @@ from memoryfm.storage.user_repo import get_user_by_id
 if TYPE_CHECKING:
     from typing import Literal, Sequence
     from sqlalchemy.orm import Session
+    from sqlalchemy import RowMapping
 
 
 def get_summary_by_user(session: Session, user_id: int) -> dict | None:
@@ -87,7 +88,7 @@ def get_daily_scrobbles_count(
     user_id: int,
     till: datetime.date | None = None,
     limit: int = 56,
-) -> Sequence:
+) -> Sequence[RowMapping]:
     datelimit = till if till else datetime.date.today()
     stmt = (
         select(
