@@ -1,11 +1,10 @@
 from __future__ import annotations
-from collections.abc import Sequence
 import os
 from dotenv import load_dotenv
 from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from .websockets import task_status
-from api.response_models import RecentScrobblesCount
+from api.response_models import RecentActivity, ScrobblesCount
 from memoryfm.io.lastfm_api import sync_lastfm_api
 import memoryfm.services.stats_service as stserv
 
@@ -30,14 +29,14 @@ def summary(username: str):
     return stserv.get_summary_by_username(username)
 
 
-@router.get(
-    "/user/{username}/recent_scrobbles", response_model=Sequence[RecentScrobblesCount]
-)
+@router.get("/user/{username}/recent_scrobbles", response_model=RecentActivity)
 def recent_scrobbles(username: str, weeks: int = 8):
     data = stserv.get_daily_scrobbles_count(username, limit=weeks * 7)
     if data is not None:
-        return [
-            RecentScrobblesCount(day=row["Date"], value=row["Scrobbles"])
-            for row in data
+        from_date, to_date, counts_seq = data
+        counts = [
+            ScrobblesCount(day=row["Date"], value=row["Scrobbles"])
+            for row in counts_seq
         ]
+        return RecentActivity(from_date=from_date, to_date=to_date, counts=counts)
     return JSONResponse(status_code=404, content={"message": "No data found."})
