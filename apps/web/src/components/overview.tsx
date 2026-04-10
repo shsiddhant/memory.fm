@@ -1,73 +1,72 @@
-import { useEffect, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
+import { fetchRecentActivity, fetchUserSummary } from "@/api/user";
 import { MdCalendarMonth } from "react-icons/md";
-import { Badge, Icon, VStack} from "@chakra-ui/react"
+import { Badge, Box, Container, Flex, Icon, VStack} from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
 import SummaryBadges from "./summarybadges";
+import RecentActivity from "./recent_activity";
+
 
 export default function Overview () {
     const { username } = useParams();
-    const [userData, setUserData] = useState<null | {
-        user: {
-            user_id: number,
-            username: string
-        },
-        summary: {
-            total_scrobbles: number,
-            days: number,
-            scrobbling_since: string,
-            scrobbles_per_day: number,
-            tracks: number,
-            artists: number,
-            albums: number,
-        },
-    }>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (!username || !username.trim()) {
+    const weeks = 12;
+    
+    if (!username || !username.trim()) {
             return;
         }
-        async function fetchData() {
-            try {
-                const response = await fetch(`http://127.0.0.1:8000/user/${username}/summary`);
-                if (response.ok) {
-                    const result = await response.json();
-                    setUserData(result)
-                } else {
-                console.error("User not found.");
-                return;
-                }
-            } catch (error) {
-                console.error("Network Error:", error);
-            } finally {
-            setLoading(false);
-            }
-        }
+    const [recentActivityQuery, summaryQuery] = useQueries({
+        queries: [
+            {
+                queryKey: ["recentActivity", username, weeks],
+                queryFn: () => fetchRecentActivity(username, weeks),
+                enabled: !!username,
+            },
+            {
+                queryKey: ["summaryQuery", username],
+                queryFn: () => fetchUserSummary(username),
+                enabled: !!username,
+            },
+        ],
+    });
 
-        fetchData();
-    }, [username]);
+    const isLoading = recentActivityQuery.isLoading || summaryQuery.isLoading;
 
-    if (loading) {
-        return <div>Loading....</div>;
+    if (isLoading) {
+        return <div>Loading...</div>
     }
-    if (!userData) {
-        return <div>No data found.</div>;
+
+    if (summaryQuery.isError) {
+        return <div>Error: {summaryQuery.error.message}</div>
     }
-    const summary = userData.summary;
+    if (recentActivityQuery.isError) {
+        return <div>Error: {recentActivityQuery.error.message}</div>
+    }
+    if (!summaryQuery.data || !recentActivityQuery.data) {
+        return <div>No data.</div>;}
+    const { summary } = summaryQuery.data
+    const { from_date, to_date, counts } = recentActivityQuery.data
     return (
         <>
         <section id="center">
-          <VStack gap={5}>
+          <VStack gap={10} mb={10}>
             <h1>{username}</h1>
             <Badge bg={"purple.subtle"} color={"purple.fg"} size={"lg"}>
                 <Icon as={MdCalendarMonth} mr={1}></Icon>
                 {`Scrobbling since ${summary.scrobbling_since}`}
             </Badge>
+            <SummaryBadges {...summary} />
           </VStack>
         </section>
         <section className="ticks"></section>
-        <section id="main-content" >
-            <SummaryBadges {...summary} />
+        <section id="main-content">
+            <Container>
+                <h2>Recent Activity</h2>
+                <Flex justifySelf={"center"} mt={6}>
+                    <Box outlineColor={"red"}>
+                        <RecentActivity from_date={from_date} to_date={to_date} counts={counts} />
+                    </Box>
+                </Flex>
+            </Container>
         </section>
         </>
     )
