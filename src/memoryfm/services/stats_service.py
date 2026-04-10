@@ -37,7 +37,7 @@ def get_daily_scrobbles_count(
     username: str,
     till: datetime.date | None = None,
     limit: int = 56,
-) -> Sequence[RowMapping] | None:
+) -> tuple[datetime.date, datetime.date, Sequence[RowMapping]] | None:
     with get_db_session() as session:
         user = get_user_by_username(session, username)
         if user:
