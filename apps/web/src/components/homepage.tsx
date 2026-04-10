@@ -12,7 +12,7 @@ function HomePage() {
     if (!username.trim()) {
       return;
     }
-    navigate(`/user/${username}/summary`);
+    navigate(`/user/${username}/overview`);
   
   };
 
