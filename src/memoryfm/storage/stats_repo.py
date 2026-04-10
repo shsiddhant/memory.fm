@@ -88,17 +88,22 @@ def get_daily_scrobbles_count(
     user_id: int,
     till: datetime.date | None = None,
     limit: int = 56,
-) -> Sequence[RowMapping]:
+) -> tuple[datetime.date, datetime.date, Sequence[RowMapping]]:
     datelimit = till if till else datetime.date.today()
+    to_date = datelimit
+    from_date = to_date - datetime.timedelta(days=limit)
     stmt = (
         select(
             func.date(Scrobble.timestamp).label("Date"),
             func.count(Scrobble.id).label("Scrobbles"),
         )
-        .where(Scrobble.user_id == user_id, func.date(Scrobble.timestamp) <= datelimit)
+        .where(
+            Scrobble.user_id == user_id,
+            func.date(Scrobble.timestamp) <= to_date,
+            func.date(Scrobble.timestamp) >= from_date,
+        )
         .order_by(Scrobble.timestamp.desc())
         .group_by("Date")
-        .limit(limit)
     )
     data = session.execute(stmt).mappings().all()
-    return data
+    return from_date, to_date, data
