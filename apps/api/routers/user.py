@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
-from .websockets import task_status
+from api.routers.websockets import task_status
 from api.response_models import RecentActivity, ScrobblesCount
 from memoryfm.io.lastfm_api import sync_lastfm_api
 import memoryfm.services.stats_service as stserv
