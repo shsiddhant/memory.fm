@@ -11,3 +11,13 @@ export const fetchRecentActivity = async (username: string, weeks: number) => {
   if (!res.ok) throw new Error("Activity not found");
   return res.json();
 };
+
+export const fetchTopCharts = async (
+  username: string, kind: string, period: number | "all_time", limit: number
+) => {
+  const res = await fetch(
+    `${BASE_URL}/user/${username}/top?kind=${kind}&period=${period}&limit=${limit}`
+  );
+  if (!res.ok) throw new Error("Top charts not found");
+  return res.json();
+};
