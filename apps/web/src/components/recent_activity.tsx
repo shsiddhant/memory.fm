@@ -36,7 +36,7 @@ export default function RecentActivity(
         colors={ [c0, c1, c2, c3, c4] }
         maxValue={"auto"}
         minValue={0}
-        margin={{ top: 0, right: 20, bottom: 20, left: 20 }}
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
         dayBorderColor=""
         daySpacing={3}
         dayRadius={5}
