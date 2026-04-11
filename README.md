@@ -1,25 +1,41 @@
 # memory.fm
 
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fshsiddhant%2Fmemory.fm%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&style=for-the-badge&logo=python&logoColor=FFE873&color=4B8BBE)
-[![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/shsiddhant/memory.fm/ci.yml?style=for-the-badge&logo=github&label=CI%20Pipeline)](https://github.com/shsiddhant/memory.fm/actions/workflows/ci.yml)
+[![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 
+<blockquote style="text-align: center;">
+ <b><i>music meets memory</i></b>
+</blockquote>
 
-**memory.fm** is a Python library, CLI tool, and web-based dashboard for exploring music listening history from Last.fm and Spotify.
+**memory.fm** is a web application for exploring music listening history from Last.fm and Spotify.
 
 Instead of focusing only on aggregate stats, it surfaces long-term and local patterns such as attachment, repetition, and obsessive listening, to help you revisit periods of your life through music.
 
 >*✨Inspired by the idea of using music as a way to revisit memories.✨*
 
-**[🔗 Check out the demo](https://memoryfm-demo.streamlit.app/)** to quickly test the stats and visuals dashboard.
+
+## Current Status
+
+This is an active rewrite of memory.fm.
+
+The current version includes:
+
+- Last.fm import
+- User overview dashboard
+- Recent activity heatmap
+
+More analytics and deeper insights are planned.
+
 
 ## Features
 
 ### Import and Manage Your Listening History
 
-- Import your complete listening history from **Last.fm** and **Spotify**.
+- Import your complete listening history from **Last.fm**
 - Fast incremental sync after the first import.
-- Supports JSON/CSV exports from [lastfmstats](https://www.lastfmstats.com).
 
 ### Stats and Analytics
 
@@ -30,126 +46,64 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 Get a clean summary of your music listening history.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/overview.png" height="600">
+  <img src="screenshots/overview.png" height="600">
 </p>
 
-#### Top Charts
-
-- View your top artists, albums, and tracks.
-- Filter them by weekly, monthly, and yearly periods, or a custom date range.
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/top_charts.png" height="600">
-</p>
-
-#### Attachment Index
-
-- See how concentrated your listening was during a given period using **Attachment Index**.
-- Find out whether you were deeply attached to a few tracks, albums, or artists, or broadly exploring.
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/attachment_index.png" height="600">
-</p>
-
-#### Streaks
-
-- Detect periods of intense, repeated listening to a single artist, album, or track. Streaks often correspond to emotionally significant moments or phases.
-
-- With **Streaks Timeline**, you can view an interactive, color-coded timeline of your listening streaks. 
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/shsiddhant/memory.fm/refs/heads/main/screenshots/streaks.png" height="600">
-</p>
-
-
-### Interface
-
-You have two UI options:
-- **Graphical Dashboard:** A user-friendly graphical dashboard that runs inside your web browser.
-- **CLI:** A command line tool with more granular control for power users.
 
 ## Installation
 
-You can install the package from PyPI.
-
 ```shell
-pip install memory.fm
+pip install git+https://github.com/shsiddhant/memory.fm@rewrite
 ```
 
 Requires **Python>=3.10**
 
-## Quick Start
+## Running Locally
 
-### Dashboard (Recommended for First-Time Users)
+### Back-end
 
-Launch the interactive web dashboard:
-```bash
-memoryfm-gui
+```shell
+cd apps/
+uvicorn api.main:app --reload
 ```
 
-This opens a browser interface at `http://localhost:8501` where you can:
-- Import your listening history from Last.fm or Spotify
-- Explore visualizations and analytics
-- View your attachment patterns and listening streaks
+### Front-end
 
-### Command Line Interface
-
-For power users, the CLI offers more granular control:
-```bash
-# Import data from Last.fm
-memoryfm import last.fm <your_username>
-
-# Import from Spotify export
-memoryfm import spotify path/to/my_spotify_data.zip --username <use_any_username>
-
-# Load your import
-memoryfm load <your_username>
-
-# View top artists for the last month
-memoryfm top artists --last month
-
+```shell
+cd apps/web
+npm install
+npm run dev
 ```
-
-See the [CLI documentation](https://memoryfm.readthedocs.io/en/stable/quickstart/cli_usage.html) for all available commands.
-
-### Python Library
-
-Use memory.fm programmatically in your own projects:
-```python
-import memoryfm as mfm
-
-# Load your listening history
-sclog = mfm.from_lastfm_api(username="your_username",
-                            tz="Asia/Kolkata")
-
-# Filter by dates
-filtered_sclog = sclog.filter_by_date("2025-09-12 10 PM", end="2025-09-13 10:40 AM")
-
-# Calculate attachment index of order alpha
-attachment = mfm.attachment(sclog, by="album", year=2024, alpha=2)
-```
-
-See the [API documentation](https://memoryfm.readthedocs.io/en/stable/references/index.html#api) for more examples.
-
-## Documentation
-
-Full documentation is available at: https://memoryfm.readthedocs.io
 
 
 ## Roadmap
 
-- [x] Support for loading Spotify listening history exports
-- [x] CLI commands for loading, printing, exporting, filters, top charts, etc.
-- [x] API support for Last.fm
-- [x] Attachment Index
-- [x] Streaks and Streaks Timeline
+- [x] Last.fm Imports
+- [x] User Overview
+- [x] Recent Activity Heatmap
+- [ ] Top Charts 
+- [ ] Attachment Index
+- [ ] Streaks and Streaks Timeline
 - [ ] Time of Day / Season based analysis
 - [ ] Memory Attachments and Timeline integration
 - [ ] Spotify wrapped but make it nerdier
-- [ ] Export options for data, visuals, and memory attachments
-- [ ] Apple Music support
 
-Check the [issue tracker](https://github.com/shsiddhant/memory.fm/issues) for more details.
+## Vision Preview (v0.8.5)  
+  
+An earlier experimental version of memory.fm explored deeper behavioral analytics and more experimental visualizations.  
+You can check out a demo at: [https://memoryfm-demo.streamlit.app/](https://memoryfm-demo.streamlit.app/)
+
+It introduced early versions of:
+
+- Attachment Index (listening concentration over time)
+- Streaks (intensity bursts in listening behavior)
+- Streaks Timeline (color coded timeline of streaks across years)
+
+The current rewrite is an architectural rebuild, focusing on:
+
+- Stable import pipeline (Last.fm + future Spotify support) using SQLAlchemy.
+- Modern FastAPI back-end and web UI (React)
+- Extensible analytics layer
 
 ## Contributing
 

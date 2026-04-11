@@ -1,7 +1,7 @@
 from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import analytics, user, websockets
+from api.routers import analytics, user, websockets
 
 app = FastAPI()
 origins = [
