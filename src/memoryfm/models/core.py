@@ -1,10 +1,18 @@
 from __future__ import annotations
-from sqlalchemy import DateTime, ForeignKey, UniqueConstraint, String
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    UniqueConstraint,
+    String,
+    func,
+)
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
     mapped_column,
     relationship,
+    validates,
 )
 
 
@@ -40,6 +48,18 @@ class User(Base):
         passive_deletes=True,
         doc="List of scrobbles of the user.",
     )
+
+    __table_args__ = (
+        CheckConstraint(
+            func.length(func.trim(username)) > 0, name="username_not_blank"
+        ),
+    )
+
+    @validates("username")
+    def validate_username(self, key, value: str):
+        if value is not None and not value.strip():
+            raise ValueError("Username cannot be empty or only whitespace")
+        return value
 
 
 class Scrobble(Base):
