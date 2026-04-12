@@ -22,6 +22,8 @@ def format_status_log(
         text = f"[SYNC RETRY] {userinfo} | {pageinfo} | {retryinfo}"
     elif sync_status.status == SyncStatusTypes.Error:
         text = f"[SYNC ERROR] {userinfo} | {pageinfo} | {sync_status.error}"
+    elif sync_status.status == SyncStatusTypes.Warning and sync_status.error:
+        text = f"[SYNC Warning] {userinfo} | {pageinfo} | {sync_status.error}"
     else:
         raise ValueError("Invalid sync_status.status")
     return text
