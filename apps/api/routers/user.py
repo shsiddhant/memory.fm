@@ -7,11 +7,12 @@ from fastapi import (
     Depends,
 )
 from fastapi.responses import JSONResponse
-from api.routers.websockets import task_status
+from api.routers.websockets import sync_status
 from api.response_models import RecentActivity, ScrobblesCount
 from memoryfm.io.lastfm_api import sync_lastfm_api
 from memoryfm.storage.db import get_db_session
 import memoryfm.services.stats_service as stserv
+from memoryfm.models.sync_status import SyncStatusTypes
 from api.input_annotated_types import TrimmedStr  # noqa: TC001
 
 router = APIRouter()
@@ -26,10 +27,10 @@ async def sync_scrobbles(
     bg_tasks: BackgroundTasks,
     session=Depends(get_db_session),
 ):
-    task_status.clear()
-    task_status["status"] = "running"
+    sync_status.clear()
+    sync_status.status = SyncStatusTypes.Progress
     bg_tasks.add_task(
-        sync_lastfm_api, session, username, api_key=API_KEY, task_status=task_status
+        sync_lastfm_api, session, username, api_key=API_KEY, sync_status=sync_status
     )
     return {"message": f"Syncing scrobbles for user: {username}"}
 
