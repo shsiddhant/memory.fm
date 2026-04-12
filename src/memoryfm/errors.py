@@ -19,4 +19,4 @@ class SchemaError(InvalidDataError):
 class UserNotFoundError(Exception):
     def __init__(self, username):
         self.username = username
-        super().__init__(f"User not found: {username}")
+        super().__init__(f"User not found: {self.username}")

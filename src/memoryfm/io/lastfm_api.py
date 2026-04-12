@@ -2,11 +2,11 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 import requests
 import json
+import logging
 import datetime
 from zoneinfo import ZoneInfo
 
 from memoryfm.errors import InvalidDataError, UserNotFoundError
-from memoryfm.logging import custom_logger
 import memoryfm.services.user_service as userv
 import memoryfm.services.scrobble_service as scserv
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 task_status: dict[str, Any] = {}
 
-logger = custom_logger()
+logger = logging.getLogger(__name__)
 
 
 def lastfm_get_recent_tracks(
@@ -168,6 +168,11 @@ def from_timestamp(
             if not data_page:
                 task_status["status"] = "completed"
                 logger.info(task_status)
+                logger.info(
+                    "Fetched %s scrobbles for user: %s",
+                    task_status["fetched_scrobbles"],
+                    username,
+                )
                 return
             elif user_id and tz:
                 batch = [
@@ -227,6 +232,8 @@ def sync_lastfm_api(
         timestamp = scserv.get_max_timestamp(session, context.user_id)
     except UserNotFoundError:
         timestamp = None
-    except Exception:
+    except Exception as e:
+        logger.error(e)
         raise
+    logger.info("Starting sync for user: %s", username)
     from_timestamp(session, username, api_key, task_status, timestamp, tz, limit)
