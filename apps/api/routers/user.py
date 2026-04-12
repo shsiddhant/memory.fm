@@ -4,10 +4,11 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
 
-from api.service_deps import get_stats_service
 from api.routers.websockets import task_status
 from api.response_models import RecentActivity, ScrobblesCount
 from memoryfm.io.lastfm_api import sync_lastfm_api
+from memoryfm.storage.db import get_db_session
+import memoryfm.services.stats_service as stserv
 
 router = APIRouter()
 
@@ -16,23 +17,25 @@ API_KEY = os.getenv("API_KEY", "")
 
 
 @router.post("/user/{username}/sync")
-async def sync_scrobbles(username: str, bg_tasks: BackgroundTasks):
+async def sync_scrobbles(
+    username: str, bg_tasks: BackgroundTasks, session=Depends(get_db_session)
+):
     task_status.clear()
     task_status["status"] = "running"
     bg_tasks.add_task(
-        sync_lastfm_api, username, api_key=API_KEY, task_status=task_status
+        sync_lastfm_api, session, username, api_key=API_KEY, task_status=task_status
     )
     return {"message": f"Syncing scrobbles for user: {username}"}
 
 
 @router.get("/user/{username}/summary")
-def summary(username: str, stserv=Depends(get_stats_service)):
-    return stserv.get_summary_by_username(username)
+def summary(username: str, session=Depends(get_db_session)):
+    return stserv.get_summary_by_username(session, username)
 
 
 @router.get("/user/{username}/recent_scrobbles", response_model=RecentActivity)
-def recent_scrobbles(username: str, weeks: int = 8, stserv=Depends(get_stats_service)):
-    data = stserv.get_daily_scrobbles_count(username, limit=weeks * 7)
+def recent_scrobbles(username: str, weeks: int = 8, session=Depends(get_db_session)):
+    data = stserv.get_daily_scrobbles_count(session, username, limit=weeks * 7)
     if data is not None:
         from_date, to_date, counts_seq = data
         counts = [
