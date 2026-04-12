@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any
+from typing import Any, TYPE_CHECKING
 import requests
 import json
 import datetime
@@ -9,6 +9,9 @@ from zoneinfo import ZoneInfo
 from memoryfm.errors import InvalidDataError
 import memoryfm.services.user_service as userv
 import memoryfm.services.scrobble_service as scserv
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
 task_status: dict[str, Any] = {}
 
@@ -104,6 +107,7 @@ def from_recenttracks_response(response: requests.Response) -> list[tuple]:
 
 
 def from_timestamp(
+    session: Session,
     username: str,
     api_key: str,
     task_status: dict[str, Any],
@@ -131,13 +135,13 @@ def from_timestamp(
         (Max 200) A rate limit for number of scrobbles per page.
 
     """
-    context = userv.get_user_context(username)
+    context = userv.get_user_context(session, username)
     user_id = None
     if context:
         user_id = context.get("user_id")
         tz = context.get("tz")
-    userv.create_user(username, tz)
-    context = userv.get_user_context(username)
+    userv.create_user(session, username, tz)
+    context = userv.get_user_context(session, username)
     if context:
         user_id = context.get("user_id")
         tz = context.get("tz")
@@ -186,7 +190,7 @@ def from_timestamp(
                     }
                     for s in data_page
                 ]
-                scserv.insert_scrobbles(user_id, batch, limit)
+                scserv.insert_scrobbles(session, user_id, batch, limit)
                 task_status["total_scrobbles"] = int(
                     response.json()["recenttracks"]["@attr"]["total"]
                 )
@@ -200,6 +204,7 @@ def from_timestamp(
 
 
 def sync_lastfm_api(
+    session: Session,
     username: str,
     api_key: str,
     task_status: dict[str, Any],
@@ -219,10 +224,10 @@ def sync_lastfm_api(
         If not ``None``, ``tz`` must be a valid IANA Timezone string.
 
     """
-    context = userv.get_user_context(username)
+    context = userv.get_user_context(session, username)
     user_id = context.get("user_id") if context else None
     if user_id:
-        timestamp = scserv.get_max_timestamp(user_id)
+        timestamp = scserv.get_max_timestamp(session, user_id)
     else:
         timestamp = None
-    from_timestamp(username, api_key, task_status, timestamp, tz, limit)
+    from_timestamp(session, username, api_key, task_status, timestamp, tz, limit)

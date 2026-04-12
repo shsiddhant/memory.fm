@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
-from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -25,7 +24,6 @@ def init_db():
     Base.metadata.create_all(engine)
 
 
-@contextmanager
 def get_db_session():
     "Get a database session context manager."
     Session = SessionLocal()
