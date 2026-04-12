@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import delete, select
 from sqlalchemy.dialects.sqlite import insert
 
-from memoryfm.core.models import User
+from memoryfm.models.core import User
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session

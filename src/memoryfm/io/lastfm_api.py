@@ -3,10 +3,10 @@ from typing import Any, TYPE_CHECKING
 import requests
 import json
 import datetime
-import logging
 from zoneinfo import ZoneInfo
 
-from memoryfm.errors import InvalidDataError
+from memoryfm.errors import InvalidDataError, UserNotFoundError
+from memoryfm.logging import custom_logger
 import memoryfm.services.user_service as userv
 import memoryfm.services.scrobble_service as scserv
 
@@ -15,9 +15,7 @@ if TYPE_CHECKING:
 
 task_status: dict[str, Any] = {}
 
-logging.basicConfig()
-logger = logging.getLogger("sqlalchemy.engine")
-logger.setLevel(logging.INFO)
+logger = custom_logger()
 
 
 def lastfm_get_recent_tracks(
@@ -135,16 +133,16 @@ def from_timestamp(
         (Max 200) A rate limit for number of scrobbles per page.
 
     """
-    context = userv.get_user_context(session, username)
-    user_id = None
-    if context:
-        user_id = context.get("user_id")
-        tz = context.get("tz")
-    userv.create_user(session, username, tz)
-    context = userv.get_user_context(session, username)
-    if context:
-        user_id = context.get("user_id")
-        tz = context.get("tz")
+    context = None
+    try:
+        userv.create_user(session, username, tz)
+        context = userv.get_user_context(session, username)
+    except UserNotFoundError as e:
+        logger.warning("User not found: %s", e.username)
+        raise
+    except Exception:
+        raise
+    user_id, tz = context.user_id, context.tz
     if timestamp is None or isinstance(timestamp, int | float):
         from_ts = int(timestamp) if timestamp else timestamp
     elif isinstance(timestamp, datetime.datetime):
@@ -167,13 +165,6 @@ def from_timestamp(
                 limit=limit,
             )
             data_page = from_recenttracks_response(response)
-        except requests.HTTPError as e:
-            if e.args[0]["error"] == 8 and task_status["retry"] <= 5:
-                task_status["retry"] += 1
-                continue
-            else:
-                raise
-        else:
             if not data_page:
                 task_status["status"] = "completed"
                 logger.info(task_status)
@@ -198,7 +189,14 @@ def from_timestamp(
                 task_status["totalpages"] = int(
                     response.json()["recenttracks"]["@attr"]["totalPages"]
                 )
-                logger.info(task_status)
+        except requests.HTTPError as e:
+            if e.args[0]["error"] == 8 and task_status["retry"] <= 5:
+                task_status["retry"] += 1
+                logger.info("Retry: %s", task_status["retry"])
+                continue
+            else:
+                raise
+        else:
             task_status["retry"] = 0
             task_status["page"] += 1
 
@@ -224,10 +222,11 @@ def sync_lastfm_api(
         If not ``None``, ``tz`` must be a valid IANA Timezone string.
 
     """
-    context = userv.get_user_context(session, username)
-    user_id = context.get("user_id") if context else None
-    if user_id:
-        timestamp = scserv.get_max_timestamp(session, user_id)
-    else:
+    try:
+        context = userv.get_user_context(session, username)
+        timestamp = scserv.get_max_timestamp(session, context.user_id)
+    except UserNotFoundError:
         timestamp = None
+    except Exception:
+        raise
     from_timestamp(session, username, api_key, task_status, timestamp, tz, limit)

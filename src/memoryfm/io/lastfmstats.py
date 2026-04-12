@@ -18,19 +18,21 @@ def from_lastfmstats(
     username, scrobbles_data = validate_lastfmstats(file)
     if username and scrobbles_data:
         userv.create_user(session, username, tz, overwrite)
-        context = userv.get_user_context(session, username)
-        user_id = context.get("user_id") if context else None
-        tz = context.get("tz") if context else tz
-        if user_id and tz:
-            scrobbles = [
-                {
-                    "timestamp": datetime.fromtimestamp(
-                        s["date"] / 1000, tz=ZoneInfo(tz)
-                    ),
-                    "artist": s["artist"],
-                    "album": s["album"],
-                    "track": s["track"],
-                }
-                for s in scrobbles_data
-            ]
-            scserv.insert_scrobbles(session, user_id, scrobbles)
+        try:
+            context = userv.get_user_context(session, username)
+            user_id, tz = context.user_id, context.tz
+            if user_id and tz:
+                scrobbles = [
+                    {
+                        "timestamp": datetime.fromtimestamp(
+                            s["date"] / 1000, tz=ZoneInfo(tz)
+                        ),
+                        "artist": s["artist"],
+                        "album": s["album"],
+                        "track": s["track"],
+                    }
+                    for s in scrobbles_data
+                ]
+                scserv.insert_scrobbles(session, user_id, scrobbles)
+        except Exception:
+            raise

@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from memoryfm.config import DB_URL
-from memoryfm.core.models import Base
+from memoryfm.models.core import Base
 
 if TYPE_CHECKING:
     from sqlalchemy import Engine
