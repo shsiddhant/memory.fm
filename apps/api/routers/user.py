@@ -36,7 +36,7 @@ def recent_scrobbles(username: str, weeks: int = 8, stserv=Depends(get_stats_ser
     if data is not None:
         from_date, to_date, counts_seq = data
         counts = [
-            ScrobblesCount(day=row["Date"], value=row["Scrobbles"])
+            ScrobblesCount(day=row["Date"].strftime("%Y-%m-%d"), value=row["Scrobbles"])
             for row in counts_seq
         ]
         return RecentActivity(from_date=from_date, to_date=to_date, counts=counts)

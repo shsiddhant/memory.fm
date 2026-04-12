@@ -11,7 +11,7 @@ from memoryfm.core.models import Base
 if TYPE_CHECKING:
     from sqlalchemy import Engine
 
-engine: Engine = create_engine(DB_URL)
+engine: Engine = create_engine(DB_URL, pool_size=5, max_overflow=10, pool_pre_ping=True)
 
 logging.basicConfig()
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
