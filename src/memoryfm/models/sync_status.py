@@ -10,6 +10,7 @@ class SyncStatusTypes(Enum):
     Completed = 3
     Retry = 4
     Error = 5
+    Warning = 6
 
 
 @dataclass
@@ -21,6 +22,7 @@ class SyncStatus:
             SyncStatusTypes.Completed,
             SyncStatusTypes.Error,
             SyncStatusTypes.Retry,
+            SyncStatusTypes.Warning,
         ]
         | None
     ) = None
