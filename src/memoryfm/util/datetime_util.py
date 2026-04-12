@@ -4,7 +4,8 @@ from tzlocal import get_localzone_name
 
 from memoryfm.errors import InvalidDataError
 
-logging.basicConfig(level=logging.ERROR)
+
+logger = logging.getLogger(__name__)
 
 
 def validate_tz(tz: str | None = None) -> str:
@@ -26,5 +27,5 @@ def validate_tz(tz: str | None = None) -> str:
         try:
             return get_localzone_name()
         except Exception as e:
-            logging.error("Error: %s.\nUsing Etc/UTC as fallback.", e)
+            logger.error("Error: %s.\nUsing Etc/UTC as fallback.", e)
             return "Etc/UTC"
