@@ -1,9 +1,9 @@
 from __future__ import annotations
-from typing import Any
 import asyncio
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from memoryfm.models.sync_status import SyncStatus, SyncStatusTypes
 
-task_status: dict[str, Any] = {}
+sync_status: SyncStatus = SyncStatus()
 
 router = APIRouter()
 
@@ -13,8 +13,8 @@ async def sync_progress_websocket(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            await websocket.send_json(task_status)
-            if task_status.get("status") == "completed":
+            await websocket.send_json(sync_status.to_dict())
+            if sync_status.status == SyncStatusTypes.Completed:
                 break
             await asyncio.sleep(1)
     except WebSocketDisconnect:
