@@ -3,26 +3,12 @@ from typing import TYPE_CHECKING
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from memoryfm.errors import SchemaError, InvalidDataError
-from memoryfm.io._loaders import load_json
+from memoryfm.util._validate import validate_lastfmstats
 import memoryfm.services.user_service as userv
 import memoryfm.services.scrobble_service as scserv
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-
-def validate_lastfmstats(file: str | Path):
-    data = load_json(file)
-    if not data:
-        raise InvalidDataError("JSON data is empty")
-    else:
-        for key in ["username", "scrobbles"]:
-            if key not in data.keys():
-                raise SchemaError(f"Key missing in JSON file: '{key}'", key)
-        username = data.get("username")
-        scrobbles_data = data.get("scrobbles")
-        return username, scrobbles_data
 
 
 def from_lastfmstats(file: str | Path, tz: str | None = None, overwrite: bool = False):
