@@ -3,6 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import analytics, user, websockets
 
+from memoryfm.logging import configure_logging
+
+configure_logging()
+
 app = FastAPI()
 origins = [
     "http://localhost:5173",

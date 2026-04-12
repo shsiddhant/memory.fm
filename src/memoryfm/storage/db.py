@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -11,9 +10,6 @@ if TYPE_CHECKING:
     from sqlalchemy import Engine
 
 engine: Engine = create_engine(DB_URL, pool_size=5, max_overflow=10, pool_pre_ping=True)
-
-logging.basicConfig()
-logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
