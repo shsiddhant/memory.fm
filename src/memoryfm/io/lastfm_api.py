@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 from memoryfm.errors import InvalidDataError, UserNotFoundError
 from memoryfm.models.sync_status import SyncStatusTypes
 from memoryfm.util.format_sync_log import format_status_log
+from memoryfm.models.service_helpers import parse_lastfm_api_response
 import memoryfm.services.user_service as userv
 import memoryfm.services.scrobble_service as scserv
 
@@ -60,7 +61,9 @@ def lastfm_get_recent_tracks(
     return response
 
 
-def from_recenttracks_response(response: requests.Response) -> list[tuple]:
+def from_recenttracks_response(
+    response: requests.Response,
+) -> tuple[list[tuple[int, str, str, str]], list[str], int] | None:
     """
     Get data from last.fm API method user.getRecentTracks response.
 
@@ -91,18 +94,9 @@ def from_recenttracks_response(response: requests.Response) -> list[tuple]:
         else:
             data = jsondata["recenttracks"]["track"]
             if data:
-                scrobbles = [
-                    (
-                        int(s["date"]["uts"]),
-                        s["name"],
-                        s["artist"]["#text"],
-                        s["album"]["#text"] if (s and "album" in s) else "",
-                    )
-                    for s in data
-                ]
-                return scrobbles
+                return parse_lastfm_api_response(data)
             else:
-                return []
+                return None
 
 
 def from_timestamp(
@@ -156,12 +150,22 @@ def from_timestamp(
     sync_status.total_scrobbles = 0
     sync_status.retry = 1
     sync_status.total_retries = 5
+    skipped_count = 0
     page_block = 20
 
     while True:
-        sync_status.status = SyncStatusTypes.Progress
         _, modpage = divmod(sync_status.page, page_block)
+        # Write progress or skips every 20 pages.
         if modpage == 0:
+            # If skipped scrobbles, write warning to log
+            if skipped_count > 0:
+                sync_status.status = SyncStatusTypes.Warning
+                text = "scrobbles" if skipped_count > 1 else "scrobble"
+                skipped_text = f"Skipping {skipped_count} {text} - missing timestamps."
+                sync_status.error = skipped_text if skipped_count > 0 else None
+                logger.warning(format_status_log(username, sync_status))
+            # Write progress to log
+            sync_status.status = SyncStatusTypes.Progress
             logger.info(format_status_log(username, sync_status))
         try:
             response = lastfm_get_recent_tracks(
@@ -171,14 +175,16 @@ def from_timestamp(
                 from_ts=from_ts,
                 limit=limit,
             )
-            data_page = from_recenttracks_response(response)
-            if not data_page:
+            data = from_recenttracks_response(response)
+            if not data:
                 if sync_status.page > sync_status.totalpages:
                     sync_status.page -= 1
                 sync_status.status = SyncStatusTypes.Completed
                 logger.info(format_status_log(username, sync_status))
                 return
             elif user_id and tz:
+                data_page, _, skipped_count_page = data
+                skipped_count += skipped_count_page
                 batch = [
                     {
                         "timestamp": datetime.datetime.fromtimestamp(
