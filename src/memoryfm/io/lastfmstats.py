@@ -9,13 +9,16 @@ import memoryfm.services.scrobble_service as scserv
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from sqlalchemy.orm import Session
 
 
-def from_lastfmstats(file: str | Path, tz: str | None = None, overwrite: bool = False):
+def from_lastfmstats(
+    session: Session, file: str | Path, tz: str | None = None, overwrite: bool = False
+):
     username, scrobbles_data = validate_lastfmstats(file)
     if username and scrobbles_data:
-        userv.create_user(username, tz, overwrite)
-        context = userv.get_user_context(username)
+        userv.create_user(session, username, tz, overwrite)
+        context = userv.get_user_context(session, username)
         user_id = context.get("user_id") if context else None
         tz = context.get("tz") if context else tz
         if user_id and tz:
@@ -30,4 +33,4 @@ def from_lastfmstats(file: str | Path, tz: str | None = None, overwrite: bool = 
                 }
                 for s in scrobbles_data
             ]
-            scserv.insert_scrobbles(user_id, scrobbles)
+            scserv.insert_scrobbles(session, user_id, scrobbles)

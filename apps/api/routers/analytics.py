@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import Literal, Annotated
 from fastapi import APIRouter, Depends, Query
 
-from api.service_deps import get_stats_service
+from memoryfm.storage.db import get_db_session
+import memoryfm.services.stats_service as stserv
 
 router = APIRouter()
 
@@ -26,6 +27,6 @@ def top_charts(
             examples=[0, 10, 50],
         ),
     ] = 10,
-    stserv=Depends(get_stats_service),
+    session=Depends(get_db_session),
 ):
-    return stserv.get_top_charts_by_username(username, kind, period, limit)
+    return stserv.get_top_charts_by_username(session, username, kind, period, limit)
