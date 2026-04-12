@@ -1,4 +1,4 @@
-from memoryfm.core.models import Scrobble, User
+from memoryfm.models.core import Scrobble, User
 
 __all__ = [
     "Scrobble",

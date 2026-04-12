@@ -14,3 +14,9 @@ class SchemaError(InvalidDataError):
         self.msg = msg
         self.obj = obj
         super().__init__(self.msg)
+
+
+class UserNotFoundError(Exception):
+    def __init__(self, username):
+        self.username = username
+        super().__init__(f"User not found: {username}")

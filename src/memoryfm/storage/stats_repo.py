@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import datetime
 from sqlalchemy import desc, distinct, select, func
-from memoryfm.core.models import Scrobble
+from memoryfm.models.core import Scrobble
 from memoryfm.storage.user_repo import get_user_by_id
 
 if TYPE_CHECKING:
