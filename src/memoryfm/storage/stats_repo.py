@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import datetime
-from sqlalchemy import distinct, select, func
+from sqlalchemy import desc, distinct, select, func
 from memoryfm.core.models import Scrobble
 from memoryfm.storage.user_repo import get_user_by_id
 
@@ -75,8 +75,8 @@ def get_top_charts_by_user(
     data = session.execute(
         select(col.label("name"), func.count(Scrobble.id).label("scrobbles"))
         .where(Scrobble.user_id == user_id, Scrobble.timestamp >= datelimit)
-        .group_by(col)
-        .order_by(func.count(Scrobble.id).desc())
+        .group_by("name")
+        .order_by(desc("scrobbles"), desc(func.max(Scrobble.timestamp)))
         .limit(limit)
     )
     top = list(data.mappings())
@@ -102,7 +102,7 @@ def get_daily_scrobbles_count(
             func.date(Scrobble.timestamp) <= to_date,
             func.date(Scrobble.timestamp) >= from_date,
         )
-        .order_by(Scrobble.timestamp.desc())
+        .order_by(desc("Date"))
         .group_by("Date")
     )
     data = session.execute(stmt).mappings().all()
