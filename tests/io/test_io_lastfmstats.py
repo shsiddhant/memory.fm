@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from memoryfm.io.lastfmstats import validate_lastfmstats
+from memoryfm.util._validate import validate_lastfmstats
 from memoryfm.errors import (
     SchemaError,
     InvalidDataError,
