@@ -1,12 +1,13 @@
 from __future__ import annotations
 import os
 from dotenv import load_dotenv
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
+
+from api.service_deps import get_stats_service
 from api.routers.websockets import task_status
 from api.response_models import RecentActivity, ScrobblesCount
 from memoryfm.io.lastfm_api import sync_lastfm_api
-import memoryfm.services.stats_service as stserv
 
 router = APIRouter()
 
@@ -25,12 +26,12 @@ async def sync_scrobbles(username: str, bg_tasks: BackgroundTasks):
 
 
 @router.get("/user/{username}/summary")
-def summary(username: str):
+def summary(username: str, stserv=Depends(get_stats_service)):
     return stserv.get_summary_by_username(username)
 
 
 @router.get("/user/{username}/recent_scrobbles", response_model=RecentActivity)
-def recent_scrobbles(username: str, weeks: int = 8):
+def recent_scrobbles(username: str, weeks: int = 8, stserv=Depends(get_stats_service)):
     data = stserv.get_daily_scrobbles_count(username, limit=weeks * 7)
     if data is not None:
         from_date, to_date, counts_seq = data
