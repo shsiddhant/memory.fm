@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import requests
 import json
 import logging
@@ -7,13 +7,14 @@ import datetime
 from zoneinfo import ZoneInfo
 
 from memoryfm.errors import InvalidDataError, UserNotFoundError
+from memoryfm.models.sync_status import SyncStatusTypes
+from memoryfm.util.format_sync_log import format_status_log
 import memoryfm.services.user_service as userv
 import memoryfm.services.scrobble_service as scserv
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
-
-task_status: dict[str, Any] = {}
+    from memoryfm.models.sync_status import SyncStatus
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +109,7 @@ def from_timestamp(
     session: Session,
     username: str,
     api_key: str,
-    task_status: dict[str, Any],
+    sync_status: SyncStatus,
     timestamp: int | datetime.datetime | None = None,
     tz: str | None = "Etc/UTC",
     limit: int = 180,
@@ -149,30 +150,33 @@ def from_timestamp(
         from_ts = int(timestamp.timestamp())
     else:
         raise ValueError("Invalid timestamp.")
-    task_status["page"] = 1
-    task_status["totalpages"] = 1
-    task_status["fetched_scrobbles"] = 0
-    task_status["total_scrobbles"] = 0
-    task_status["retry"] = 1
+    sync_status.page = 1
+    sync_status.totalpages = 1
+    sync_status.fetched_scrobbles = 0
+    sync_status.total_scrobbles = 0
+    sync_status.retry = 1
+    sync_status.total_retries = 5
+    page_block = 20
 
     while True:
+        sync_status.status = SyncStatusTypes.Progress
+        _, modpage = divmod(sync_status.page, page_block)
+        if modpage == 0:
+            logger.info(format_status_log(username, sync_status))
         try:
             response = lastfm_get_recent_tracks(
                 username,
                 api_key,
-                page=task_status["page"],
+                page=sync_status.page,
                 from_ts=from_ts,
                 limit=limit,
             )
             data_page = from_recenttracks_response(response)
             if not data_page:
-                task_status["status"] = "completed"
-                logger.info(task_status)
-                logger.info(
-                    "Fetched %s scrobbles for user: %s",
-                    task_status["fetched_scrobbles"],
-                    username,
-                )
+                if sync_status.page > sync_status.totalpages:
+                    sync_status.page -= 1
+                sync_status.status = SyncStatusTypes.Completed
+                logger.info(format_status_log(username, sync_status))
                 return
             elif user_id and tz:
                 batch = [
@@ -187,30 +191,34 @@ def from_timestamp(
                     for s in data_page
                 ]
                 scserv.insert_scrobbles(session, user_id, batch, limit)
-                task_status["total_scrobbles"] = int(
+                sync_status.total_scrobbles = int(
                     response.json()["recenttracks"]["@attr"]["total"]
                 )
-                task_status["fetched_scrobbles"] += len(batch)
-                task_status["totalpages"] = int(
+                sync_status.fetched_scrobbles += len(batch)
+                sync_status.totalpages = int(
                     response.json()["recenttracks"]["@attr"]["totalPages"]
                 )
         except requests.HTTPError as e:
-            if e.args[0]["error"] == 8 and task_status["retry"] <= 5:
-                task_status["retry"] += 1
-                logger.info("Retry: %s", task_status["retry"])
+            if (
+                e.args[0]["error"] == 8
+                and sync_status.retry <= sync_status.total_retries
+            ):
+                sync_status.retry += 1
+                sync_status.status = SyncStatusTypes.Retry
+                logger.info(format_status_log(username, sync_status))
                 continue
             else:
                 raise
         else:
-            task_status["retry"] = 0
-            task_status["page"] += 1
+            sync_status.retry = 0
+            sync_status.page += 1
 
 
 def sync_lastfm_api(
     session: Session,
     username: str,
     api_key: str,
-    task_status: dict[str, Any],
+    sync_status: SyncStatus,
     tz: str | None = None,
     limit: int = 180,
 ):
@@ -235,5 +243,6 @@ def sync_lastfm_api(
     except Exception as e:
         logger.error(e)
         raise
-    logger.info("Starting sync for user: %s", username)
-    from_timestamp(session, username, api_key, task_status, timestamp, tz, limit)
+    sync_status.status = SyncStatusTypes.Started
+    logger.info(format_status_log(username, sync_status))
+    from_timestamp(session, username, api_key, sync_status, timestamp, tz, limit)
