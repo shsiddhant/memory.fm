@@ -136,9 +136,13 @@ def from_timestamp(
     if context:
         user_id = context.get("user_id")
         tz = context.get("tz")
-        userv.create_user(username, tz)
-    if timestamp is None or isinstance(timestamp, int):
-        from_ts = timestamp
+    userv.create_user(username, tz)
+    context = userv.get_user_context(username)
+    if context:
+        user_id = context.get("user_id")
+        tz = context.get("tz")
+    if timestamp is None or isinstance(timestamp, int | float):
+        from_ts = int(timestamp) if timestamp else timestamp
     elif isinstance(timestamp, datetime.datetime):
         from_ts = int(timestamp.timestamp())
     else:
