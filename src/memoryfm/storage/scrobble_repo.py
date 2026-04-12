@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 
-from memoryfm.core.models import Scrobble
+from memoryfm.models.core import Scrobble
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
