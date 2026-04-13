@@ -12,18 +12,21 @@ def format_status_log(
         f"fetched={sync_status.fetched_scrobbles}/{sync_status.total_scrobbles}"
     )
     retryinfo = f"attempt={sync_status.retry}/{sync_status.total_retries}"
+    phaseinfo = f"[{sync_status.phase.name.upper()}]" if sync_status.phase else ""
+    commoninfo = f"{phaseinfo} | {userinfo} | {pageinfo}"
+
     if sync_status.status == SyncStatusTypes.Started:
-        text = f"[SYNC STARTED] {userinfo}"
+        text = f"[SYNC STARTED] {phaseinfo} | {userinfo}"
     elif sync_status.status == SyncStatusTypes.Progress:
-        text = f"[SYNC PROGRESS] {userinfo} | {pageinfo} | {scrobbleinfo}"
+        text = f"[SYNC PROGRESS] {commoninfo} | {scrobbleinfo}"
     elif sync_status.status == SyncStatusTypes.Completed:
-        text = f"[SYNC COMPLETED] {userinfo} | {pageinfo} | {scrobbleinfo}"
+        text = f"[SYNC COMPLETED] {commoninfo} | {scrobbleinfo}"
     elif sync_status.status == SyncStatusTypes.Retry:
-        text = f"[SYNC RETRY] {userinfo} | {pageinfo} | {retryinfo}"
+        text = f"[SYNC RETRY] {commoninfo} | {retryinfo}"
     elif sync_status.status == SyncStatusTypes.Error:
-        text = f"[SYNC ERROR] {userinfo} | {pageinfo} | {sync_status.error}"
+        text = f"[SYNC ERROR] {commoninfo} | {sync_status.error}"
     elif sync_status.status == SyncStatusTypes.Warning and sync_status.error:
-        text = f"[SYNC Warning] {userinfo} | {pageinfo} | {sync_status.error}"
+        text = f"[SYNC Warning] {commoninfo} | {sync_status.error}"
     else:
         raise ValueError("Invalid sync_status.status")
     return text
