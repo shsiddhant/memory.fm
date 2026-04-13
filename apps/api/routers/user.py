@@ -13,7 +13,7 @@ from api.response_models import (
     SummaryModel,
 )
 from memoryfm.io.lastfm_api import sync_lastfm_api
-from memoryfm.storage.db import get_db_session
+from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 from memoryfm.models.sync_status import SyncStatusTypes
 from api.input_annotated_types import TrimmedStr  # noqa: TC001
