@@ -7,7 +7,10 @@ from fastapi import (
     Depends,
 )
 from fastapi.exceptions import ResponseValidationError
-from api.routers.websockets import sync_status
+from api.routers.websockets import (
+    get_ensure_user_status,
+    get_sync_status,
+)
 from api.response_models import (
     RecentActivity,
     SummaryModel,
@@ -15,6 +18,7 @@ from api.response_models import (
 from memoryfm.io.lastfm_api import sync_lastfm_api
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
+import memoryfm.services.user_service as userv
 from memoryfm.models.sync_status import SyncStatusTypes
 from api.input_annotated_types import TrimmedStr  # noqa: TC001
 
@@ -24,12 +28,24 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY", "")
 
 
+@router.post("/user/{username}/ensure")
+async def ensure_user(
+    username: TrimmedStr,
+    bg_tasks: BackgroundTasks,
+    session=Depends(get_db_session),
+):
+    ensure_user_status = get_ensure_user_status(username)
+    bg_tasks.add_task(userv.ensure_user, session, username, ensure_user_status)
+    return {"msg": f"Ensuring user exists: {username}..."}
+
+
 @router.post("/user/{username}/sync")
 async def sync_scrobbles(
     username: TrimmedStr,
     bg_tasks: BackgroundTasks,
     session=Depends(get_db_session),
 ):
+    sync_status = get_sync_status(username)
     sync_status.clear()
     sync_status.status = SyncStatusTypes.Progress
     bg_tasks.add_task(
