@@ -54,3 +54,8 @@ class SummaryDataModel(BaseModel):
 class SummaryModel(BaseModel):
     user: UserModel
     summary: SummaryDataModel
+
+
+class TopChart(BaseModel):
+    name: str
+    scrobbles: int
