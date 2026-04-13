@@ -1,6 +1,8 @@
 from __future__ import annotations
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import ResponseValidationError
 from api.routers import analytics, user, websockets
 
 from memoryfm.logging import configure_logging
@@ -24,3 +26,10 @@ app.add_middleware(
 app.include_router(analytics.router)
 app.include_router(user.router)
 app.include_router(websockets.router)
+
+
+@app.exception_handler(ResponseValidationError)
+async def pydantic_validation_exception_handler(
+    request: Request, exec: ResponseValidationError
+):
+    return JSONResponse(status_code=422, content={"errors": exec.errors()})

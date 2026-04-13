@@ -6,9 +6,12 @@ from fastapi import (
     BackgroundTasks,
     Depends,
 )
-from fastapi.responses import JSONResponse
+from fastapi.exceptions import ResponseValidationError
 from api.routers.websockets import sync_status
-from api.response_models import RecentActivity, ScrobblesCount
+from api.response_models import (
+    RecentActivity,
+    SummaryModel,
+)
 from memoryfm.io.lastfm_api import sync_lastfm_api
 from memoryfm.storage.db import get_db_session
 import memoryfm.services.stats_service as stserv
@@ -35,9 +38,12 @@ async def sync_scrobbles(
     return {"message": f"Syncing scrobbles for user: {username}"}
 
 
-@router.get("/user/{username}/summary")
+@router.get("/user/{username}/summary", response_model=SummaryModel)
 def summary(username: TrimmedStr, session=Depends(get_db_session)):
-    return stserv.get_summary_by_username(session, username)
+    data = stserv.get_summary_by_username(session, username)
+    if not data:
+        raise ResponseValidationError(errors=[{"msg": "No data found for user."}])
+    return data
 
 
 @router.get("/user/{username}/recent_scrobbles", response_model=RecentActivity)
@@ -47,11 +53,4 @@ def recent_scrobbles(
     session=Depends(get_db_session),
 ):
     data = stserv.get_daily_scrobbles_count(session, username, limit=weeks * 7)
-    if data is not None:
-        from_date, to_date, counts_seq = data
-        counts = [
-            ScrobblesCount(day=row["Date"].strftime("%Y-%m-%d"), value=row["Scrobbles"])
-            for row in counts_seq
-        ]
-        return RecentActivity(from_date=from_date, to_date=to_date, counts=counts)
-    return JSONResponse(status_code=404, content={"message": "No data found."})
+    return RecentActivity.from_service_data(data)
