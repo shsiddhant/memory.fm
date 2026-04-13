@@ -20,3 +20,10 @@ class UserNotFoundError(Exception):
     def __init__(self, username):
         self.username = username
         super().__init__(f"User not found: {self.username}")
+
+
+class LastfmAPIError(Exception):
+    def __init__(self, code: int, msg: str):
+        self.code = code
+        self.msg = msg
+        super().__init__(f"{self.code}: {self.msg}")
