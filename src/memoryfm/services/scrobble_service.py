@@ -30,5 +30,7 @@ def insert_scrobbles(
             raise
 
 
-def get_max_timestamp(session: Session, user_id: int) -> datetime | None:
-    return screpo.get_max_timestamp_by_user(session, user_id)
+def get_end_timestamps(
+    session: Session, user_id: int
+) -> tuple[datetime, datetime] | None:
+    return screpo.get_end_timestamps_by_user(session, user_id)
