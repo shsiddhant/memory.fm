@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.exceptions import ResponseValidationError
 
 from api.response_models import TopChart
-from memoryfm.storage.db import get_db_session
+from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 
 router = APIRouter()
