@@ -258,17 +258,18 @@ def sync_lastfm_api(
     logger.info(format_status_log(username, sync_status))
 
     # Backfill if old missing scrobbles
-    sync_status.phase = SyncPhase.Backfill
-    fetch_by_timestamps(
-        session,
-        username,
-        api_key,
-        sync_status,
-        from_ts=None,
-        to_ts=first_ts,
-        tz=tz,
-        limit=limit,
-    )
+    if first_ts:
+        sync_status.phase = SyncPhase.Backfill
+        fetch_by_timestamps(
+            session,
+            username,
+            api_key,
+            sync_status,
+            from_ts=None,
+            to_ts=first_ts,
+            tz=tz,
+            limit=limit,
+        )
     # Insert recent scrobbles
     sync_status.phase = SyncPhase.Recent
     fetch_by_timestamps(
