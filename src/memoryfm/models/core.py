@@ -42,6 +42,18 @@ class User(Base):
         server_default="Etc/UTC",
         doc="Timezone of the user. All time of the day analytics are based on it.",
     )
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        doc="Timestamp at which user was created.",
+    )
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        doc="Timestamp at which user was last updated.",
+    )
     scrobbles: Mapped[list["Scrobble"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
