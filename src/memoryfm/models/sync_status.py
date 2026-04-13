@@ -35,3 +35,14 @@ class SyncStatus:
 
     def to_dict(self):
         return asdict(self)
+
+
+class UserExist(Enum):
+    Exists = 1
+    Checking = 2
+    Error = 3
+
+
+@dataclass
+class EnsureUserStatus:
+    status: UserExist | None = None
