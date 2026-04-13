@@ -1,7 +1,11 @@
 from __future__ import annotations
-from typing import Literal
 from dataclasses import asdict, dataclass, fields
 from enum import Enum
+
+
+class SyncPhase(Enum):
+    Backfill = "backfill"
+    Recent = "recent"
 
 
 class SyncStatusTypes(Enum):
@@ -15,17 +19,7 @@ class SyncStatusTypes(Enum):
 
 @dataclass
 class SyncStatus:
-    status: (
-        Literal[
-            SyncStatusTypes.Started,
-            SyncStatusTypes.Progress,
-            SyncStatusTypes.Completed,
-            SyncStatusTypes.Error,
-            SyncStatusTypes.Retry,
-            SyncStatusTypes.Warning,
-        ]
-        | None
-    ) = None
+    status: SyncStatusTypes | None = None
     page: int | None = None
     totalpages: int | None = None
     fetched_scrobbles: int | None = None
@@ -33,6 +27,7 @@ class SyncStatus:
     retry: int | None = None
     total_retries: int | None = None
     error: str | None = None
+    phase: SyncPhase | None = None
 
     def clear(self):
         for field in fields(self):

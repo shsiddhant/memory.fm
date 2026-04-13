@@ -28,8 +28,13 @@ def insert_scrobbles_by_user(session: Session, user_id: int, scrobbles: Sequence
     session.execute(stmt, data)
 
 
-def get_max_timestamp_by_user(session: Session, user_id: int) -> datetime | None:
-    timestamp = session.scalar(
-        select(func.max(Scrobble.timestamp)).where(Scrobble.user_id == user_id)
+def get_end_timestamps_by_user(
+    session: Session, user_id: int
+) -> tuple[datetime, datetime] | None:
+    stmt = select(func.min(Scrobble.timestamp), func.max(Scrobble.timestamp)).where(
+        Scrobble.user_id == user_id
     )
-    return timestamp
+    data = session.execute(stmt).fetchone()
+    if data:
+        return data.tuple()
+    return None
