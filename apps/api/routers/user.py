@@ -29,7 +29,7 @@ async def ensure_user(
     session=Depends(get_db_session),
 ):
     bg_tasks.add_task(run_ensure_user, session, username)
-    return {"msg": f"Ensuring user exists: {username}..."}
+    return {"status": "accepted", "message": f"Ensure user task started for {username}"}
 
 
 @router.post("/user/{username}/sync")
@@ -44,7 +44,7 @@ async def sync_scrobbles(
         username,
         api_key=API_KEY,
     )
-    return {"message": f"Syncing scrobbles for user: {username}"}
+    return {"status": "accepted", "message": f"Sync task started for {username}"}
 
 
 @router.get("/user/{username}/summary", response_model=SummaryModel)
