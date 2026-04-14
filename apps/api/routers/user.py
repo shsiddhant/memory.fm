@@ -7,15 +7,12 @@ from fastapi import (
     Depends,
 )
 from fastapi.exceptions import ResponseValidationError
-from api.routers.websockets import (
-    get_ensure_user_status,
-    get_sync_status,
-)
+from api.state.status_services import get_ensure_user_status, get_sync_status
+from api.state.sync import run_sync
 from api.response_models import (
     RecentActivity,
     SummaryModel,
 )
-from memoryfm.io.lastfm_api import sync_lastfm_api
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 import memoryfm.services.user_service as userv
@@ -49,7 +46,10 @@ async def sync_scrobbles(
     sync_status.clear()
     sync_status.status = SyncStatusTypes.Progress
     bg_tasks.add_task(
-        sync_lastfm_api, session, username, api_key=API_KEY, sync_status=sync_status
+        run_sync,
+        session,
+        username,
+        api_key=API_KEY,
     )
     return {"message": f"Syncing scrobbles for user: {username}"}
 
