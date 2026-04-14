@@ -9,12 +9,12 @@ class SyncPhase(Enum):
 
 
 class SyncStatusTypes(Enum):
-    Started = 1
-    Progress = 2
-    Completed = 3
-    Retry = 4
-    Error = 5
-    Warning = 6
+    Started = "started"
+    Progress = "progress"
+    Completed = "completed"
+    Retry = "retry"
+    Error = "error"
+    Warning = "warning"
 
 
 @dataclass
@@ -34,15 +34,26 @@ class SyncStatus:
             setattr(self, field.name, None)
 
     def to_dict(self):
-        return asdict(self)
+        return serialize(asdict(self))
 
 
 class UserExist(Enum):
-    Exists = 1
-    Checking = 2
-    Error = 3
+    Exists = "exists"
+    Checking = "checking"
+    Error = "error"
 
 
 @dataclass
 class EnsureUserStatus:
     status: UserExist | None = None
+
+
+def serialize(obj):
+    if isinstance(obj, Enum):
+        return obj.value
+    if isinstance(obj, dict):
+        return {k: serialize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [serialize(v) for v in obj]
+
+    return obj
