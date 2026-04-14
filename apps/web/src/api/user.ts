@@ -1,5 +1,6 @@
 const BACKEND_URL = "http://127.0.0.1:8000";
 
+
 const handleResponse = async (res: Response) => {
   const data = await res.json();
 
@@ -17,6 +18,18 @@ const handleResponse = async (res: Response) => {
 
   return data;
 };
+
+
+export const ensureUser = async (username: string) => {
+  const res = await fetch(
+    `${BACKEND_URL}/user/${username}/ensure/`,
+    {
+      method: "POST",
+    }
+  );
+  return handleResponse(res);
+}
+
 
 export const fetchUserSummary = async (username: string) => {
   const res = await fetch(`${BACKEND_URL}/user/${username}/summary`);
