@@ -1,4 +1,4 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchRecentActivity, fetchTopCharts, fetchUserSummary } from "@/api/user";
 import { MdCalendarMonth } from "react-icons/md";
 import { Badge, Box, Container, Flex, Icon, VStack} from "@chakra-ui/react"
@@ -7,56 +7,81 @@ import SummaryBadges from "./summarybadges";
 import RecentActivity from "./recent_activity";
 import TopChartsPreview from "./topcharts_preview";
 import HeaderBar from "./headerbar";
+import NoScrobbles from "./no_scrobbles";
 
 
 export default function Overview () {
     const { username } = useParams();
-    const [weeks, period, limit] = [12, 30, 5] 
-    
-    if (!username || !username.trim()) {
-            return;
-        }
-    const [recentActivityQuery, summaryQuery, topArtistsQuery, topTracksQuery] = useQueries({
-        queries: [
-            {
-                queryKey: ["recentActivity", username, weeks],
-                queryFn: () => fetchRecentActivity(username, weeks),
-                enabled: !!username,
-            },
-            {
-                queryKey: ["summaryQuery", username],
+    const [weeks, period, limit] = [12, 30, 5]
+    let isValidUsername = false;
+    if (!username?.trim()) {
+        return;
+    }
+    else {
+        isValidUsername = true;
+    }
+
+    const summaryQuery = useQuery({
+        queryKey: ["summaryQuery", username],
                 queryFn: () => fetchUserSummary(username),
-                enabled: !!username,
-            },
-            {
-                queryKey: ["topArtists", username, period, limit],
-                queryFn: () => fetchTopCharts(username, "artist", period, limit),
-                enabled: !!username,
-            },
-            {
-                queryKey: ["topTracks", username, period, limit],
-                queryFn: () => fetchTopCharts(username, "track", period, limit),
-                enabled: !!username,
-            },
-        ],
+                enabled: isValidUsername
     });
 
-    const isLoading = (
-        recentActivityQuery.isLoading || summaryQuery.isLoading ||
-        topArtistsQuery.isLoading || topTracksQuery.isLoading
-    );
+    const hasValidSummary = summaryQuery.data?.summary != null;
 
-    if (isLoading) {
-        return <div>Loading...</div>
+    const recentActivityQuery = useQuery({
+        queryKey: ["recentActivity", username, weeks],
+        queryFn: () => fetchRecentActivity(username, weeks),
+        enabled: isValidUsername && hasValidSummary
+    });
+
+    const topArtistsQuery = useQuery({
+        queryKey: ["topArtists", username, period, limit],
+        queryFn: () => fetchTopCharts(username, "artist", period, limit),
+        enabled: isValidUsername && hasValidSummary
+    });
+
+    const topTracksQuery = useQuery({
+        queryKey: ["topTracks", username, period, limit],
+        queryFn: () => fetchTopCharts(username, "track", period, limit),
+        enabled: isValidUsername && hasValidSummary
+    });
+
+    if (!isValidUsername) return null;
+
+    if (summaryQuery.isLoading) {
+        return <div>Loading summary...</div>;
     }
 
-    for (const query of [recentActivityQuery, summaryQuery, topArtistsQuery, topTracksQuery]) {
-        if (query.isError) {
-            return <div>Error: { query.error.message }</div>
-        }
+    if (summaryQuery.isError || !hasValidSummary) {
+        return (
+            <>
+                <HeaderBar username={username} />
+                <NoScrobbles />
+            </>
+        );
     }
-    if (!summaryQuery.data || !recentActivityQuery.data || !topArtistsQuery.data || !topTracksQuery.data) {
-        return <div>No data.</div>;}
+
+    const isLoading =
+        recentActivityQuery.isLoading ||
+        topArtistsQuery.isLoading ||
+        topTracksQuery.isLoading;
+
+    const isError =
+        recentActivityQuery.isError ||
+        topArtistsQuery.isError ||
+        topTracksQuery.isError;
+
+    if (isLoading) return <div>Loading...</div>;
+
+    if (isError) {
+        return (
+            <>
+                <HeaderBar username={username} />
+                <NoScrobbles />
+            </>
+        );
+    }
 
     const { summary } = summaryQuery.data
     const { from_date, to_date, counts } = recentActivityQuery.data
@@ -100,3 +125,5 @@ export default function Overview () {
         </>
     )
 }
+
+    

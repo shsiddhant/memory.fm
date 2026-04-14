@@ -2,6 +2,7 @@ import { useState, type ChangeEvent } from 'react';
 import { Box, Button, VStack, Input } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
 import "../App.css"
+import { ensureUser } from '@/api/user';
 
 function HomePage() {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ function HomePage() {
     if (!username.trim()) {
       return;
     }
+    ensureUser(username);
     navigate(`/user/${username}/overview`);
   
   };
