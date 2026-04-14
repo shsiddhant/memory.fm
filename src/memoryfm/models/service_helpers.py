@@ -24,17 +24,24 @@ class ScrobbleResponse(BaseModel):
     album: str = Field(default="", validation_alias=AliasPath("album", "#text"))
 
 
-def skip_now_playing(scrobbles: list[Any]) -> list[ScrobbleResponse]:
+def skip_now_playing(scrobbles: Any) -> list[ScrobbleResponse]:
     valid_scrobbles = []
-    for scrobble in scrobbles:
-        if "@attr" in scrobble and scrobble["@attr"].get("nowplaying") == "true":
-            continue
-        try:
-            scrobble_valid = ScrobbleResponse.model_validate(scrobble)
-            valid_scrobbles.append(scrobble_valid)
-        except ValidationError:
-            raise
+    if isinstance(scrobbles, dict):
+        valid_scrobbles.extend(convert_single_scrobble_to_list(scrobbles))
+    elif isinstance(scrobbles, list):
+        for scrobble in scrobbles:
+            valid_scrobbles.extend(convert_single_scrobble_to_list(scrobble))
     return valid_scrobbles
+
+
+def convert_single_scrobble_to_list(scrobble: Any) -> list[ScrobbleResponse]:
+    if "@attr" in scrobble and scrobble["@attr"].get("nowplaying") == "true":
+        return []
+    try:
+        scrobble_valid = ScrobbleResponse.model_validate(scrobble)
+        return [scrobble_valid]
+    except ValidationError:
+        raise
 
 
 FilteredScrobbles = Annotated[
