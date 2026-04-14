@@ -17,6 +17,13 @@
   }
 }
 
+.app-logo {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+
+}
+
 .quote {
   font-size: 18px;
   line-height: 118%;

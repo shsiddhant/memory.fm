@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import SummaryBadges from "./summarybadges";
 import RecentActivity from "./recent_activity";
 import TopChartsPreview from "./topcharts_preview";
+import HeaderBar from "./headerbar";
 
 
 export default function Overview () {
@@ -64,9 +65,9 @@ export default function Overview () {
 
     return (
         <>
+        <HeaderBar username={username} />
         <section id="center">
           <VStack gap={10} mb={10}>
-            <h1>{username}</h1>
             <Badge bg={"purple.subtle"} color={"purple.fg"} size={"lg"}>
                 <Icon as={MdCalendarMonth} mr={1}></Icon>
                 {`Scrobbling since ${summary.scrobbling_since}`}
