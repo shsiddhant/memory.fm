@@ -1,23 +1,38 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "http://127.0.0.1:8000";
+
+const handleResponse = async (res: Response) => {
+  const data = await res.json();
+
+  if (!res.ok) {
+    if (res.status === 422 && data.errors) {
+      const errorMessages = data.errors
+        .map((err: { msg: string }, i: number) => `${i} - ${err.msg}`)
+        .join(", ");
+
+      throw new Error(errorMessages);
+    }
+
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
+};
 
 export const fetchUserSummary = async (username: string) => {
-  const res = await fetch(`${BASE_URL}/user/${username}/summary`);
-  if (!res.ok) throw new Error("User summary not found");
-  return res.json();
+  const res = await fetch(`${BACKEND_URL}/user/${username}/summary`);
+  return handleResponse(res);
 };
 
 export const fetchRecentActivity = async (username: string, weeks: number) => {
-  const res = await fetch(`${BASE_URL}/user/${username}/recent_scrobbles?weeks=${weeks}`);
-  if (!res.ok) throw new Error("Activity not found");
-  return res.json();
+  const res = await fetch(`${BACKEND_URL}/user/${username}/recent_scrobbles?weeks=${weeks}`);
+  return handleResponse(res);
 };
 
 export const fetchTopCharts = async (
   username: string, kind: string, period: number | "all_time", limit: number
 ) => {
   const res = await fetch(
-    `${BASE_URL}/user/${username}/top?kind=${kind}&period=${period}&limit=${limit}`
+    `${BACKEND_URL}/user/${username}/top?kind=${kind}&period=${period}&limit=${limit}`
   );
-  if (!res.ok) throw new Error("Top charts not found");
-  return res.json();
+  return handleResponse(res);
 };
