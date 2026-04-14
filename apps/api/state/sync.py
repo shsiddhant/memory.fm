@@ -2,19 +2,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import asyncio
 
-from api.state.status_services import get_sync_status
+from api.state.status_services import get_sync_status, get_ensure_user_status
+from api.state.locks import get_lock
 from memoryfm.io.lastfm_api import sync_lastfm_api
+from memoryfm.services.user_service import ensure_user
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
-
-user_locks: dict[str, asyncio.Lock] = {}
-
-
-def get_lock(username: str):
-    if username not in user_locks:
-        user_locks[username] = asyncio.Lock()
-    return user_locks[username]
 
 
 async def run_sync(session: Session, username: str, api_key: str):
@@ -28,4 +22,17 @@ async def run_sync(session: Session, username: str, api_key: str):
             username,
             api_key,
             sync_status,
+        )
+
+
+async def run_ensure_user(session: Session, username: str):
+    ensure_sync_status = get_ensure_user_status(username)
+    lock = get_lock(username)
+
+    async with lock:
+        await asyncio.to_thread(
+            ensure_user,
+            session,
+            username,
+            ensure_sync_status,
         )
