@@ -20,9 +20,9 @@ async def sync_progress_websocket(websocket: WebSocket):
         await websocket.close(1008)
         return
 
-    sync_status = get_sync_status(username)
     try:
         while True:
+            sync_status = get_sync_status(username)
             await websocket.send_json(sync_status.to_dict())
             if sync_status.status == SyncStatusTypes.Completed:
                 break
