@@ -24,6 +24,9 @@ const config  = defineConfig({
                         value: { _light: "#922020", _dark: "#f8d2cf" }
                     },
                 },
+                accent: {
+                    value: { _light: "#B40B08", _dark: "#FB9E98" }
+                }
             },
         },
     },
