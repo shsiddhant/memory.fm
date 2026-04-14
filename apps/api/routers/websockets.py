@@ -1,5 +1,4 @@
 from __future__ import annotations
-from dataclasses import asdict
 import asyncio
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from memoryfm.models.sync_status import (
@@ -41,7 +40,7 @@ async def ensure_user_websocket(websocket: WebSocket):
     ensure_user_status = get_ensure_user_status(username)
     try:
         while True:
-            await websocket.send_json(asdict(ensure_user_status))
+            await websocket.send_json(ensure_user_status.to_dict())
             if ensure_user_status.status == UserExist.Exists:
                 break
             await asyncio.sleep(1)

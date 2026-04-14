@@ -47,6 +47,9 @@ class UserExist(Enum):
 class EnsureUserStatus:
     status: UserExist | None = None
 
+    def to_dict(self):
+        return serialize(asdict(self))
+
 
 def serialize(obj):
     if isinstance(obj, Enum):
