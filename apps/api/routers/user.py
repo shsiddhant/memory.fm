@@ -7,16 +7,13 @@ from fastapi import (
     Depends,
 )
 from fastapi.exceptions import ResponseValidationError
-from api.state.status_services import get_ensure_user_status, get_sync_status
-from api.state.sync import run_sync
+from api.state.sync import run_sync, run_ensure_user
 from api.response_models import (
     RecentActivity,
     SummaryModel,
 )
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
-import memoryfm.services.user_service as userv
-from memoryfm.models.sync_status import SyncStatusTypes
 from api.input_annotated_types import TrimmedStr  # noqa: TC001
 
 router = APIRouter()
@@ -31,8 +28,7 @@ async def ensure_user(
     bg_tasks: BackgroundTasks,
     session=Depends(get_db_session),
 ):
-    ensure_user_status = get_ensure_user_status(username)
-    bg_tasks.add_task(userv.ensure_user, session, username, ensure_user_status)
+    bg_tasks.add_task(run_ensure_user, session, username)
     return {"msg": f"Ensuring user exists: {username}..."}
 
 
@@ -42,9 +38,6 @@ async def sync_scrobbles(
     bg_tasks: BackgroundTasks,
     session=Depends(get_db_session),
 ):
-    sync_status = get_sync_status(username)
-    sync_status.clear()
-    sync_status.status = SyncStatusTypes.Progress
     bg_tasks.add_task(
         run_sync,
         session,
