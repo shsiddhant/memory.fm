@@ -1,4 +1,6 @@
 from __future__ import annotations
+import datetime
+from typing import Literal
 import logging
 from tzlocal import get_localzone_name
 
@@ -29,3 +31,10 @@ def validate_tz(tz: str | None = None) -> str:
         except Exception as e:
             logger.error("Error: %s.\nUsing Etc/UTC as fallback.", e)
             return "Etc/UTC"
+
+
+def get_datelimit_from_period(period: int | Literal["all_time"] = 7):
+    if period != "all_time":
+        return datetime.datetime.now() - datetime.timedelta(days=period)
+    else:
+        return datetime.datetime.fromtimestamp(0)
