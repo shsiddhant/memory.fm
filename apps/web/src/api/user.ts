@@ -30,6 +30,15 @@ export const ensureUser = async (username: string) => {
   return handleResponse(res);
 }
 
+export const syncUserScrobbles = async (username: string) => {
+  const res = await fetch(
+    `${BACKEND_URL}/user/${username}/sync/`,
+    {
+      method: "POST",
+    }
+  );
+  return handleResponse(res);
+}
 
 export const fetchUserSummary = async (username: string) => {
   const res = await fetch(`${BACKEND_URL}/user/${username}/summary`);

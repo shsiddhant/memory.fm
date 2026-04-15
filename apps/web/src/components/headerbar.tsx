@@ -1,9 +1,18 @@
 import { Avatar, Box, Flex, Menu, Portal, Text } from "@chakra-ui/react";
 import "../App.css"
+import { syncUserScrobbles } from "@/api/user";
 
 export default function HeaderBar (
-    { username }: { username: string }
+    { username, onSync}: {
+        username: string
+        onSync: (hasStartedSync: boolean) => void
+    }
 ) {
+    
+    async function handleClick() {
+            await syncUserScrobbles(username);
+            onSync(true);
+        }
 
     return (
         <Flex
@@ -33,7 +42,12 @@ export default function HeaderBar (
                     <Portal>
                         <Menu.Positioner>
                             <Menu.Content>
-                                <Menu.Item value="sync">Sync Scrobbles</Menu.Item>
+                                <Menu.Item
+                                    value="sync"
+                                    onClick={handleClick}
+                                >
+                                    Sync Scrobbles
+                                </Menu.Item>
                             </Menu.Content>
                         </Menu.Positioner>
                     </Portal>
