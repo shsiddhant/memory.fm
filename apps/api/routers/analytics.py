@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Literal, Annotated, Sequence
 from fastapi import APIRouter, Depends, Query
-from fastapi.exceptions import ResponseValidationError
 
 from api.response_models import TopChart
 from memoryfm.storage.session import get_db_session
@@ -10,7 +9,7 @@ import memoryfm.services.stats_service as stserv
 router = APIRouter()
 
 
-@router.get("/user/{username}/top", response_model=Sequence[TopChart])
+@router.get("/user/{username}/top", response_model=Sequence[TopChart] | None)
 def top_charts(
     username: str,
     kind: Literal["artist", "album", "track"],
@@ -32,6 +31,4 @@ def top_charts(
     session=Depends(get_db_session),
 ):
     data = stserv.get_top_charts_by_username(session, username, kind, period, limit)
-    if not data:
-        raise ResponseValidationError(errors=[{"msg": "No data found for user."}])
     return data
