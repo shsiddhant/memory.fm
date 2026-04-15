@@ -160,7 +160,7 @@ def fetch_by_timestamps(
 
         # Write progress after every `page_block` pages.
         _, modpage = divmod(sync_status.page, page_block)
-        if modpage == 0:
+        if modpage == 0 or sync_status.page == 1:
             # If skipped scrobbles, write warning to log
             if skipped_count > 0:
                 sync_status.status = SyncStatusTypes.Warning
@@ -194,6 +194,7 @@ def fetch_by_timestamps(
                 sync_status.status = SyncStatusTypes.Completed
                 logger.info(format_status_log(username, sync_status))
                 break
+            sync_status.status = SyncStatusTypes.Progress
             scserv.insert_scrobbles(session, user_id, batch)
             sync_status.totalpages = valid_response.totalpages
             sync_status.total_scrobbles = valid_response.total_scrobbles

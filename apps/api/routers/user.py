@@ -6,7 +6,6 @@ from fastapi import (
     BackgroundTasks,
     Depends,
 )
-from fastapi.exceptions import ResponseValidationError
 from api.state.sync import run_sync, run_ensure_user
 from api.response_models import (
     RecentActivity,
@@ -47,12 +46,9 @@ async def sync_scrobbles(
     return {"status": "accepted", "message": f"Sync task started for {username}"}
 
 
-@router.get("/user/{username}/summary", response_model=SummaryModel)
+@router.get("/user/{username}/summary", response_model=SummaryModel | None)
 def summary(username: TrimmedStr, session=Depends(get_db_session)):
-    data = stserv.get_summary_by_username(session, username)
-    if not data:
-        raise ResponseValidationError(errors=[{"msg": "No data found for user."}])
-    return data
+    return stserv.get_summary_by_username(session, username)
 
 
 @router.get("/user/{username}/recent_scrobbles", response_model=RecentActivity)
