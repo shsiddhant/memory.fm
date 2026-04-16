@@ -50,11 +50,11 @@ export const fetchRecentActivity = async (username: string, weeks: number) => {
   return handleResponse(res);
 };
 
-export const fetchTopCharts = async (
+export const fetchTopChartsByPeriod = async (
   username: string, kind: string, period: number | "all_time", limit: number
 ) => {
   const res = await fetch(
-    `${BACKEND_URL}/user/${username}/top?kind=${kind}&period=${period}&limit=${limit}`
+    `${BACKEND_URL}/user/${username}/top_last?kind=${kind}&period=${period}&limit=${limit}`
   );
   return handleResponse(res);
 };

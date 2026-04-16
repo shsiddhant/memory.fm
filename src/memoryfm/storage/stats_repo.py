@@ -6,9 +6,10 @@ from memoryfm.models.core import Scrobble
 from memoryfm.storage.user_repo import get_user_by_id
 
 if TYPE_CHECKING:
-    from typing import Literal, Sequence
+    from typing import Sequence
     from sqlalchemy.orm import Session
     from sqlalchemy import RowMapping
+    from memoryfm.models.service_enums import ChartKindColumn
 
 
 def get_summary_by_user(session: Session, user_id: int) -> dict | None:
@@ -55,31 +56,24 @@ def get_summary_by_user(session: Session, user_id: int) -> dict | None:
 def get_top_charts_by_user(
     session: Session,
     user_id: int,
-    kind: Literal["artist", "album", "track"],
-    period: int | Literal["all_time"] = 7,
+    kind: ChartKindColumn,
+    from_ts: datetime.datetime | None = None,
+    to_ts: datetime.datetime | None = None,
     limit: int | None = 10,
-) -> list:
-    if period != "all_time":
-        now = datetime.datetime.now()
-        datelimit = now - datetime.timedelta(days=period)
-    else:
-        datelimit = datetime.datetime.fromtimestamp(0)
-    if kind == "track":
-        col = Scrobble.track
-    elif kind == "artist":
-        col = Scrobble.artist
-    elif kind == "album":
-        col = Scrobble.album
-    else:
-        raise ValueError("Kind must be one of: 'tracks', 'artists', 'albums'")
-    data = session.execute(
+) -> Sequence[RowMapping]:
+    col = kind.column
+    stmt = (
         select(col.label("name"), func.count(Scrobble.id).label("scrobbles"))
-        .where(Scrobble.user_id == user_id, Scrobble.timestamp >= datelimit)
+        .where(Scrobble.user_id == user_id)
         .group_by("name")
         .order_by(desc("scrobbles"), desc(func.max(Scrobble.timestamp)))
         .limit(limit)
     )
-    top = list(data.mappings())
+    if from_ts:
+        stmt = stmt.filter(Scrobble.timestamp >= from_ts)
+    if to_ts:
+        stmt = stmt.filter(Scrobble.timestamp < to_ts)
+    top = session.execute(stmt).mappings().fetchall()
     return top
 
 

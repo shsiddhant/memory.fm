@@ -3,16 +3,17 @@ from typing import Literal, Annotated, Sequence
 from fastapi import APIRouter, Depends, Query
 
 from api.response_models import TopChart
+from memoryfm.models.service_enums import ChartKindColumn  # noqa: TC001
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 
 router = APIRouter()
 
 
-@router.get("/user/{username}/top", response_model=Sequence[TopChart] | None)
-def top_charts(
+@router.get("/user/{username}/top_last", response_model=Sequence[TopChart] | None)
+def top_charts_recent(
     username: str,
-    kind: Literal["artist", "album", "track"],
+    kind: Annotated[ChartKindColumn, Query(description="Type of top chart to fetch.")],
     period: Annotated[
         int | Literal["all_time"],
         Query(
@@ -23,12 +24,13 @@ def top_charts(
     limit: Annotated[
         int,
         Query(
-            description="The number of items to return. **Set to -1 to fetch all**",
+            description="The number of items to return. **Set to -1 to fetch all.**",
             ge=-1,
             examples=[0, 10, 50],
         ),
     ] = 10,
     session=Depends(get_db_session),
 ):
-    data = stserv.get_top_charts_by_username(session, username, kind, period, limit)
+    """Fetch top charts by period."""
+    data = stserv.get_top_charts_by_period(session, username, kind, period, limit)
     return data
