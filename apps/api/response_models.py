@@ -59,3 +59,8 @@ class SummaryModel(BaseModel):
 class TopChart(BaseModel):
     name: str
     scrobbles: int
+
+
+class TimeSeriesData(BaseModel):
+    day: date
+    value: int | float
