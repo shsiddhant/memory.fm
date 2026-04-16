@@ -1,19 +1,20 @@
 from __future__ import annotations
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, Sequence
 from math import exp
-from sqlalchemy import select, func
+from sqlalchemy import select, func, Float
 from memoryfm.models.service_enums import Frequency
 from memoryfm.models.core import Scrobble
 from memoryfm.util.datetime_util import get_datelimit_from_period
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
+    from sqlalchemy import RowMapping
     from memoryfm.models.service_enums import (
         ChartKindColumn,
     )
 
 
-def get_frequency_counts_cte(
+def get_frequency_proportions_cte(
     user_id: int,
     kind: ChartKindColumn,
     period: int | Literal["all_time"] = 30,
@@ -34,12 +35,25 @@ def get_frequency_counts_cte(
         select(
             stmt_cte_bin.columns[freq.value],
             stmt_cte_bin.columns[kind.value],
-            func.count().label("scrobbles"),
+            func.count().cast(Float).label("scrobbles"),
         )
-        .group_by(freq.value, kind.value)
+        .group_by(
+            stmt_cte_bin.columns[freq.value],
+            stmt_cte_bin.columns[kind.value],
+        )
         .cte("freq")
     )
-    return stmt_cte_freq
+    cte_freq_cols = stmt_cte_freq.columns
+    scrobbles_col = cte_freq_cols["scrobbles"]
+    stmt_cte_props = select(
+        cte_freq_cols[freq.value],
+        cte_freq_cols[kind.value],
+        (
+            scrobbles_col
+            / func.sum(scrobbles_col).over(partition_by=cte_freq_cols[freq.value])
+        ).label("prop"),
+    ).cte("props")
+    return stmt_cte_props
 
 
 def get_renyi_entropy(
@@ -49,24 +63,20 @@ def get_renyi_entropy(
     period: int | Literal["all_time"] = 30,
     freq: Frequency = Frequency.D,
     alpha: float = 1,
-):
-    stmt_cte_freq = get_frequency_counts_cte(user_id, kind, period, freq)
-    cte_freq_cols = stmt_cte_freq.columns
-    scrobbles_col = cte_freq_cols["scrobbles"]
+) -> Sequence[RowMapping] | None:
+    stmt_cte_props = get_frequency_proportions_cte(user_id, kind, period, freq)
+    cte_props_cols = stmt_cte_props.columns
+    prop_col = cte_props_cols["prop"]
 
     if alpha != 1:
-        entropy_col = (1 / (1 - alpha)) * func.ln(
-            func.sum(func.pow(scrobbles_col, alpha))
-        )
+        entropy_col = (1 / (1 - alpha)) * func.ln(func.sum(func.pow(prop_col, alpha)))
     elif alpha == 1:
-        entropy_col = func.ln(func.sum(scrobbles_col)) - (
-            func.sum(scrobbles_col * func.ln(scrobbles_col)) / func.sum(scrobbles_col)
-        )
+        entropy_col = -func.sum(prop_col * func.ln(prop_col))
     else:
         return None
     stmt = select(
-        cte_freq_cols[freq.value].label("day"), entropy_col.label("value")
-    ).group_by(freq.value)
+        cte_props_cols[freq.value].label("day"), entropy_col.label("value")
+    ).group_by(cte_props_cols[freq.value])
     data = session.execute(stmt).mappings().fetchall()
     return data
 
