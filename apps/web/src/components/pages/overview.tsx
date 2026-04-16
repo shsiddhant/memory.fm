@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchRecentActivity, fetchTopCharts, fetchUserSummary } from "@/api/user";
+import { fetchRecentActivity, fetchTopChartsByPeriod, fetchUserSummary } from "@/api/user";
 import { MdCalendarMonth } from "react-icons/md";
 import { Badge, Box, Container, Flex, Icon, VStack} from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
@@ -52,13 +52,13 @@ export default function Overview () {
 
     const topArtistsQuery = useQuery({
         queryKey: ["topArtists", username, period, limit],
-        queryFn: () => fetchTopCharts(username, "artist", period, limit),
+        queryFn: () => fetchTopChartsByPeriod(username, "artist", period, limit),
         enabled: isValidUsername && hasValidSummary
     });
 
     const topTracksQuery = useQuery({
         queryKey: ["topTracks", username, period, limit],
-        queryFn: () => fetchTopCharts(username, "track", period, limit),
+        queryFn: () => fetchTopChartsByPeriod(username, "track", period, limit),
         enabled: isValidUsername && hasValidSummary
     });
 
