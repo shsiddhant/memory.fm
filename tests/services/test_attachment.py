@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from math import exp, log
 
 import pytest
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 kind = ChartKindColumn.Album
 freq = Frequency.W
 username = "lazulinoother"
-period: Literal["all_time"] = "all_time"
+from_ts, to_ts = None, None
 
 renyi_entropy_expected = {1: -(5 * log(5 / 6) + log(1 / 6)) / 6, 2: -log(26 / 36)}
 att_index_expected = {k: 100 * exp(-v) for k, v in renyi_entropy_expected.items()}
@@ -25,7 +25,7 @@ att_index_expected = {k: 100 * exp(-v) for k, v in renyi_entropy_expected.items(
 def test_get_renyi_entropy(seeded_db: Session):
     for alpha, value in renyi_entropy_expected.items():
         entropy = attserv.get_renyi_entropy_by_username(
-            seeded_db, username, kind, period, freq, alpha
+            seeded_db, username, kind, from_ts, to_ts, freq, alpha
         )
         assert entropy is not None
         assert len(entropy) == 1
@@ -35,7 +35,7 @@ def test_get_renyi_entropy(seeded_db: Session):
 def test_get_attachment_index(seeded_db: Session):
     for alpha, value in att_index_expected.items():
         att_index = attserv.get_attachment_index_by_username(
-            seeded_db, username, kind, period, freq, alpha
+            seeded_db, username, kind, from_ts, to_ts, freq, alpha
         )
         assert att_index is not None
         assert len(att_index) == 1
