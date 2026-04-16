@@ -2,6 +2,7 @@ from __future__ import annotations
 import datetime
 from typing import Literal
 import logging
+from zoneinfo import ZoneInfo
 from tzlocal import get_localzone_name
 
 from memoryfm.errors import InvalidDataError
@@ -38,3 +39,13 @@ def get_datelimit_from_period(period: int | Literal["all_time"] = 7):
         return datetime.datetime.now() - datetime.timedelta(days=period)
     else:
         return datetime.datetime.fromtimestamp(0)
+
+
+def normalize_timestamp(
+    timestamp: datetime.datetime | None, tz: str = "Etc/UTC"
+) -> datetime.datetime | None:
+    if not timestamp:
+        return None
+    if timestamp.tzinfo is None:
+        return timestamp.replace(tzinfo=ZoneInfo(tz))
+    return timestamp.astimezone(tz=ZoneInfo(tz))
