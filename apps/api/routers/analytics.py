@@ -2,11 +2,12 @@ import datetime
 from typing import Literal, Annotated, Sequence
 from fastapi import APIRouter, Depends, Query
 
-from api.response_models import TopChart
-from memoryfm.models.service_enums import ChartKindColumn
+from api.response_models import TimeSeriesData, TopChart
+from memoryfm.models.service_enums import ChartKindColumn, Frequency
 from memoryfm.services.user_service import get_user_context
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
+import memoryfm.services.attachment_service as attserv
 from memoryfm.util.datetime_util import normalize_timestamp
 
 router = APIRouter()
@@ -43,11 +44,15 @@ def top_charts(
     kind: Annotated[ChartKindColumn, Query(description="Type of top chart to fetch.")],
     from_ts: Annotated[
         datetime.datetime | None,
-        Query(description="Fetch top charts since this date. *Use ISO 8601 datetime.*"),
+        Query(
+            description="Fetch top charts since this datetime. *Use ISO 8601 datetime.*"
+        ),
     ] = None,
     to_ts: Annotated[
         datetime.datetime | None,
-        Query(description="Fetch top charts upto this date. *Use ISO 8601 datetime.*"),
+        Query(
+            description="Fetch top charts upto this datetime. *Use ISO 8601 datetime.*"
+        ),
     ] = None,
     limit: Annotated[
         int | None,
@@ -59,7 +64,7 @@ def top_charts(
     ] = 10,
     session=Depends(get_db_session),
 ):
-    """Fetch top charts by period."""
+    """Fetch top charts for user in the given datetime range."""
     tz = get_user_context(session, username).tz
     return (
         stserv.get_top_charts_by_username(
@@ -69,6 +74,63 @@ def top_charts(
             from_ts=normalize_timestamp(from_ts, tz),
             to_ts=normalize_timestamp(to_ts, tz),
             limit=limit,
+        )
+        or []
+    )
+
+
+@router.get("/user/{username}/attachment", response_model=Sequence[TimeSeriesData])
+def attachment_index(
+    username: str,
+    kind: Annotated[
+        ChartKindColumn, Query(description="Kind of Attachment Index to fetch.")
+    ],
+    from_ts: Annotated[
+        datetime.datetime | None,
+        Query(
+            description=(
+                "Fetch attachment index since this datetime. *Use ISO 8601 datetime.*"
+            )
+        ),
+    ] = None,
+    to_ts: Annotated[
+        datetime.datetime | None,
+        Query(
+            description=(
+                "Fetch attachment index upto this datetime. *Use ISO 8601 datetime.*"
+            )
+        ),
+    ] = None,
+    freq: Annotated[
+        Frequency,
+        Query(
+            description="The Frequency over which scrobble counts are grouped together."
+        ),
+    ] = Frequency.D,
+    alpha: Annotated[
+        float,
+        Query(
+            description=(
+                "Order of Attachment Index. "
+                "The order is same as order of the underlying Rényi Entropy."
+            ),
+            ge=0.5,
+            le=3.0,
+        ),
+    ] = 1,
+    session=Depends(get_db_session),
+):
+    """Fetch Attachment Index for user in the given datetime range."""
+    tz = get_user_context(session, username).tz
+    return (
+        attserv.get_attachment_index_by_username(
+            session,
+            username,
+            kind,
+            normalize_timestamp(from_ts, tz),
+            normalize_timestamp(to_ts, tz),
+            freq,
+            alpha,
         )
         or []
     )
