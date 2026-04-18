@@ -46,13 +46,14 @@ def get_frequency_proportions_cte(
     )
     cte_freq_cols = stmt_cte_freq.columns
     scrobbles_col = cte_freq_cols["scrobbles"]
+    total_scrobbles_col = func.sum(scrobbles_col).over(
+        partition_by=cte_freq_cols[freq.value]
+    )
     stmt_cte_props = select(
         cte_freq_cols[freq.value],
         cte_freq_cols[kind.value],
-        (
-            scrobbles_col
-            / func.sum(scrobbles_col).over(partition_by=cte_freq_cols[freq.value])
-        ).label("prop"),
+        total_scrobbles_col.label("total_scrobbles"),
+        (scrobbles_col / total_scrobbles_col).label("prop"),
     ).cte("props")
     return stmt_cte_props
 
@@ -69,6 +70,7 @@ def get_renyi_entropy(
     stmt_cte_props = get_frequency_proportions_cte(user_id, kind, from_ts, to_ts, freq)
     cte_props_cols = stmt_cte_props.columns
     prop_col = cte_props_cols["prop"]
+    total_scrobbles_col = func.any_value(cte_props_cols["total_scrobbles"])
 
     if alpha != 1:
         entropy_col = (1 / (1 - alpha)) * func.ln(func.sum(func.pow(prop_col, alpha)))
@@ -77,7 +79,9 @@ def get_renyi_entropy(
     else:
         return None
     stmt = select(
-        cte_props_cols[freq.value].label("day"), entropy_col.label("value")
+        cte_props_cols[freq.value].label("day"),
+        total_scrobbles_col.label("total_scrobbles"),
+        entropy_col.label("value"),
     ).group_by(cte_props_cols[freq.value])
     data = session.execute(stmt).mappings().fetchall()
     return data
