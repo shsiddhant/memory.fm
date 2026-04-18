@@ -11,6 +11,17 @@ const config  = defineConfig({
         },
         semanticTokens: {
             colors: {
+                brand: {
+                    solid: {
+                        value: { _light: "#B40B08", _dark: "#FB9E98" }
+                    },
+                    subtle: {
+                        value: { _light: "#fbe0e0", _dark: "#65241f" }
+                    },
+                    muted: {
+                        value: { _light: "#f7bdbc", _dark: "#9d453d" }
+                    },
+                },
                 activityColors: {
                     empty: {
                         value: { _light: "#fbe0e0", _dark: "#65241f" }
@@ -32,7 +43,7 @@ const config  = defineConfig({
                     },
                 },
                 accent: {
-                    value: { _light: "#B40B08", _dark: "#FB9E98" }
+                    value: "{colors.brand.solid}"
                 },
                 ticks: {
                     value: { _light: "#e5e4e7", _dark: "#2e303a"}
