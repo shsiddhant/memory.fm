@@ -36,4 +36,4 @@ class TestFromLastfmstats:
 
         stmt = select(Scrobble).where(Scrobble.user_id == user_id)
         scrobbles = seeded_db.execute(stmt).fetchall()
-        assert len(scrobbles) == 6
+        assert len(scrobbles) == 11
