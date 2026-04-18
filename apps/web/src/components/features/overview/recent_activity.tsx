@@ -27,7 +27,7 @@ export default function RecentActivity(
         ]
     )
     return (
-        <div style={{ height: 250, width: 500 }}>
+        <div style={{ height: 250, width: 600 }}>
         <ResponsiveTimeRange
         data={counts}
         from={`${from_date}T00:00:00`}
@@ -36,7 +36,7 @@ export default function RecentActivity(
         colors={ [c0, c1, c2, c3, c4] }
         maxValue={"auto"}
         minValue={0}
-        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+        margin={{ top: 20, right: 20, bottom: 0, left: 20 }}
         dayBorderColor=""
         daySpacing={3}
         dayRadius={5}

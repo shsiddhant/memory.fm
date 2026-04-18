@@ -1,19 +1,29 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchRecentActivity, fetchTopChartsByPeriod, fetchUserSummary } from "@/api/user";
-import { MdCalendarMonth } from "react-icons/md";
-import { Badge, Box, Container, Flex, Icon, VStack} from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
-import { useSyncStatus } from "@/api/sync";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import SyncCompleteAlert from "../sync_complete_alert";
-import SyncProgress from "../sync_progress";
-import SummaryBadges from "../summarybadges";
-import RecentActivity from "../recent_activity";
-import TopChartsPreview from "../topcharts_preview";
-import HeaderBar from "../headerbar";
-import NoScrobbles from "../no_scrobbles";
+// Data API
+import { fetchRecentActivity, fetchTopChartsByPeriod, fetchUserSummary } from "@/api/user";
+
+// Hooks
+import { useSyncStatus } from "@/hooks/use_sync_status";
+
+// Components
+
+// Chakra UI components
+import { MdCalendarMonth } from "react-icons/md";
+import { Badge, Box, Flex, Icon, VStack} from "@chakra-ui/react"
+
+// Custom Components
+import Section from "@/components/ui/section";
+import SyncCompleteAlert from "../features/overview/sync_complete_alert";
+import SyncProgress from "../features/overview/sync_progress";
+import SummaryBadges from "../features/overview/summarybadges";
+import RecentActivity from "../features/overview/recent_activity";
+import TopChartsPreview from "../features/overview/topcharts_preview";
+import NoScrobbles from "../features/overview/no_scrobbles";
 import { useEffect, useState } from "react";
 
+// Overview Page
 
 export default function Overview () {
     const { username } = useParams();
@@ -28,12 +38,8 @@ export default function Overview () {
         isValidUsername = true;
     }
     
-    const [ hasStartedSync, setHasStartedSync ] = useState<boolean>(false);
-
-    const { syncStatus } = useSyncStatus(username, hasStartedSync); 
-
+    const { syncStatus, isSyncActive } = useSyncStatus(username);
     const [ showAlert, setShowAlert ] = useState<boolean>(false);
-
     const [ fetched, setFetched ] = useState<number | null>(null);
 
     const summaryQuery = useQuery({
@@ -62,29 +68,40 @@ export default function Overview () {
         enabled: isValidUsername && hasValidSummary
     });
 
-    useEffect(() => {
-    if (!syncStatus) return;
+    const handleCloseAlert = () => {
+        if (!syncStatus) return;
+        
+        const key = `syncAlertDismissed:${username}:${syncStatus.fetched_scrobbles}`;
+        localStorage.setItem(key, "true");
+        setShowAlert(false);
+    };
 
-    if (syncStatus.status === "completed") {
+    useEffect(() => {
+        if (!syncStatus) return;
+        
+        if (syncStatus.status !== "completed") return;
+
+        const key = `syncAlertDismissed:${username}:${syncStatus.fetched_scrobbles}`;
 
         setTimeout(() => {
-            setHasStartedSync(false);
-            setFetched(syncStatus?.fetched_scrobbles);
+            const dismissed = localStorage.getItem(key) === "true";
+            if (dismissed) return;
+            
+            setFetched(syncStatus.fetched_scrobbles);
             setShowAlert(true);
         }, 1000);
-
-        queryClient.invalidateQueries({
-            queryKey: ["summaryQuery", username],
-            refetchType: "active"
-        });
-    }
-  }, [syncStatus?.status, syncStatus?.fetched_scrobbles, username, queryClient]);
+    
+    }, [syncStatus?.status, syncStatus?.fetched_scrobbles, username]);
 
   useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["summaryQuery", username]
     });
   }, [username, queryClient]);
+
+    if (summaryQuery.isLoading) {
+        return <div>Loading summary...</div>;
+    }
 
     if (summaryQuery.isLoading) {
         return <div>Loading summary...</div>;
@@ -130,57 +147,50 @@ export default function Overview () {
 
     return (
         <>
-        <HeaderBar username={username} onSync={setHasStartedSync} />
         {showAlert ? (
             <SyncCompleteAlert
                 fetched={fetched}
-                onClose={setShowAlert}
+                onClose={handleCloseAlert}
             /> 
-        ) : hasStartedSync ? (
+        ) : isSyncActive ? (
             <SyncProgress
-                syncStatus={syncStatus}
+                syncStatus={syncStatus!}
             />
         ) : null}
         {!hasValidSummary ? (
             <NoScrobbles
                     username={username}
-                    syncStatus={syncStatus}
-                    hasStartedSync={hasStartedSync}
-                    onSync={setHasStartedSync}
+                    syncStatus={syncStatus!}
+                    isSyncActive={isSyncActive}
             />
         ) : (
             <>
-                <section id="center">
-                    <VStack gap={10} mb={10}>
-                        <Badge bg={"purple.subtle"} color={"purple.fg"} size={"lg"}>
+                <Box px={{ base: 4, md: 8 }}>
+                    <VStack gap={{base: 4, md: 10 }}>
+                        <Badge
+                            bg={"purple.subtle"}
+                            color={"purple.fg"}
+                            size={"lg"}
+                            display="flex"
+                        >
                             <Icon as={MdCalendarMonth} mr={1}></Icon>
                             {`Scrobbling since ${summary.scrobbling_since}`}
                         </Badge>
                         <SummaryBadges {...summary} />
                     </VStack>
-                </section>
-                <section className="ticks"></section>
-                <section id="main-content">
-                    <Container>
-                        <h2>{"Recent Activity".toUpperCase()}</h2>
-                        <Flex justifySelf={"center"} mt={12}>
-                            <Box outlineColor={"red"}>
-                                <RecentActivity from_date={from_date} to_date={to_date} counts={counts} />
-                            </Box>
-                        </Flex>
-                    </Container>
-                </section>
-                <section className="ticks"></section>
-                <section id="main-content">
-                    <Container>
-                        <h2>{`Top Charts - Last ${period} Days`.toUpperCase()}</h2>
-                        <Flex gap={20} justify={"center"} mt={12}>
-                            <TopChartsPreview {...topArtistsInput} />
-                            <TopChartsPreview {...topTracksInput} />
-                        </Flex>
-                    </Container>
-                </section>
-                <section id="spacer"></section>
+                </Box>
+                <Section
+                    title={"Recent Activity"}
+                    children={<RecentActivity from_date={from_date} to_date={to_date} counts={counts} />}
+                />
+                <Section
+                    title={`Top Charts - Last ${period} Days`}
+                >
+                    <Flex direction={"row"} gap="10" justify={"space-between"}>
+                    <TopChartsPreview {...topArtistsInput} />
+                    <TopChartsPreview {...topTracksInput} />
+                    </Flex>
+                </Section>
             </>
         )}
         </>
