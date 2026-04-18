@@ -1,34 +1,35 @@
 import { Alert, Box, Button, VStack } from "@chakra-ui/react";
-import { syncUserScrobbles } from "@/api/user";
 import type { SyncStatus } from "@/api/sync";
+import { useStartSync } from "@/hooks/use_start_sync";
 
 
 export default function NoScrobbles(
-    { username, syncStatus, hasStartedSync, onSync }: {
+    { username, syncStatus, isSyncActive}: {
         username: string,
         syncStatus: SyncStatus,
-        hasStartedSync: boolean,
-        onSync: (hasStartedSync: boolean) => void
+        isSyncActive: boolean,
     }
 ) {
 
+    const startSync = useStartSync();
+
     async function handleClick() {
-        await syncUserScrobbles(username);
-        onSync(true);
+        await startSync(username);
     }
 
-    const inProgress = syncStatus != null && syncStatus.status == "progress" 
+    const inProgress = syncStatus != null && syncStatus.status == "progress";
     const isCompleted = syncStatus?.status == "completed";
 
     const isLoadingSyncButton = 
-        hasStartedSync ||
+        isSyncActive ||
         syncStatus?.status == "started" ||
         inProgress;
     
     const showWarning =
-        !hasStartedSync &&
+        !isSyncActive &&
         !inProgress &&
         !isCompleted;
+
 
     return (
     <VStack gap={"10"} width={"full"}>

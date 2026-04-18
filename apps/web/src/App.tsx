@@ -1,17 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './components/pages/homepage';
-import Overview from './components/pages/overview';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
+import { Box } from '@chakra-ui/react';
 
-function App() {
-
+export default function App() {
   return (
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/user/:username/overview" element={<Overview />} />
-    </Routes>
-    </BrowserRouter>
-  )
+    <Box minH="100vh" bg="bg.panel">
+    <RouterProvider router={router} />
+    </Box>
+  );
 }
-
-export default App
