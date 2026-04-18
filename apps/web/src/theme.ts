@@ -42,10 +42,10 @@ const config  = defineConfig({
         
     },
     globalCss: {
-    "html, body": {
-      fontFamily: "body",
+        "html, body": {
+            fontFamily: "body",
+        },
     },
-  },
 });
 
 export const system = createSystem(defaultConfig, config);
