@@ -3,7 +3,7 @@ import { Alert, CloseButton, Flex } from "@chakra-ui/react"
 export default function SyncCompleteAlert(
     { fetched, onClose }: {
         fetched: number | null
-        onClose: (showAlert: boolean) => void
+        onClose: () => void
     }
 ) {
     return (
@@ -23,7 +23,7 @@ export default function SyncCompleteAlert(
                     position="absolute"
                     right="1" 
                     top="1" 
-                    onClick={() => onClose(false)} />
+                    onClick={() => onClose()} />
             </Alert.Root>
         </Flex>
     )

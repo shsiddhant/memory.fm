@@ -2,6 +2,13 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react"
 
 const config  = defineConfig({
     theme: {
+        tokens: {
+            fonts: {
+                body: { value: "'Atkinson Hyperlegible Next Variable', sans-serif" },
+                heading: { value: "'Atkinson Hyperlegible Next Variable', sans-serif" },
+                mono: { value: "'Atkinson Hyperlegible Mono Variable', monospace" },
+            }
+        },
         semanticTokens: {
             colors: {
                 activityColors: {
@@ -26,10 +33,19 @@ const config  = defineConfig({
                 },
                 accent: {
                     value: { _light: "#B40B08", _dark: "#FB9E98" }
+                },
+                ticks: {
+                    value: { _light: "#e5e4e7", _dark: "#2e303a"}
                 }
             },
         },
+        
     },
+    globalCss: {
+    "html, body": {
+      fontFamily: "body",
+    },
+  },
 });
 
 export const system = createSystem(defaultConfig, config);

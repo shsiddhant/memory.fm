@@ -1,50 +1,85 @@
-import { useState, type ChangeEvent } from 'react';
-import { Box, Button, VStack, Input } from '@chakra-ui/react'
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import "../../App.css"
 import { ensureUser } from '@/api/user';
+
+import { Box, Button, VStack, Input, Center, Container, Text as ChakraText, Heading } from '@chakra-ui/react'
 
 function HomePage() {
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const normalizedUsername = username.trim();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => setUsername(event.target.value);
-  async function handleClick () {
-    if (!username.trim()) {
-      return;
+  function handleChange (event: ChangeEvent<HTMLInputElement>) {
+    setUsername(event.target.value);
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event?.preventDefault();
+
+    if (!normalizedUsername || loading) return;
+
+    try {
+      setLoading(true);
+
+      await ensureUser(normalizedUsername);
+
+      navigate(`/user/${normalizedUsername}/overview`);
+    } catch (err) {
+      console.error("Failed to ensure user exitss.", err);
+    } finally {
+      setLoading(false);
     }
-    await ensureUser(username);
-    navigate(`/user/${username}/overview`);
-  
-  };
+  }
 
   return (
-    <>
-      <section id="center">
-        <div>
-          <h1>memory.fm</h1>
-          <div className="quote">music meets memory</div>
-        </div>
-      </section>
-      <VStack gap="10">
-        <Box w="50%">
-          <Input
-            value={username}
-            placeholder="username"
-            variant="flushed"
-            textAlign="center"
-            onChange={handleChange}
-          />
-        </Box>
-        <Button
-          h="10"
-          onClick={handleClick}
-        >
-          Enter
-        </Button>
-      </VStack>
-    </>
-  )
+    <Center minH="100vh" bg="bg.canvas">
+      <Container maxW="md">
+        <VStack gap="12" textAlign="center">
+          {/* Logo/Hero Section */}
+          <VStack gap="2">
+            <Heading size="6xl" fontWeight="bold" color="accent" letterSpacing="tight">
+              memory.fm
+            </Heading>
+            <ChakraText fontSize="xl" color="fg.muted" fontStyle="italic">
+              music meets memory
+            </ChakraText>
+          </VStack>
+
+          {/* Form Section */}
+          <Box as="form" onSubmit={handleSubmit} w="full">
+            <VStack gap="6">
+              <Input
+                autoFocus
+                value={username}
+                placeholder="Enter your Last.fm username"
+                variant="subtle"
+                display={"flex"}
+                textAlign="center"
+                lineHeight="1"
+                onChange={handleChange}
+                disabled={loading}
+                _focus={{ borderColor: "accent" }}
+              />
+              
+              <Button
+                size="xl"
+                w="full"
+                type="submit"
+                loading={loading}
+                disabled={!normalizedUsername}
+                bg="accent"
+                color="white"
+                _hover={{ bg: "accent" }}
+              >
+                Get Started
+              </Button>
+            </VStack>
+          </Box>
+        </VStack>
+      </Container>
+    </Center>
+  );
 }
 
-export default HomePage
+export default HomePage;
