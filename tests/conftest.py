@@ -10,7 +10,7 @@ from memoryfm.models.core import Base
 data_dir = Path(__file__).resolve().parent / "data"
 json_dir = data_dir / "json"
 csv_dir = data_dir / "csv"
-file = json_dir / "lastfmstats-lazulinoother_test.json"
+file = json_dir / "fiona.json"
 tz = "Asia/Kolkata"
 
 
