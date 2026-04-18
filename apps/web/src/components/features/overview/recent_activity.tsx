@@ -1,4 +1,4 @@
-import { ResponsiveTimeRange} from "@nivo/calendar";
+import { ResponsiveTimeRange } from "@nivo/calendar";
 import { useToken } from "@chakra-ui/react";
 
 interface ScrobblesCount {
@@ -16,6 +16,26 @@ export default function RecentActivity(
     { from_date, to_date, counts }: RecentActivityObject
 ) {
 
+    const theme = {
+        labels: {
+            text: {
+                fontSize: "var(--chakra-font-sizes-sm)",
+                fill: "var(--chakra-colors-fg-muted)",
+                fontFamily: "var(--chakra-fonts-body)",
+                fontWeight: "500",
+                },
+            },
+  
+        tooltip: {
+            container: {
+                fontFamily: "var(--chakra-fonts-body)",
+                fontSize: "var(--chakra-font-sizes-sm)",
+                background: "var(--chakra-colors-bg-panel)",
+                color: "var(--chakra-colors-fg-muted)",
+            },
+        },
+    };
+
     const [emptyColor, c0, c1, c2, c3, c4] = useToken(
         "colors.activityColors", [
             "empty",
@@ -30,17 +50,19 @@ export default function RecentActivity(
         <div style={{ height: 250, width: 600 }}>
         <ResponsiveTimeRange
         data={counts}
+        theme={theme}
         from={`${from_date}T00:00:00`}
         to={`${to_date}T23:59:59`}
         emptyColor={ emptyColor }
         colors={ [c0, c1, c2, c3, c4] }
         maxValue={"auto"}
         minValue={0}
-        margin={{ top: 20, right: 20, bottom: 0, left: 20 }}
+        margin={{ top: 40, right: 20, bottom: 0, left: 20 }}
         dayBorderColor=""
         daySpacing={3}
         dayRadius={5}
-        
+        monthLegendOffset={20}
+        monthLegend={(_year, _month, date) => `${date.toLocaleDateString("default", {month: "long"})}`}
         />
         </div>
     )
