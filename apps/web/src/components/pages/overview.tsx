@@ -11,7 +11,7 @@ import { useSyncStatus } from "@/hooks/use_sync_status";
 
 // Chakra UI components
 import { MdCalendarMonth } from "react-icons/md";
-import { Badge, Box, Flex, Icon, VStack} from "@chakra-ui/react"
+import { Badge, Box, Flex, Icon, Separator, VStack} from "@chakra-ui/react"
 
 // Custom Components
 import Section from "@/components/ui/section";
@@ -187,8 +187,9 @@ export default function Overview () {
                     title={`Top Charts - Last ${period} Days`}
                 >
                     <Flex direction={"row"} gap="10" justify={"space-between"}>
-                    <TopChartsPreview {...topArtistsInput} />
-                    <TopChartsPreview {...topTracksInput} />
+                        <TopChartsPreview {...topArtistsInput} />
+                        <Separator />
+                        <TopChartsPreview {...topTracksInput} />
                     </Flex>
                 </Section>
             </>
