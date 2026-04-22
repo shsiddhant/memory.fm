@@ -5,8 +5,9 @@ import { Tooltip } from "@/components/ui/tooltip"
 import { useState } from "react"
 
 export default function LimitSelector(
-    { value, onLimitChange }: {
+    { value, min, onLimitChange }: {
         value: number
+        min: number
         onLimitChange: (value: number) => void
     }
 ) {
@@ -16,7 +17,7 @@ export default function LimitSelector(
         <Slider.Root
             defaultValue={[10]}
             value={[value]}
-            min={0}
+            min={min}
             max={100}
             minW={"300px"}
             variant={"solid"}
