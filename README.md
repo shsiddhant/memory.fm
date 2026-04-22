@@ -21,10 +21,9 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 
 ## Preview
 
-<p align="center">
-  <img src="https://github.com/shsiddhant/memory.fm/blob/main/screenshots/overview.png" width="600px" alt="User Overview Dashboard" />
-</p>
-
+| Overview | Top Charts |
+| -------- | -----------|
+| <img src="screenshots/overview.png" width="600px" alt="User Overview Dashboard" />| <img src="screenshots/top_charts.png" width="600px" alt="User Overview Dashboard" />|
 
 ## Quick Start
 
