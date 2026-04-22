@@ -1,6 +1,6 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react"
 
-const config  = defineConfig({
+const config = defineConfig({
     theme: {
         tokens: {
             fonts: {
@@ -18,8 +18,17 @@ const config  = defineConfig({
                     subtle: {
                         value: { _light: "#fbe0e0", _dark: "#65241f" }
                     },
+                    fg: {
+                        value: "{colors.brand.solid}"
+                    },
                     muted: {
                         value: { _light: "#f7bdbc", _dark: "#9d453d" }
+                    },
+                    emphasized: {
+                        value: { _light: "#a80502", _dark: "#fdbeb8" }
+                    },
+                    focusRing: {
+                        value: "{colors.brand.solid}"
                     },
                 },
                 activityColors: {
@@ -46,11 +55,11 @@ const config  = defineConfig({
                     value: "{colors.brand.solid}"
                 },
                 ticks: {
-                    value: { _light: "#e5e4e7", _dark: "#2e303a"}
+                    value: { _light: "#e5e4e7", _dark: "#2e303a" }
                 }
             },
         },
-        
+
     },
     globalCss: {
         "html, body": {

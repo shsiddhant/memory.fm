@@ -24,8 +24,9 @@ export default function TopChartsPreview(
                         color="fg.muted"
                         letterSpacing="wider"
                         fontSize="xs"
+                        textTransform={"uppercase"}
                     >
-                        {kind.toUpperCase()}
+                        {kind}
                     </Table.ColumnHeader>
                     <Table.ColumnHeader
                         textAlign="end"
