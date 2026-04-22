@@ -1,7 +1,7 @@
 const BACKEND_URL = "http://127.0.0.1:8000";
 
 
-const handleResponse = async (res: Response) => {
+export const handleResponse = async (res: Response) => {
   const data = await res.json();
 
   if (!res.ok) {
