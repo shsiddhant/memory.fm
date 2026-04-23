@@ -3,7 +3,9 @@ from typing import TYPE_CHECKING
 import datetime
 from sqlalchemy import desc, distinct, select, func
 from memoryfm.models.core import Scrobble
+from memoryfm.models.service_enums import Frequency
 from memoryfm.storage.user_repo import get_user_by_id
+from memoryfm.storage.cte_util import get_frequency_cte
 
 if TYPE_CHECKING:
     from typing import Sequence
@@ -101,3 +103,29 @@ def get_daily_scrobbles_count(
     )
     data = session.execute(stmt).mappings().all()
     return from_date, to_date, data
+
+
+def get_top_charts_by_freq(
+    session: Session,
+    user_id: int,
+    kind: ChartKindColumn,
+    from_ts: datetime.datetime | None = None,
+    to_ts: datetime.datetime | None = None,
+    freq: Frequency = Frequency.D,
+) -> Sequence[RowMapping]:
+    stmt_cte_freq = get_frequency_cte(user_id, kind, from_ts, to_ts, freq)
+    cols = stmt_cte_freq.columns
+    scrobbles_col = cols["scrobbles"]
+    total_scrobbles_col = func.sum(scrobbles_col).over(partition_by=cols[freq.value])
+    stmt = (
+        select(
+            cols[freq.value].label("day"),
+            cols[kind.value].label("name"),
+            cols["scrobbles"],
+            total_scrobbles_col.label("total_scrobbles"),
+        )
+        .distinct(cols[freq.value])
+        .order_by(cols[freq.value], desc(cols["scrobbles"]))
+    )
+    top = session.execute(stmt).mappings().fetchall()
+    return top

@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Sequence
 from math import exp
-from sqlalchemy import select, func, Float
+from sqlalchemy import select, func
 from memoryfm.models.service_enums import Frequency
-from memoryfm.models.core import Scrobble
+from memoryfm.storage.cte_util import get_frequency_proportions_cte
 
 if TYPE_CHECKING:
     import datetime
@@ -12,50 +12,6 @@ if TYPE_CHECKING:
     from memoryfm.models.service_enums import (
         ChartKindColumn,
     )
-
-
-def get_frequency_proportions_cte(
-    user_id: int,
-    kind: ChartKindColumn,
-    from_ts: datetime.datetime | None = None,
-    to_ts: datetime.datetime | None = None,
-    freq: Frequency = Frequency.D,
-):
-    stmt_bin = select(
-        func.date_trunc(freq.value, Scrobble.timestamp).label(freq.value),
-        kind.column,
-    ).where(Scrobble.user_id == user_id)
-    if from_ts:
-        stmt_bin = stmt_bin.filter(Scrobble.timestamp >= from_ts)
-    if to_ts:
-        stmt_bin = stmt_bin.filter(Scrobble.timestamp < to_ts)
-
-    stmt_cte_bin = stmt_bin.cte("binned")
-
-    stmt_cte_freq = (
-        select(
-            stmt_cte_bin.columns[freq.value],
-            stmt_cte_bin.columns[kind.value],
-            func.count().cast(Float).label("scrobbles"),
-        )
-        .group_by(
-            stmt_cte_bin.columns[freq.value],
-            stmt_cte_bin.columns[kind.value],
-        )
-        .cte("freq")
-    )
-    cte_freq_cols = stmt_cte_freq.columns
-    scrobbles_col = cte_freq_cols["scrobbles"]
-    total_scrobbles_col = func.sum(scrobbles_col).over(
-        partition_by=cte_freq_cols[freq.value]
-    )
-    stmt_cte_props = select(
-        cte_freq_cols[freq.value],
-        cte_freq_cols[kind.value],
-        total_scrobbles_col.label("total_scrobbles"),
-        (scrobbles_col / total_scrobbles_col).label("prop"),
-    ).cte("props")
-    return stmt_cte_props
 
 
 def get_renyi_entropy(
