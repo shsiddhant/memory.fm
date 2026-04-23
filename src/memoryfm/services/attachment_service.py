@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Literal, Sequence
 import pandas as pd
 import numpy as np
 
@@ -7,6 +7,7 @@ from memoryfm.models.service_enums import ChartKindColumn, Frequency
 import memoryfm.storage.attachment_index as attrepo
 from memoryfm.storage.user_repo import get_user_by_username
 from memoryfm.storage.stats_repo import get_top_charts_by_freq
+from memoryfm.util.datetime_util import get_datelimit_from_period, normalize_timestamp
 
 if TYPE_CHECKING:
     import datetime
@@ -115,3 +116,29 @@ def get_attachment_moments(
             )
             return top_moments_df.to_dict(orient="records")
         return None
+
+
+def get_attachment_moments_by_period(
+    session: Session,
+    username: str,
+    kind: ChartKindColumn,
+    period: int | Literal["all_time"],
+    freq: Frequency = Frequency.D,
+    alpha: float = 1,
+    threshold: float = 1,
+):
+    user = get_user_by_username(session, username)
+    if user:
+        tz = user.tz
+        from_ts = normalize_timestamp(get_datelimit_from_period(period), tz)
+        return get_attachment_moments(
+            session,
+            username,
+            kind,
+            from_ts,
+            to_ts=None,
+            freq=freq,
+            alpha=alpha,
+            threshold=threshold,
+        )
+    return None
