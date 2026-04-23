@@ -85,3 +85,12 @@ def test_get_weighted_attachment_index(seeded_db: Session):
     assert wtd_att_index is not None
     assert len(wtd_att_index) == 2
     assert wtd_att_index[0].get("value") == pytest.approx(wtd_att_index_expected)
+
+
+def test_get_attachment_moments(seeded_db: Session):
+    moments = attserv.get_attachment_moments(
+        seeded_db, username, kind, from_ts, to_ts, freq=Frequency.D
+    )
+    assert moments is not None
+    assert len(moments) == 2
+    assert moments[1].get("track") == "Anything We Want"
