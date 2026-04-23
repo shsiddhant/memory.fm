@@ -103,13 +103,13 @@ def get_attachment_moments(
         if weighted_att and top_charts:
             df = pd.DataFrame(weighted_att)
             top_charts_df = pd.DataFrame(top_charts)
-            df["z-score"] = (df["value"] - df["value"].mean()) / df["value"].std()
+            df["z_score"] = (df["value"] - df["value"].mean()) / df["value"].std()
 
-            top_moments_df = df[df["z-score"] >= threshold]
+            top_moments_df = df[df["z_score"] >= threshold]
             top_moments_df["day"] = top_moments_df["day"].dt.strftime("%Y-%m-%d")
-            top_moments_df[[kind.value, "scrobbles", "total_scrobbles"]] = (
-                top_charts_df[["name", "scrobbles", "total_scrobbles"]]
-            )
+            top_moments_df[["name", "scrobbles", "total_scrobbles"]] = top_charts_df[
+                ["name", "scrobbles", "total_scrobbles"]
+            ]
             top_moments_df["dominance"] = (
                 top_moments_df["scrobbles"] / top_moments_df["total_scrobbles"]
             )

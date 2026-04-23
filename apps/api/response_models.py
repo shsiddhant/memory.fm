@@ -64,3 +64,13 @@ class TopChart(BaseModel):
 class TimeSeriesData(BaseModel):
     day: date
     value: int | float
+
+
+class AttachmentMoment(BaseModel):
+    day: date
+    value: float
+    z_score: float
+    name: str
+    scrobbles: float
+    total_scrobbles: float
+    dominance: float
