@@ -52,4 +52,4 @@ export type AttachmentMoment = {
 export type TimeSeries = {
   day: string,
   value: number,
-}
+}[]
