@@ -11,14 +11,14 @@ interface SectionProps {
 const Section = ({ title, children }: SectionProps) => {
   return (
     <Flex direction="column" w="full" align="center">
-      <Box w="full" maxW="1200px">
+      <Box width="full" maxW="1200px" mx={"auto"}>
         <SectionSeparator title={title} colorToken="ticks" />
+      </Box>
         <Box as="section" mb="12" justifyItems={"center"}>
           <Stack className="content" h="full">
             {children}
           </Stack>
         </Box>
-      </Box>
     </Flex>
   );
 };
