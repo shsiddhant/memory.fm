@@ -76,6 +76,24 @@ def get_weighted_attachment_index_by_username(
         return None
 
 
+def get_weighted_attachment_by_period(
+    session: Session,
+    username: str,
+    kind: ChartKindColumn,
+    period: int | Literal["all_time"],
+    freq: Frequency = Frequency.D,
+    alpha: float = 1,
+):
+    user = get_user_by_username(session, username)
+    if user:
+        tz = user.tz
+        from_ts = normalize_timestamp(get_datelimit_from_period(period), tz)
+        return get_attachment_index_by_username(
+            session, username, kind, from_ts, to_ts=None, freq=freq, alpha=alpha
+        )
+    return None
+
+
 def get_attachment_moments(
     session: Session,
     username: str,
