@@ -123,7 +123,7 @@ def attachment_index(
     """Fetch Attachment Index for user in the given datetime range."""
     tz = get_user_context(session, username).tz
     return (
-        attserv.get_attachment_index_by_username(
+        attserv.get_weighted_attachment_index_by_username(
             session,
             username,
             kind,
