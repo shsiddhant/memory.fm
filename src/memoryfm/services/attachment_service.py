@@ -88,7 +88,7 @@ def get_weighted_attachment_by_period(
     if user:
         tz = user.tz
         from_ts = normalize_timestamp(get_datelimit_from_period(period), tz)
-        return get_attachment_index_by_username(
+        return get_weighted_attachment_index_by_username(
             session, username, kind, from_ts, to_ts=None, freq=freq, alpha=alpha
         )
     return None

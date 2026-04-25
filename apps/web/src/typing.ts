@@ -48,3 +48,8 @@ export type AttachmentMoment = {
   total_scrobbles: number
   dominance: number
 }
+
+export type TimeSeries = {
+  day: string,
+  value: number,
+}
