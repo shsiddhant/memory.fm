@@ -1,14 +1,6 @@
 const BACKEND_URL = "http://127.0.0.1:8000";
-import { handleResponse } from "./user";
-
-
-interface ChartsInput {
-    username: string
-    kind: string,
-    from_ts: string | null, // ISO 8601
-    to_ts: string | null,// ISO 8601
-    limit: number | null,
-}
+import { handleResponse } from "@/api/user";
+import type { ChartsInput } from "@/typing";
 
 
 export const fetchTopCharts = async (

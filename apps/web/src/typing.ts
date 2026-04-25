@@ -8,6 +8,14 @@ export interface TopChart {
     [key: string]: string | number; 
 }
 
+export interface ChartsInput {
+    username: string
+    kind: string,
+    from_ts: string | null, // ISO 8601
+    to_ts: string | null,// ISO 8601
+    limit: number | null,
+}
+
 export interface Dates {
     from_ts: DateValue;
     to_ts: DateValue;
@@ -31,3 +39,12 @@ export type AnalyticsParams = {
   kind: KindType
 }
 
+export type AttachmentMoment = {
+  day: string
+  value: number
+  z_score: number
+  name: string
+  scrobbles: number
+  total_scrobbles: number
+  dominance: number
+}
