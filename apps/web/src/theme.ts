@@ -18,6 +18,9 @@ const config = defineConfig({
                     subtle: {
                         value: { _light: "#fbe0e0", _dark: "#65241f" }
                     },
+                    cardbg: {
+                        value: { _light: "#fbe0e0", _dark: "#4a1713"}
+                    },
                     fg: {
                         value: "{colors.brand.solid}"
                     },
