@@ -136,6 +136,52 @@ def attachment_index(
     )
 
 
+@router.get("/user/{username}/attachment_last", response_model=Sequence[TimeSeriesData])
+def attachment_index_last(
+    username: str,
+    kind: Annotated[
+        ChartKindColumn, Query(description="Kind of Attachment Index to fetch.")
+    ],
+    period: Annotated[
+        int | Literal["all_time"],
+        Query(
+            description="Filter by period of ```period``` days. "
+            "**Set to all_time to view all time top charts.**"
+        ),
+    ] = 7,
+    freq: Annotated[
+        Frequency,
+        Query(
+            description="The Frequency over which scrobble counts are grouped together."
+        ),
+    ] = Frequency.D,
+    alpha: Annotated[
+        float,
+        Query(
+            description=(
+                "Order of Attachment Index. "
+                "The order is same as order of the underlying Rényi Entropy."
+            ),
+            ge=0.5,
+            le=3.0,
+        ),
+    ] = 1,
+    session=Depends(get_db_session),
+):
+    """Fetch Attachment Index for user in the given period."""
+    return (
+        attserv.get_weighted_attachment_by_period(
+            session,
+            username,
+            kind,
+            period,
+            freq,
+            alpha,
+        )
+        or []
+    )
+
+
 @router.get(
     "/user/{username}/attachment_moments", response_model=Sequence[AttachmentMoment]
 )
