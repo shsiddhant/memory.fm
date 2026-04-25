@@ -159,7 +159,7 @@ export default function AttachmentTimeline(
 
     const groups = groupMoments(moments, 4);
     return (
-        <Flex direction="column" gap={12} p={10} position="relative">
+        <Flex direction="column" gap={12} mt={6} position="relative">
             {groups.map((group, index) => (
                 <SnakeGroup
                     group={group}

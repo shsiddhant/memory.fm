@@ -25,6 +25,10 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 | -------- | -----------|
 | <img src="screenshots/overview.png" width="600px" alt="User Overview Dashboard" />| <img src="screenshots/top_charts.png" width="600px" alt="User Overview Dashboard" />|
 
+| Attachment Index | Attachment Moments Timeline |
+| -------- | -----------|
+| <img src="screenshots/attachment_index.png" width="600px" alt="Attachment Index" />| <img src="screenshots/attachment_timeline.png" width="600px" alt="Attachment Moments Timeline" />|
+
 ## Quick Start
 
 ### Clone and install
@@ -65,34 +69,58 @@ http://localhost:5173
 
 ### Behavioral Analytics
 
-memory.fm focuses on **listening behavior modeling**, not just summaries.
+memory.fm focuses on **listening behavior modeling** instead of summary stats.
 
-Currently computed in backend:
+It surfaces patterns like:
 
-- **Top Artists / Albums / Tracks**
-- **Listening frequency distributions**
-- **Rényi entropy** - diversity of listening
-- **Attachment Index** - concentration of listening
+- **Attachment**: how strongly you gravitate toward specific artists or tracks
+- **Repetition**: how often you return to the same music
+- **Obsessive listening:** short bursts of intense focus
+
+These patterns help you rediscover periods of your life through music.
+
+### Overview
+
+A high-level snapshot of your listening history:
+
+- Key summary statistics
+- Activity heatmap (when you listened most)
+- Quick preview of top artists, albums, and tracks
+
+<img src="screenshots/overview.png" width="800px" alt="User Overview Dashboard" />
+
+### Top Charts
+
+Explore your favorites across time:
+
+- Top artists, albums, and tracks
+- Flexible time filters:
+  - Weekly / Monthly / Yearly
+  - Custom date ranges
+
+<img src="screenshots/top_charts.png" width="800px" alt="User Top Charts" />
+
+### Attachment
+
+Measure how concentrated your listening is within a time period.
+
+- High attachment -> focused listening (few artists on repeat)
+- Low attachment -> more exploratory listening
+
+<img src="screenshots/attachment_index.png" width="800px" alt="Attachment Index" />
+
+#### Timeline of Attachment Moments
+
+- Identify peaks in emotional or musical focus.
+- Revisit phases where certain track, albums, or artists dominated your listening.
+
+<img src="screenshots/attachment_timeline.png" width="800px" alt="Attachment Timeline" />
 
 
-### Frontend (in progress)
+### Coming Soon
 
-- Overview dashboard
-- Activity heatmap
-- Top charts preview
-- Upcoming:
-    - Attachment insights
-    - Streaks Timeline
-
-## Current Status
-
-**memory.fm is actively being rewritten from a legacy prototype (v0.8.5) into a modern full-stack web application.**
-
-### New architecture (in progress)
-- FastAPI backend (SQLAlchemy models)
-- React frontend
-- Modular analytics engine
-
+- Listening Streaks and Streaks Timeline
+- Time-of-day and seasonal patterns
 
 ## Roadmap
 
@@ -111,20 +139,15 @@ Currently computed in backend:
 - [ ] Streaks
 - [ ] Time of Day / Season based analysis
 
-### 3. API Layer (FastAPI)
-
-- [x] User overview endpoints
-- [ ] Time-series analytics endpoints
-
-### 4. Front-end (React)
+### 3. Front-end (React)
 
 - [x] Overview dashboard
 - [x] Activity heatmap
 - [ ] Insights and visualization
-	- [ ] Attachment Index 
+	- [x] Attachment Index 
 	- [ ] Streaks Timeline
 
-### 5. Ideas
+### 4. Ideas
 
 - [ ] Memory Attachments and Timeline integration
 - [ ] Spotify wrapped but make it nerdier

@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 
 // Data API
-import { fetchAttachmentMoments, fetchAttachmentMomentsByPeriod } from "@/api/analytics";
+import { fetchAttachmentIndex, fetchAttachmentIndexByPeriod, fetchAttachmentMoments, fetchAttachmentMomentsByPeriod } from "@/api/analytics";
 
 import { Box, Flex, parseDate, Text as ChakraText, type DateValue, VStack, Alert } from "@chakra-ui/react";
 import Section from "@/components/ui/section";
 import PeriodSelector from "@/components/features/analytics/periodselector";
-import type { AttachmentMoment, Dates } from "@/typing";
+import type { AttachmentMoment, Dates, TimeSeries } from "@/typing";
 import { useParams } from "react-router-dom";
 import KindSelector from "../features/analytics/kindselector";
 import useAnalyticsParams from "@/hooks/use_analytics_params";
 import AttachmentTimeline from "@/components/features/attachment/attachment_moments";
+import AttachmentGraph from "../features/attachment/attachment_graph";
 
 
 // Attachment Page
@@ -31,7 +32,8 @@ export default function AttachmentPage() {
         from_ts: parseDate(new Date()),
         to_ts: parseDate(new Date())
     });
-    const [data, setData] = useState<AttachmentMoment[]>();
+    const [moments, setMoments] = useState<AttachmentMoment[]>();
+    const [attachment, setAttachment] = useState<TimeSeries>();
     if (!username?.trim()) {
         return null;
     }
@@ -41,8 +43,15 @@ export default function AttachmentPage() {
             setLoading(true);
             try {
                 let result: AttachmentMoment[];
+                let result_2: TimeSeries;
                 if (params.mode == "custom") {
                     result = await fetchAttachmentMoments({
+                        username: username,
+                        kind: params.kind,
+                        from_ts: customDates.from_ts.toString(),
+                        to_ts: customDates.to_ts.toString(),
+                    });
+                    result_2 = await fetchAttachmentIndex({
                         username: username,
                         kind: params.kind,
                         from_ts: customDates.from_ts.toString(),
@@ -53,11 +62,15 @@ export default function AttachmentPage() {
                     result = await fetchAttachmentMomentsByPeriod(
                         username, params.kind, params.mode,
                     )
+                    result_2 = await fetchAttachmentIndexByPeriod(
+                        username, params.kind, params.mode
+                    )
                 }
 
-                setData(result);
+                setMoments(result);
+                setAttachment(result_2);
             } catch (error) {
-                console.error("Failed to load moments", error);
+                console.error("Failed to load data.", error);
             } finally {
                 setLoading(false);
             }
@@ -65,7 +78,6 @@ export default function AttachmentPage() {
 
         loadData();
     }, [params, customDates]);
-
 
     const handleDateChange = (key: keyof Dates, newValues: DateValue[]) => {
         const selectedDate = newValues[0];
@@ -77,7 +89,7 @@ export default function AttachmentPage() {
         }
     }
 
-    if (!data) {
+    if (!moments || !attachment) {
         return <ChakraText>No Data Found</ChakraText>
     }
 
@@ -110,11 +122,15 @@ export default function AttachmentPage() {
                     />
                 </VStack>
             </Flex>
-            {(!loading && data.length > 0) ? (
+            {(!loading && moments.length > 0 && attachment.length > 0) ? (
                 <>
                     <Section
                         title={`Top Attachment Moments - ${params.kind}s`}
-                        children={<AttachmentTimeline moments={data} />}
+                        children={<AttachmentTimeline moments={moments} />}
+                    />
+                    <Section
+                        title={`Attachment Index - ${params.kind}s`}
+                        children={<AttachmentGraph data={attachment} />}
                     />
                 </>
             ) : (loading) ? (
