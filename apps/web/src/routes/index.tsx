@@ -3,6 +3,7 @@ import AppLayout from "@/components/layout/layout"
 import HomePage from "@/components/pages/homepage"
 import Overview from "@/components/pages/overview";
 import TopChartsPage from '@/components/pages/topcharts';
+import AttachmentPage from '@/components/pages/attachment';
 
 
 export const router = createBrowserRouter([
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
             {
                 path: "topcharts",
                 element: <TopChartsPage />
+            },
+            {
+                path: "attachment",
+                element: <AttachmentPage />
             },
         ],
     },
