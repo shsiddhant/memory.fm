@@ -39,8 +39,15 @@ classifiers = [
 local_scheme="no-local-version"
 fallback_version = "0.0.0"
 
+# Cython
+[tool.setuptools]
+ext-modules = [
+  {name = "memoryfm._cython._streaks", sources = ["src/memoryfm/_cython/streaks.pyx"]}
+]
+
 [project.optional-dependencies]
 dev = [
+    "cython>=3.2.4",
     "importlib-metadata>=9.0.0",
     "ipython>=8.39.0",
     "mypy>=1.20.0",
@@ -58,6 +65,7 @@ doc = [
     "sphinx-design>=0.6.1",
     "sphinx-sqlalchemy>=0.3.0",
 ]
+notebook = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
