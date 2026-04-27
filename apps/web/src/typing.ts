@@ -53,3 +53,17 @@ export type TimeSeries = {
   day: string,
   value: number,
 }[]
+
+export type YearRange = {
+  start: number | null
+  end: number | null
+}
+
+export type ListeningStreak = {
+  start: string
+  end: string
+  name: string
+  length: number
+  log_length: number
+  kind: KindType
+}

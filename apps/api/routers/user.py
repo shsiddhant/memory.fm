@@ -12,9 +12,11 @@ from api.state.sync import run_sync, run_ensure_user
 from api.response_models import (
     RecentActivity,
     SummaryModel,
+    YearRange,
 )
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
+from memoryfm.services.scrobble_service import get_year_range
 from api.input_annotated_types import TrimmedStr  # noqa: TC001
 
 router = APIRouter()
@@ -65,3 +67,9 @@ def recent_scrobbles(
     """Get recent daily scrobble counts for user."""
     data = stserv.get_daily_scrobbles_count(session, username, limit=weeks * 7)
     return RecentActivity.from_service_data(data)
+
+
+@router.get("/user/{username}/year_range", response_model=YearRange)
+def year_range(username: TrimmedStr, session=Depends(get_db_session)):
+    """Get scrobbling year range for user."""
+    return get_year_range(session, username)
