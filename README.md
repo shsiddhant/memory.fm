@@ -34,7 +34,7 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 ### Clone and install
 
 ```
-git clone -b rewrite https://github.com/shsiddhant/memory.fm.git
+git clone https://github.com/shsiddhant/memory.fm.git
 cd memory.fm
 pip install .
 ```

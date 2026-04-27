@@ -4,6 +4,7 @@ import type { KindType } from "@/typing";
 
 const alpha = 2;
 const threshold = 1.5;
+const min_length = 5;
 
 export const fetchAttachmentMoments = async(
     { username, kind, from_ts, to_ts }: {
@@ -49,6 +50,15 @@ export const fetchAttachmentIndexByPeriod = async (
 ) => {
     const res = await fetch(
         `${BACKEND_URL}/user/${username}/attachment_last?kind=${kind}&period=${period}&freq=day&alpha=${alpha}`
+    );
+    return handleResponse(res);
+}
+
+export const fetchStreaksByYear = async (
+    username: string, kind: KindType, year: number
+) => {
+    const res = await fetch(
+        `${BACKEND_URL}/user/${username}/streaks_yearly?kind=${kind}&year=${year}&min_length=${min_length}`
     );
     return handleResponse(res);
 }

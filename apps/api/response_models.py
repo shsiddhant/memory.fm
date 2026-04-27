@@ -78,6 +78,11 @@ class AttachmentMoment(BaseModel):
     dominance: float
 
 
+class YearRange(BaseModel):
+    start: int
+    end: int
+
+
 class ListeningStreak(BaseModel):
     start: datetime
     end: datetime

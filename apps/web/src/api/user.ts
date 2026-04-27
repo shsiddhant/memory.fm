@@ -58,3 +58,10 @@ export const fetchTopChartsByPeriod = async (
   );
   return handleResponse(res);
 };
+
+export const fetchYearRange = async (username: string) => {
+  const res = await fetch(
+    `${BACKEND_URL}/user/${username}/year_range`
+  );
+  return handleResponse(res);
+};
