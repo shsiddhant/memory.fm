@@ -2,12 +2,18 @@ import datetime
 from typing import Literal, Annotated, Sequence
 from fastapi import APIRouter, Depends, Query
 
-from api.response_models import AttachmentMoment, TimeSeriesData, TopChart
+from api.response_models import (
+    AttachmentMoment,
+    ListeningStreak,
+    TimeSeriesData,
+    TopChart,
+)
 from memoryfm.models.service_enums import ChartKindColumn, Frequency
 from memoryfm.services.user_service import get_user_context
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 import memoryfm.services.attachment_service as attserv
+import memoryfm.services.streaks_service as strkserv
 from memoryfm.util.datetime_util import normalize_timestamp
 
 router = APIRouter()
@@ -302,3 +308,31 @@ def attachment_moments_last(
         )
         or []
     )
+
+
+@router.get(
+    "/user/{username}/streaks_yearly",
+    response_model=Sequence[ListeningStreak],
+)
+def streaks(
+    username: str,
+    kind: Annotated[
+        ChartKindColumn, Query(description="Kind of listening streaks to fetch.")
+    ],
+    year: Annotated[
+        int, Query(description="Year for which streaks are to be fetched.", ge=1971)
+    ],
+    min_length: Annotated[int, Query(description="Minimum length of streaks.", ge=2)],
+    session=Depends(get_db_session),
+):
+    """Fetch listening streaks for the user in a given year."""
+    service_data = strkserv.get_streaks_by_year(
+        session,
+        username,
+        kind,
+        year,
+        min_length,
+    )
+    if not service_data:
+        return []
+    return [ListeningStreak.from_service_data(kind, streak) for streak in service_data]

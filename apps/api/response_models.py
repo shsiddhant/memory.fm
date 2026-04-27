@@ -1,8 +1,10 @@
-from __future__ import annotations
 from typing import Any, Sequence
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
 from fastapi.exceptions import ResponseValidationError
-from datetime import date
+from datetime import date, datetime
+from math import log2
+
+from memoryfm.models.service_enums import ChartKindColumn
 
 
 class ScrobblesCount(BaseModel):
@@ -74,3 +76,33 @@ class AttachmentMoment(BaseModel):
     scrobbles: float
     total_scrobbles: float
     dominance: float
+
+
+class ListeningStreak(BaseModel):
+    start: datetime
+    end: datetime
+    name: str
+    length: int
+    log_length: float
+    kind: ChartKindColumn
+
+    @classmethod
+    def from_service_data(
+        cls, kind: ChartKindColumn, data: tuple[datetime, datetime, str, int] | None
+    ):
+        schema = TypeAdapter(tuple[datetime, datetime, str, int])
+        if not data:
+            raise ResponseValidationError(errors=[{"msg": "No data found for user."}])
+        try:
+            start, end, name, length = schema.validate_python(data)
+        except ValidationError as e:
+            raise ResponseValidationError(errors=e.errors())
+        log_length = log2(length)
+        return cls(
+            start=start,
+            end=end,
+            name=name,
+            length=length,
+            log_length=log_length,
+            kind=kind,
+        )
