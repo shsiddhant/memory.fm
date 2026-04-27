@@ -20,7 +20,9 @@ from_ts = datetime.datetime.fromtimestamp(1707419854)
 def test_get_streaks_by_year(seeded_db: Session):
     streaks = strkserv.get_streaks_by_username(seeded_db, username, kind, from_ts)
     assert streaks is not None
-    assert len(streaks) == 1
+    assert len(streaks) == 1, repr(streaks)
+    for i, s in enumerate(streaks):
+        print(i, repr(s))
     assert streaks[0][1].month == 2
 
 
