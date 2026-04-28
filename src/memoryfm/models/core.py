@@ -23,6 +23,47 @@ class Base(DeclarativeBase):
     pass
 
 
+class Artist(Base):
+    """
+    Represents a single artist in the database.
+    """
+
+    __tablename__ = "artists"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(), unique=True, doc="Artist name.")
+
+
+class Album(Base):
+    """
+    Represents an album in the database.
+    """
+
+    __tablename__ = "albums"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(), doc="Album name.")
+    artist_id: Mapped[int] = mapped_column(ForeignKey("artists.id"), index=True)
+
+    __table_args__ = (UniqueConstraint("name", "artist_id"),)
+
+
+class Track(Base):
+    """
+    Represents a track in the database
+    """
+
+    __tablename__ = "tracks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(), doc="Track name.")
+
+    album_id: Mapped[int] = mapped_column(ForeignKey("albums.id"), index=True)
+    artist_id: Mapped[int] = mapped_column(ForeignKey("artists.id"), index=True)
+
+    __table_args__ = (UniqueConstraint("name", "album_id"),)
+
+
 class User(Base):
     """
     Represents a user in the database.
@@ -103,7 +144,9 @@ class Scrobble(Base):
         server_default="",
         doc="(Optional) Album name for the scrobbled track.",
     )
-    """Album"""
+
+    track_id: Mapped[int] = mapped_column(ForeignKey("tracks.id"), index=True)
+
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), doc="User id of the scrobble."
     )
@@ -111,6 +154,4 @@ class Scrobble(Base):
         back_populates="scrobbles", doc="User of the scrobble in the user table."
     )
 
-    __table_args__ = (
-        UniqueConstraint("timestamp", "track", "artist", "album", "user_id"),
-    )
+    __table_args__ = (UniqueConstraint("timestamp", "track_id", "user_id"),)
