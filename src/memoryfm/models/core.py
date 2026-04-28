@@ -3,6 +3,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    Integer,
     UniqueConstraint,
     String,
     func,
@@ -148,10 +149,35 @@ class Scrobble(Base):
     track_id: Mapped[int] = mapped_column(ForeignKey("tracks.id"), index=True)
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), doc="User id of the scrobble."
+        ForeignKey("users.id", ondelete="CASCADE"),
+        index=True,
+        doc="User id of the scrobble.",
     )
     user: Mapped["User"] = relationship(
         back_populates="scrobbles", doc="User of the scrobble in the user table."
     )
 
     __table_args__ = (UniqueConstraint("timestamp", "track_id", "user_id"),)
+
+
+class AnalyticsView(Base):
+    """
+    Read-only view for denormalized scrobbles to use for analytics.
+    """
+
+    __tablename__ = "analytics_view"
+
+    scrobble_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    timestamp: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+
+    user_id: Mapped[int] = mapped_column(Integer)
+    track_id: Mapped[int] = mapped_column(Integer)
+    album_id: Mapped[int] = mapped_column(Integer)
+    artist_id: Mapped[int] = mapped_column(Integer)
+
+    track: Mapped[str] = mapped_column(String)
+    album: Mapped[str] = mapped_column(String)
+    artist: Mapped[str] = mapped_column(String)
+    username: Mapped[str] = mapped_column(String)
+
+    __table_args__ = {"info": {"is_view": True}}
