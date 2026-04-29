@@ -8,7 +8,10 @@ from zoneinfo import ZoneInfo
 
 
 from memoryfm.errors import (
+    APIKeyError,
     InvalidDataError,
+    RateLimitExceededError,
+    UserLoginRequiredError,
     UserNotFoundError,
     LastfmAPIError,
 )
@@ -200,13 +203,19 @@ def fetch_by_timestamps(
             sync_status.total_scrobbles = valid_response.total_scrobbles
             sync_status.fetched_scrobbles += len(batch)
         except LastfmAPIError as e:
-            if e.code == 8 and sync_status.retry <= sync_status.total_retries:
+            if e.code in (8, 11) and sync_status.retry <= sync_status.total_retries:
                 sync_status.retry += 1
                 sync_status.status = SyncStatusTypes.Retry
                 logger.info(format_status_log(username, sync_status))
                 continue
             elif e.code == 6:
                 raise UserNotFoundError(username)
+            elif e.code == 17:
+                raise UserLoginRequiredError(e.msg)
+            elif e.code in (10, 26):
+                raise APIKeyError(e.code, e.msg)
+            elif e.code == 29:
+                raise RateLimitExceededError(e.msg)
             else:
                 raise
         else:
