@@ -8,8 +8,8 @@ from fastapi import (
     Depends,
     Query,
 )
-from api.state.sync import run_sync, run_ensure_user
-from api.response_models import (
+from apps.api.state.sync import run_sync, run_ensure_user
+from apps.api.response_models import (
     RecentActivity,
     SummaryModel,
     YearRange,
@@ -17,7 +17,7 @@ from api.response_models import (
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 from memoryfm.services.scrobble_service import get_year_range
-from api.input_annotated_types import TrimmedStr  # noqa: TC001
+from apps.api.input_annotated_types import TrimmedStr  # noqa: TC001
 
 router = APIRouter()
 
