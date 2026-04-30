@@ -22,6 +22,7 @@ import RecentActivity from "../features/overview/recent_activity";
 import TopChartsPreview from "../features/overview/topcharts_preview";
 import NoScrobbles from "../features/overview/no_scrobbles";
 import { useEffect, useState } from "react";
+import { LoadingSpinner } from "../ui/loading";
 
 // Overview Page
 
@@ -99,12 +100,9 @@ export default function Overview () {
     });
   }, [username, queryClient]);
 
-    if (summaryQuery.isLoading) {
-        return <div>Loading summary...</div>;
-    }
 
     if (summaryQuery.isLoading) {
-        return <div>Loading summary...</div>;
+        return <LoadingSpinner />;
     }
 
     const isLoading =
@@ -118,7 +116,7 @@ export default function Overview () {
         topArtistsQuery.isError ||
         topTracksQuery.isError;
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <LoadingSpinner />;
 
     if (isError) {
         return (

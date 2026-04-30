@@ -12,6 +12,7 @@ import KindSelector from "../features/analytics/kindselector";
 import useAnalyticsParams from "@/hooks/use_analytics_params";
 import AttachmentTimeline from "@/components/features/attachment/attachment_moments";
 import AttachmentGraph from "../features/attachment/attachment_graph";
+import { LoadingSpinner } from "../ui/loading";
 
 
 // Attachment Page
@@ -89,10 +90,6 @@ export default function AttachmentPage() {
         }
     }
 
-    if (!moments || !attachment) {
-        return <ChakraText>No Data Found</ChakraText>
-    }
-
     return (
         <Flex
             direction="column"
@@ -122,7 +119,7 @@ export default function AttachmentPage() {
                     />
                 </VStack>
             </Flex>
-            {(!loading && moments.length > 0 && attachment.length > 0) ? (
+            {(!loading && moments && moments.length > 0 && attachment && attachment.length > 0) ? (
                 <>
                     <Section
                         title={`Top Attachment Moments - ${params.kind}s`}
@@ -134,7 +131,7 @@ export default function AttachmentPage() {
                     />
                 </>
             ) : (loading) ? (
-                <div>Loading...</div>
+                <LoadingSpinner />
             ) : (
                 <Flex justify={"center"}>
                     <Alert.Root status={"info"} width={"sm"} justifySelf={"center"}>
