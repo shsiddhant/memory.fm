@@ -14,6 +14,7 @@ import useAnalyticsParams from "@/hooks/use_analytics_params";
 import LimitSelector from "../features/analytics/limitselector";
 import TopChartsTable from "../features/topcharts/topcharts_table";
 import Section from "../ui/section";
+import { LoadingSpinner } from "../ui/loading";
 
 // Top Charts Page
 
@@ -79,9 +80,6 @@ export default function TopChartsPage() {
         }
     }
 
-    if (!data) {
-        return <ChakraText>No Data Found</ChakraText>
-    }
 
     return (
         <Flex
@@ -123,7 +121,7 @@ export default function TopChartsPage() {
                     />
                 </VStack>
             </Flex>
-            {(!loading && data.length > 0) ? (
+            {(!loading && data && data.length > 0) ? (
                 <>
                 <Section
                 title={`Top ${params.kind}s`}
@@ -131,7 +129,7 @@ export default function TopChartsPage() {
                 />
                 </>
             ) : (loading) ? (
-                <div>Loading...</div>
+                <LoadingSpinner />
             ): (
                 <Flex justify={"center"}>
                 <Alert.Root status={"info"} width={"sm"} justifySelf={"center"}>

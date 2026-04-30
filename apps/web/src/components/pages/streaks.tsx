@@ -11,6 +11,7 @@ import SliderSelector from "@/components/features/analytics/sliderselector";
 import KindSelector from "@/components/features/analytics/kindselector";
 import StreaksTimeline from "@/components/features/streaks/streaks_timeline";
 import Section from "../ui/section";
+import { LoadingSpinner } from "../ui/loading";
 
 
 export default function StreaksPage() {
@@ -41,7 +42,7 @@ export default function StreaksPage() {
     });
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return <LoadingSpinner />
     }
 
     if (isError) {
