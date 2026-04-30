@@ -4,6 +4,7 @@ import HomePage from "@/components/pages/homepage"
 import Overview from "@/components/pages/overview";
 import TopChartsPage from '@/components/pages/topcharts';
 import AttachmentPage from '@/components/pages/attachment';
+import StreaksPage from '@/components/pages/streaks';
 
 
 export const router = createBrowserRouter([
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
             {
                 path: "attachment",
                 element: <AttachmentPage />
+            },
+            {
+                path: "streaks",
+                element: <StreaksPage />
             },
         ],
     },

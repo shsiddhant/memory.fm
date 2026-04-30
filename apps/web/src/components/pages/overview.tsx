@@ -152,7 +152,7 @@ export default function Overview () {
                 fetched={fetched}
                 onClose={handleCloseAlert}
             /> 
-        ) : isSyncActive ? (
+        ) : (isSyncActive || syncStatus?.status === "error")? (
             <SyncProgress
                 syncStatus={syncStatus!}
             />

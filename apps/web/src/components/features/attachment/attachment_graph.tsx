@@ -6,7 +6,6 @@ export default function AttachmentGraph(
     { data }: { data: TimeSeries }
 ) {
     const chart = useChart({ data });
-    console.log("Data:", data?.length);
 
     return (
 
