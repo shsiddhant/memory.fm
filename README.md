@@ -29,6 +29,10 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 | -------- | -----------|
 | <img src="screenshots/attachment_index.png" width="600px" alt="Attachment Index" />| <img src="screenshots/attachment_timeline.png" width="600px" alt="Attachment Moments Timeline" />|
 
+| Streaks Timeline - Artists | Streaks Timeline - Albums|
+| -------------------------- | ------------------------ |
+|<img src="screenshots/streaks_artists.png" width="600px" alt="Streaks Timeline - Artists" /> |<img src="screenshots/streaks.png" width="600px" alt="Streaks Timeline - Albums" />|
+
 ## Quick Start
 
 ### Clone and install
@@ -116,10 +120,16 @@ Measure how concentrated your listening is within a time period.
 
 <img src="screenshots/attachment_timeline.png" width="800px" alt="Attachment Timeline" />
 
+### Streaks
+
+- Detect periods of intense, repeated listening to a single artist, album, or track. Streaks often correspond to emotionally significant moments or phases.
+
+- With **Streaks Timeline**, you can view an interactive, color-coded timeline of your listening streaks. 
+
+<img src="screenshots/streaks_timeline.webp" width="800px" alt="Streaks Timeline" />
 
 ### Coming Soon
 
-- Listening Streaks and Streaks Timeline
 - Time-of-day and seasonal patterns
 
 ## Roadmap
@@ -136,7 +146,7 @@ Measure how concentrated your listening is within a time period.
 - [x] Top Charts (Artists / Albums / Tracks)
 - [x] Rényi entropy
 - [x] Attachment Index
-- [ ] Streaks
+- [x] Streaks
 - [ ] Time of Day / Season based analysis
 
 ### 3. Front-end (React)
@@ -145,7 +155,8 @@ Measure how concentrated your listening is within a time period.
 - [x] Activity heatmap
 - [ ] Insights and visualization
 	- [x] Attachment Index 
-	- [ ] Streaks Timeline
+	- [x] Streaks Timeline
+  - [ ] Streaks Cards
 
 ### 4. Ideas
 

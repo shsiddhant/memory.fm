@@ -83,8 +83,6 @@ export default function TopChartsPage() {
         return <ChakraText>No Data Found</ChakraText>
     }
 
-
-    console.log("Data:", data[0])
     return (
         <Flex
             direction="column"

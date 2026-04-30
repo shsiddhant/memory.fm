@@ -45,5 +45,8 @@ def get_year_range(session: Session, username: str):
         timestamps = get_end_timestamps(session, user_id)
         if timestamps:
             start_ts, end_ts = timestamps
-            start, end = start_ts.year, end_ts.year
+            if start_ts:
+                start = start_ts.year
+            if end_ts:
+                end = end_ts.year
     return {"start": start, "end": end}
