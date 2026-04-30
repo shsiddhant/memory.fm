@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import ResponseValidationError
-from api.routers import analytics, user, websockets
+from apps.api.routers import analytics, user, websockets
 
 from memoryfm.logging import configure_logging
 

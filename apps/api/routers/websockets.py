@@ -6,7 +6,7 @@ from memoryfm.models.sync_status import (
     UserExist,
 )
 
-from api.state.status_services import get_ensure_user_status, get_sync_status
+from apps.api.state.status_services import get_ensure_user_status, get_sync_status
 
 router = APIRouter()
 

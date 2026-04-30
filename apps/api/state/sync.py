@@ -3,8 +3,8 @@ import logging
 from typing import TYPE_CHECKING
 import asyncio
 
-from api.state.status_services import get_sync_status, get_ensure_user_status
-from api.state.locks import get_lock
+from apps.api.state.status_services import get_sync_status, get_ensure_user_status
+from apps.api.state.locks import get_lock
 from memoryfm.io.lastfm_api import sync_lastfm_api
 from memoryfm.models.sync_status import SyncStatus, SyncStatusTypes
 from memoryfm.services.user_service import ensure_user
