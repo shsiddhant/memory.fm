@@ -22,7 +22,7 @@ export const handleResponse = async (res: Response) => {
 
 export const ensureUser = async (username: string) => {
   const res = await fetch(
-    `${BACKEND_URL}/user/${username}/ensure/`,
+    `${BACKEND_URL}/user/${username}/ensure`,
     {
       method: "POST",
     }
@@ -32,7 +32,7 @@ export const ensureUser = async (username: string) => {
 
 export const syncUserScrobbles = async (username: string) => {
   const res = await fetch(
-    `${BACKEND_URL}/user/${username}/sync/`,
+    `${BACKEND_URL}/user/${username}/sync`,
     {
       method: "POST",
     }

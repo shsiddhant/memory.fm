@@ -26,7 +26,7 @@ function HomePage() {
 
       navigate(`/user/${normalizedUsername}/overview`);
     } catch (err) {
-      console.error("Failed to ensure user exitss.", err);
+      console.error("Failed to ensure user exists.", err);
     } finally {
       setLoading(false);
     }
