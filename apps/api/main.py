@@ -25,9 +25,12 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "http://127.0.0.1:5173")
 if FRONTEND_URL:
     origins.append(FRONTEND_URL)
 
+origin_regex = r"https://memory-fm.*\.vercel\.app|http://localhost:5173"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
