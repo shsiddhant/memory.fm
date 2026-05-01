@@ -1,6 +1,6 @@
-const BACKEND_URL = "http://127.0.0.1:8000";
 import { handleResponse } from "@/api/user";
 import type { KindType } from "@/typing";
+import { BACKEND_URL } from "@/api/urls";
 
 const alpha = 2;
 const threshold = 1.5;
