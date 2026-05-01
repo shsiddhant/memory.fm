@@ -8,7 +8,7 @@ const useWebSocket = (
 );
 import { useMemo } from "react";
 
-const WEBSOCKET_URL = "ws://127.0.0.1:8000";
+import { WEBSOCKET_URL } from "@/api/urls";
 
 export type SyncStatusType = 
   | "started"
