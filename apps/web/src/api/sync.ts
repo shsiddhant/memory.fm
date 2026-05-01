@@ -11,7 +11,7 @@ const useWebSocket = (
 import { useMemo, useRef, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-const WEBSOCKET_URL = "ws://127.0.0.1:8000";
+import { WEBSOCKET_URL } from "@/api/urls";
 
 export type SyncStatusType = 
   | "started"
