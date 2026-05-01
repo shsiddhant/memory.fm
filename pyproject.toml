@@ -75,6 +75,11 @@ Repository = "https://github.com/shsiddhant/memory.fm"
 Issues = "https://github.com/shsiddhant/memory.fm/issues"
 Changelog = "https://github.com/shsiddhant/memory.fm/blob/main/CHANGELOG.md"
 
+
+[tool.alembic]
+
+script_location = "apps/alembic/migrations"
+
 [tool.ruff]
 line-length = 88
 target-version = "py310"
