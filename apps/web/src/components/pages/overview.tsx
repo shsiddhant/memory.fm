@@ -10,8 +10,8 @@ import { useSyncStatus } from "@/hooks/use_sync_status";
 // Components
 
 // Chakra UI components
-import { MdCalendarMonth } from "react-icons/md";
-import { Badge, Box, Flex, Icon, Separator, VStack} from "@chakra-ui/react"
+import { MdCalendarMonth, MdListAlt } from "react-icons/md";
+import { Badge, Box, Flex, Icon, Separator, VStack } from "@chakra-ui/react"
 
 // Custom Components
 import Section from "@/components/ui/section";
@@ -23,13 +23,15 @@ import TopChartsPreview from "../features/overview/topcharts_preview";
 import NoScrobbles from "../features/overview/no_scrobbles";
 import { useEffect, useState } from "react";
 import { LoadingSpinner } from "../ui/loading";
+import type { PageHeaderProps } from "@/typing";
+import PageHeader from "../ui/page-header";
 
 // Overview Page
 
-export default function Overview () {
+export default function Overview() {
     const { username } = useParams();
     const queryClient = useQueryClient();
-    
+
     const [weeks, period, limit] = [12, 30, 5];
     let isValidUsername = false;
     if (!username?.trim()) {
@@ -38,10 +40,10 @@ export default function Overview () {
     else {
         isValidUsername = true;
     }
-    
+
     const { syncStatus, isSyncActive } = useSyncStatus(username);
-    const [ showAlert, setShowAlert ] = useState<boolean>(false);
-    const [ fetched, setFetched ] = useState<number | null>(null);
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [fetched, setFetched] = useState<number | null>(null);
 
     const summaryQuery = useQuery({
         queryKey: ["summaryQuery", username],
@@ -71,7 +73,7 @@ export default function Overview () {
 
     const handleCloseAlert = () => {
         if (!syncStatus) return;
-        
+
         const key = `syncAlertDismissed:${username}:${syncStatus.fetched_scrobbles}`;
         localStorage.setItem(key, "true");
         setShowAlert(false);
@@ -79,7 +81,7 @@ export default function Overview () {
 
     useEffect(() => {
         if (!syncStatus) return;
-        
+
         if (syncStatus.status !== "completed") return;
 
         const key = `syncAlertDismissed:${username}:${syncStatus.fetched_scrobbles}`;
@@ -87,18 +89,18 @@ export default function Overview () {
         setTimeout(() => {
             const dismissed = localStorage.getItem(key) === "true";
             if (dismissed) return;
-            
+
             setFetched(syncStatus.fetched_scrobbles);
             setShowAlert(true);
         }, 1000);
-    
+
     }, [syncStatus?.status, syncStatus?.fetched_scrobbles, username]);
 
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: ["summaryQuery", username]
-    });
-  }, [username, queryClient]);
+    useEffect(() => {
+        queryClient.invalidateQueries({
+            queryKey: ["summaryQuery", username]
+        });
+    }, [username, queryClient]);
 
 
     if (summaryQuery.isLoading) {
@@ -122,16 +124,16 @@ export default function Overview () {
         return (
             <VStack gap={"5"}>
                 <div>
-                    { summaryQuery.error?.message}
+                    {summaryQuery.error?.message}
                 </div>
                 <div>
-                    { recentActivityQuery.error?.message }
+                    {recentActivityQuery.error?.message}
                 </div>
                 <div>
-                    { topArtistsQuery.error?.message }
+                    {topArtistsQuery.error?.message}
                 </div>
                 <div>
-                    { topTracksQuery.error?.message }
+                    {topTracksQuery.error?.message}
                 </div>
             </VStack>
         );
@@ -140,60 +142,69 @@ export default function Overview () {
 
     const { summary } = summaryQuery.data || {}
     const { from_date, to_date, counts } = recentActivityQuery.data || {}
-    const topArtistsInput = {kind: "artist", topCharts: topArtistsQuery.data}
-    const topTracksInput = {kind: "track", topCharts: topTracksQuery.data}
+    const topArtistsInput = { kind: "artist", topCharts: topArtistsQuery.data }
+    const topTracksInput = { kind: "track", topCharts: topTracksQuery.data }
+
+    const page: PageHeaderProps = {
+        title: "Overview",
+        icon: MdListAlt,
+        info: ""
+    };
 
     return (
-        <>
-        {showAlert ? (
-            <SyncCompleteAlert
-                fetched={fetched}
-                onClose={handleCloseAlert}
-            /> 
-        ) : (isSyncActive || syncStatus?.status === "error")? (
-            <SyncProgress
-                syncStatus={syncStatus!}
-            />
-        ) : null}
-        {!hasValidSummary ? (
-            <NoScrobbles
+        <Flex
+            direction="column"
+            gap={4}
+        >
+            {PageHeader(page)}
+            {showAlert ? (
+                <SyncCompleteAlert
+                    fetched={fetched}
+                    onClose={handleCloseAlert}
+                />
+            ) : (isSyncActive || syncStatus?.status === "error") ? (
+                <SyncProgress
+                    syncStatus={syncStatus!}
+                />
+            ) : null}
+            {!hasValidSummary ? (
+                <NoScrobbles
                     username={username}
                     syncStatus={syncStatus!}
                     isSyncActive={isSyncActive}
-            />
-        ) : (
-            <>
-                <Box px={{ base: 4, md: 8 }}>
-                    <VStack gap={{base: 4, md: 10 }}>
-                        <Badge
-                            bg={"purple.subtle"}
-                            color={"purple.fg"}
-                            size={"lg"}
-                            display="flex"
-                        >
-                            <Icon as={MdCalendarMonth} mr={1}></Icon>
-                            {`Scrobbling since ${summary.scrobbling_since}`}
-                        </Badge>
-                        <SummaryBadges {...summary} />
-                    </VStack>
-                </Box>
-                <Section
-                    title={"Recent Activity"}
-                    children={<RecentActivity from_date={from_date} to_date={to_date} counts={counts} />}
                 />
-                <Section
-                    title={`Top Charts - Last ${period} Days`}
-                >
-                    <Flex direction={"row"} gap="10" justify={"space-between"}>
-                        <TopChartsPreview {...topArtistsInput} />
-                        <Separator />
-                        <TopChartsPreview {...topTracksInput} />
-                    </Flex>
-                </Section>
-            </>
-        )}
-        </>
+            ) : (
+                <>
+                    <Box px={{ base: 4, md: 8 }}>
+                        <VStack gap={{ base: 4, md: 10 }}>
+                            <Badge
+                                bg={"purple.subtle"}
+                                color={"purple.fg"}
+                                size={"lg"}
+                                display="flex"
+                            >
+                                <Icon as={MdCalendarMonth} mr={1}></Icon>
+                                {`Scrobbling since ${summary.scrobbling_since}`}
+                            </Badge>
+                            <SummaryBadges {...summary} />
+                        </VStack>
+                    </Box>
+                    <Section
+                        title={"Recent Activity"}
+                        children={<RecentActivity from_date={from_date} to_date={to_date} counts={counts} />}
+                    />
+                    <Section
+                        title={`Top Charts - Last ${period} Days`}
+                    >
+                        <Flex direction={"row"} gap="10" justify={"space-between"}>
+                            <TopChartsPreview {...topArtistsInput} />
+                            <Separator />
+                            <TopChartsPreview {...topTracksInput} />
+                        </Flex>
+                    </Section>
+                </>
+            )}
+        </Flex>
     );
 }
 
-    
