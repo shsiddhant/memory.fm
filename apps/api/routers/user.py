@@ -8,7 +8,7 @@ from fastapi import (
     Depends,
     Query,
 )
-from apps.api.state.sync import run_sync, run_ensure_user
+from apps.api.state.sync import run_refresh, run_sync, run_ensure_user
 from apps.api.response_models import (
     RecentActivity,
     SummaryModel,
@@ -73,3 +73,22 @@ def recent_scrobbles(
 def year_range(username: TrimmedStr, session=Depends(get_db_session)):
     """Get scrobbling year range for user."""
     return get_year_range(session, username)
+
+
+@router.post("/user/{username}/refresh")
+async def refresh_scrobbles(
+    username: TrimmedStr,
+    bg_tasks: BackgroundTasks,
+    session=Depends(get_db_session),
+):
+    """Sync scrobbles for user from last.fm API."""
+    bg_tasks.add_task(
+        run_refresh,
+        session,
+        username,
+        api_key=API_KEY,
+    )
+    return {
+        "status": "accepted",
+        "message": f"Refresh scrobbles task started for {username}",
+    }

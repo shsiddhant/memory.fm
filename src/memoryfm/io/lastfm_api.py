@@ -6,6 +6,8 @@ import logging
 import datetime
 from zoneinfo import ZoneInfo
 
+from sqlalchemy.exc import SQLAlchemyError
+
 
 from memoryfm.errors import (
     APIKeyError,
@@ -292,3 +294,25 @@ def sync_lastfm_api(
         tz=tz,
         limit=limit,
     )
+
+
+def refresh_scrobbles_lastfm_api(
+    session: Session,
+    username: str,
+    api_key: str,
+    sync_status: SyncStatus,
+    limit: int = 200,
+):
+    try:
+        context = userv.get_user_context(session, username)
+        if context:
+            user_id = context.user_id
+            tz = context.tz
+            logger.info("[REFRESHING SCROBBLES] | %s", username)
+            logger.info("[DELETING SCROBBLES] | %s", username)
+            scserv.delete_scrobbles(session, user_id)
+            logger.info("[DELETED SCROBBLES] | %s", username)
+            sync_lastfm_api(session, username, api_key, sync_status, tz, limit)
+    except SQLAlchemyError as e:
+        session.rollback()
+        logger.error(e)
