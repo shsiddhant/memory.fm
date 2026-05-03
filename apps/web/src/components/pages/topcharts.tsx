@@ -7,7 +7,7 @@ import { Box, Flex, parseDate, Text as ChakraText, type DateValue, VStack, Alert
 //import Section from "@/components/ui/section";
 import { fetchTopChartsByPeriod } from "@/api/user";
 import PeriodSelector from "@/components/features/analytics/periodselector";
-import type { Dates, TopChart } from "@/typing";
+import type { Dates, PageHeaderProps, TopChart } from "@/typing";
 import { useParams } from "react-router-dom";
 import KindSelector from "../features/analytics/kindselector";
 import useAnalyticsParams from "@/hooks/use_analytics_params";
@@ -15,6 +15,8 @@ import LimitSelector from "../features/analytics/limitselector";
 import TopChartsTable from "../features/topcharts/topcharts_table";
 import Section from "../ui/section";
 import { LoadingSpinner } from "../ui/loading";
+import { MdBarChart } from "react-icons/md";
+import PageHeader from "../ui/page-header";
 
 // Top Charts Page
 
@@ -80,12 +82,19 @@ export default function TopChartsPage() {
         }
     }
 
+    const page: PageHeaderProps = {
+        title: "Top Charts",
+        icon: MdBarChart,
+        info: ""
+    };
+
 
     return (
         <Flex
             direction="column"
             gap={4}
         >
+            {PageHeader(page)}
             <Box mt={"4"}>
                 <KindSelector value={params.kind} onKindChange={setKind} />
             </Box>

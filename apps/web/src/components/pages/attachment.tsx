@@ -6,14 +6,15 @@ import { fetchAttachmentIndex, fetchAttachmentIndexByPeriod, fetchAttachmentMome
 import { Box, Flex, parseDate, Text as ChakraText, type DateValue, VStack, Alert } from "@chakra-ui/react";
 import Section from "@/components/ui/section";
 import PeriodSelector from "@/components/features/analytics/periodselector";
-import type { AttachmentMoment, Dates, TimeSeries } from "@/typing";
+import type { AttachmentMoment, Dates, PageHeaderProps, TimeSeries } from "@/typing";
 import { useParams } from "react-router-dom";
 import KindSelector from "../features/analytics/kindselector";
 import useAnalyticsParams from "@/hooks/use_analytics_params";
 import AttachmentTimeline from "@/components/features/attachment/attachment_moments";
 import AttachmentGraph from "../features/attachment/attachment_graph";
 import { LoadingSpinner } from "../ui/loading";
-
+import { MdFavorite } from "react-icons/md";
+import PageHeader from "../ui/page-header";
 
 // Attachment Page
 
@@ -90,11 +91,18 @@ export default function AttachmentPage() {
         }
     }
 
+    const page: PageHeaderProps = {
+        title: "Attachment",
+        icon: MdFavorite,
+        info: "Attachment Index is measure of how concentrated your listening was on any given day."
+    };
+
     return (
         <Flex
             direction="column"
             gap={4}
         >
+            {PageHeader(page)}
             <Box mt={"4"}>
                 <KindSelector value={params.kind} onKindChange={setKind} />
             </Box>

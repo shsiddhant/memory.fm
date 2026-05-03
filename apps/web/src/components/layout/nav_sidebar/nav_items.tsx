@@ -1,4 +1,4 @@
-import { Box, Flex, List, Text as ChakraText} from "@chakra-ui/react";
+import { Box, Flex, List, Text as ChakraText } from "@chakra-ui/react";
 import type { IconType } from "react-icons";
 import { NavLink } from "react-router-dom";
 import { useSidebarNav } from "./nav_sidebar_context";
@@ -15,7 +15,7 @@ export interface SidebarNavItemsProps {
 }
 
 function sidebarItem(
-    item: SidebarNavItem, index: number
+  item: SidebarNavItem, index: number
 ) {
 
   const { open } = useSidebarNav();
@@ -41,17 +41,17 @@ function sidebarItem(
               {open && (
                 <ChakraText fontWeight="medium">{item.label}</ChakraText>
               )}
-      </Flex>
-    </Box>
-  )}
-</NavLink>
+            </Flex>
+          </Box>
+        )}
+      </NavLink>
     </List.Item>
   )
 }
 
 
-export default function SidebarNavItems (
-  {navItems} : SidebarNavItemsProps
+export default function SidebarNavItems(
+  { navItems }: SidebarNavItemsProps
 ) {
 
   return (
@@ -59,10 +59,10 @@ export default function SidebarNavItems (
       gap="2"
       variant={"plain"}
       width="full"
-      >
-        {navItems.map(
-          (item, index) => sidebarItem(item, index)
-        )}
-      </List.Root>
+    >
+      {navItems.map(
+        (item, index) => sidebarItem(item, index)
+      )}
+    </List.Root>
   )
 }

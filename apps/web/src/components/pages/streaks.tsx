@@ -4,7 +4,7 @@ import { fetchStreaksByYear } from "@/api/analytics";
 import { useQuery } from "@tanstack/react-query";
 import useAnalyticsParams, { useYearRange } from "@/hooks/use_analytics_params";
 
-import type { ListeningStreak } from "@/typing";
+import type { ListeningStreak, PageHeaderProps } from "@/typing";
 
 import { Box, Flex, Text as ChakraText, VStack, Alert } from "@chakra-ui/react";
 import SliderSelector from "@/components/features/analytics/sliderselector";
@@ -12,6 +12,8 @@ import KindSelector from "@/components/features/analytics/kindselector";
 import StreaksTimeline from "@/components/features/streaks/streaks_timeline";
 import Section from "../ui/section";
 import { LoadingSpinner } from "../ui/loading";
+import { MdBolt } from "react-icons/md";
+import PageHeader from "../ui/page-header";
 
 
 export default function StreaksPage() {
@@ -60,11 +62,18 @@ export default function StreaksPage() {
 
     const streaks: ListeningStreak[] = streaksQuery.data || []
 
+    const page: PageHeaderProps = {
+        title: "Streaks",
+        icon: MdBolt,
+        info: "A Streak is a series of consecutive listens of the same artist, album, or track."
+    };
+
     return (
         <Flex
             direction="column"
             gap={4}
         >
+            {PageHeader(page)}
             <Box mt={"4"}>
                 <KindSelector value={params.kind} onKindChange={setKind} />
             </Box>

@@ -1,6 +1,7 @@
 // Types and Interfaces
 
 import type { DateValue } from "@chakra-ui/react";
+import type { IconType } from "react-icons";
 
 export interface TopChart {
     name: string,
@@ -66,4 +67,10 @@ export type ListeningStreak = {
   length: number
   log_length: number
   kind: KindType
+}
+
+export type PageHeaderProps = {
+  title: string
+  icon: IconType
+  info: string
 }
