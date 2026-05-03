@@ -50,3 +50,12 @@ def get_year_range(session: Session, username: str):
             if end_ts:
                 end = end_ts.year
     return {"start": start, "end": end}
+
+
+def delete_scrobbles(session: Session, user_id: int):
+    try:
+        screpo.delete_scrobbles_by_user(session, user_id)
+        session.commit()
+    except SQLAlchemyError:
+        session.rollback()
+        raise

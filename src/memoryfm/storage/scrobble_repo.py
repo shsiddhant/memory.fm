@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from sqlalchemy import func, select, tuple_
+from sqlalchemy import delete, func, select, tuple_
 from sqlalchemy.dialects.postgresql import insert
 
 from memoryfm.models.core import Album, Artist, Scrobble, Track
@@ -117,3 +117,19 @@ def get_end_timestamps_by_user(
     if data:
         return data.tuple()
     return None
+
+
+def delete_scrobbles_by_user(
+    session: Session,
+    user_id: int,
+    from_ts: datetime | None = None,
+    to_ts: datetime | None = None,
+):
+    stmt = delete(Scrobble).where(Scrobble.user_id == user_id)
+
+    if from_ts:
+        stmt = stmt.where(Scrobble.timestamp >= from_ts)
+    if to_ts:
+        stmt = stmt.where(Scrobble.timestamp <= to_ts)
+
+    session.execute(stmt)

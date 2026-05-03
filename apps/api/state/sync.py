@@ -5,7 +5,7 @@ import asyncio
 
 from apps.api.state.status_services import get_sync_status, get_ensure_user_status
 from apps.api.state.locks import get_lock
-from memoryfm.io.lastfm_api import sync_lastfm_api
+from memoryfm.io.lastfm_api import sync_lastfm_api, refresh_scrobbles_lastfm_api
 from memoryfm.models.sync_status import SyncStatus, SyncStatusTypes
 from memoryfm.services.user_service import ensure_user
 from memoryfm.util.format_sync_log import format_status_log
@@ -64,3 +64,22 @@ async def run_ensure_user(session: Session, username: str):
             username,
             ensure_sync_status,
         )
+
+
+async def run_refresh(session: Session, username: str, api_key: str):
+    sync_status = get_sync_status(username)
+    lock = get_lock(username)
+
+    async with lock:
+        sync_status.error = None
+        try:
+            await asyncio.to_thread(
+                refresh_scrobbles_lastfm_api,
+                session,
+                username,
+                api_key,
+                sync_status,
+            )
+        except Exception as e:
+            apply_exception_to_status(e, sync_status)
+            logger.error(format_status_log(username, sync_status))
