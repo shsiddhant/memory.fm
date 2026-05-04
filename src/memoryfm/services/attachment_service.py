@@ -124,11 +124,18 @@ def get_attachment_moments(
             top_charts_df = pd.DataFrame(top_charts)
             df["z_score"] = (df["value"] - df["value"].mean()) / df["value"].std()
 
-            top_moments_df = df[df["z_score"] >= threshold]
+            top_moments_df = df[df["z_score"] >= threshold].copy()
+
+            if top_moments_df.empty:
+                return []
+
             top_moments_df["day"] = top_moments_df["day"].dt.strftime("%Y-%m-%d")
-            top_moments_df[["name", "scrobbles", "total_scrobbles"]] = top_charts_df[
-                ["name", "scrobbles", "total_scrobbles"]
-            ]
+            top_charts_df["day"] = top_charts_df["day"].dt.strftime("%Y-%m-%d")
+            top_moments_df = top_moments_df.merge(
+                top_charts_df[["day", "name", "scrobbles", "total_scrobbles"]],
+                on="day",
+                how="left",
+            )
             top_moments_df["dominance"] = (
                 top_moments_df["scrobbles"] / top_moments_df["total_scrobbles"]
             )

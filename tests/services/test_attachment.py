@@ -89,8 +89,15 @@ def test_get_weighted_attachment_index(seeded_db: Session):
 
 def test_get_attachment_moments(seeded_db: Session):
     moments = attserv.get_attachment_moments(
-        seeded_db, username, kind, from_ts, to_ts, freq=Frequency.D
+        seeded_db, username, kind, from_ts, to_ts, freq=Frequency.D, threshold=0
     )
     assert moments is not None
-    assert len(moments) == 2
-    assert moments[1].get("name") == "Anything We Want"
+    assert len(moments) == 1, repr(moments)
+    assert moments[0].get("name") == "Anything We Want"
+
+
+def test_get_attachment_moments_empty(seeded_db: Session):
+    moments = attserv.get_attachment_moments(
+        seeded_db, username, kind, from_ts, to_ts, freq=Frequency.D, threshold=1000
+    )
+    assert moments == []
