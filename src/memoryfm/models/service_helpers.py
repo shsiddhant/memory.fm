@@ -69,9 +69,25 @@ class LastfmErrorResponse(BaseModel):
     msg: str = Field(validation_alias=AliasPath("message"))
 
 
+class LastfmUserInfoResponse(BaseModel):
+    name: str = Field(validation_alias=AliasPath("user", "name"))
+    url: str = Field(validation_alias=AliasPath("user", "url"))
+
+
 def parse_lastfm_api_response(response_data: Any) -> LastfmResponse:
     try:
         return LastfmResponse.model_validate(response_data)
+    except ValidationError:
+        try:
+            error_data = LastfmErrorResponse.model_validate(response_data).model_dump()
+            raise LastfmAPIError(**error_data)
+        except ValidationError:
+            raise
+
+
+def parse_lastfm_api_user_info(response_data: Any) -> LastfmUserInfoResponse:
+    try:
+        return LastfmUserInfoResponse.model_validate(response_data)
     except ValidationError:
         try:
             error_data = LastfmErrorResponse.model_validate(response_data).model_dump()

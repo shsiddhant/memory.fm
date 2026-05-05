@@ -46,6 +46,9 @@ class UserExist(Enum):
 @dataclass
 class EnsureUserStatus:
     status: UserExist | None = None
+    retry: int | None = None
+    total_retries: int | None = None
+    error: str | None = None
 
     def to_dict(self):
         return serialize(asdict(self))

@@ -5,15 +5,19 @@ export const handleResponse = async (res: Response) => {
   const data = await res.json();
 
   if (!res.ok) {
-    if (res.status === 422 && data.errors) {
-      const errorMessages = data.errors
-        .map((err: { msg: string }, i: number) => `${i} - ${err.msg}`)
-        .join(", ");
+    const error: any = new Error();
+    error.status = res.status;
+    error.data = data;
 
-      throw new Error(errorMessages);
+    if (res.status === 422 && data.errors) {
+      error.message = data.errors
+        .map((err: { msg: string }) => `${err.msg}`)
+        .join("\n");
+    } else {
+      throw new Error(data.message || "Request failed");
     }
 
-    throw new Error(data.message || "Request failed");
+    throw error;
   }
 
   return data;

@@ -14,6 +14,7 @@ from apps.api.response_models import (
     SummaryModel,
     YearRange,
 )
+from memoryfm.models.service_helpers import LastfmUserInfoResponse
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 from memoryfm.services.scrobble_service import get_year_range
@@ -25,15 +26,17 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY", "")
 
 
-@router.post("/user/{username}/ensure")
+@router.post(
+    "/user/{username}/ensure",
+    response_model=LastfmUserInfoResponse,
+)
 async def ensure_user(
     username: TrimmedStr,
-    bg_tasks: BackgroundTasks,
     session=Depends(get_db_session),
 ):
     """Ensure that user with username exist. If not, create one."""
-    bg_tasks.add_task(run_ensure_user, session, username)
-    return {"status": "accepted", "message": f"Ensure user task started for {username}"}
+    userinfo = await run_ensure_user(session, username, api_key=API_KEY)
+    return userinfo
 
 
 @router.post("/user/{username}/sync")

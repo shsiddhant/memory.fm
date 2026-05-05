@@ -2,15 +2,18 @@ import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ensureUser } from '@/api/user';
 
-import { Box, Button, VStack, Input, Center, Container, Text as ChakraText, Heading } from '@chakra-ui/react'
+import { Box, Button, VStack, Input, Center, Container, Text as ChakraText, Heading, Field } from '@chakra-ui/react'
 
 function HomePage() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
   const normalizedUsername = username.trim();
 
-  function handleChange (event: ChangeEvent<HTMLInputElement>) {
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setError(null);
     setUsername(event.target.value);
   }
 
@@ -21,12 +24,15 @@ function HomePage() {
 
     try {
       setLoading(true);
+      setError(null);
 
       await ensureUser(normalizedUsername);
 
       navigate(`/user/${normalizedUsername}/overview`);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to ensure user exists.", err);
+
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -49,6 +55,7 @@ function HomePage() {
           {/* Form Section */}
           <Box as="form" onSubmit={handleSubmit} w="full">
             <VStack gap="6">
+              <Field.Root invalid={!!error}>
               <Input
                 autoFocus
                 value={username}
@@ -61,7 +68,14 @@ function HomePage() {
                 disabled={loading}
                 _focus={{ borderColor: "accent" }}
               />
-              
+              </Field.Root>
+
+              {error && (
+                <ChakraText color="red.400" fontSize="sm">
+                  {error}
+                </ChakraText>
+              )}
+
               <Button
                 size="xl"
                 w="full"
