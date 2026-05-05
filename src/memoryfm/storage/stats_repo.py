@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import datetime
 from sqlalchemy import desc, distinct, select, func
-from memoryfm.models.core import Scrobble
+from memoryfm.models.core import AnalyticsView
 from memoryfm.models.service_enums import Frequency
 from memoryfm.storage.user_repo import get_user_by_id
 from memoryfm.storage.cte_util import get_frequency_cte
@@ -17,20 +17,22 @@ if TYPE_CHECKING:
 def get_summary_by_user(session: Session, user_id: int) -> dict | None:
     user = get_user_by_id(session, user_id)
     username = user.username if user else None
-    data = (
-        session.execute(
-            select(
-                func.count(Scrobble.id).label("count"),
-                func.min(Scrobble.timestamp).label("first_scrobble"),
-                func.max(Scrobble.timestamp).label("last_scrobble"),
-                func.count(distinct(Scrobble.track)).label("tracks"),
-                func.count(distinct(Scrobble.artist)).label("artists"),
-                func.count(distinct(Scrobble.album)).label("albums"),
-            ).where(Scrobble.user_id == user_id)
-        )
-        .mappings()
-        .fetchone()
+
+    columns = (
+        func.count(AnalyticsView.scrobble_id).label("count"),
+        func.min(AnalyticsView.timestamp).label("first_scrobble"),
+        func.max(AnalyticsView.timestamp).label("last_scrobble"),
+        func.count(distinct(AnalyticsView.track_id)).label("tracks"),
+        func.count(distinct(AnalyticsView.artist_id)).label("artists"),
+        func.count(distinct(AnalyticsView.album_id))
+        .filter(AnalyticsView.album != "")
+        .label("albums"),
     )
+    conditions = [AnalyticsView.user_id == user_id]
+    stmt = select(*columns).where(*conditions)
+
+    data = session.execute(stmt).mappings().fetchone()
+
     if data:
         first_date: datetime.datetime | None = data.get("first_scrobble")
         last_date: datetime.datetime | None = data.get("last_scrobble")
@@ -63,18 +65,26 @@ def get_top_charts_by_user(
     to_ts: datetime.datetime | None = None,
     limit: int | None = 10,
 ) -> Sequence[RowMapping]:
-    col = kind.column
-    stmt = (
-        select(col.label("name"), func.count(Scrobble.id).label("scrobbles"))
-        .where(Scrobble.user_id == user_id)
-        .group_by("name")
-        .order_by(desc("scrobbles"), desc(func.max(Scrobble.timestamp)))
-        .limit(limit)
-    )
+    id_col = kind.id_column.label("id")  # type: ignore[attr-defined]
+    name_col = func.any_value(kind.name_column).label("name")
+    subname_col = func.any_value(kind.subname_column).label("subname")
+    scrobbles_col = func.count(AnalyticsView.scrobble_id).label("scrobbles")
+
+    stmt = select(id_col, name_col, scrobbles_col)
+    if subname_col is not None:
+        stmt = select(id_col, name_col, subname_col, scrobbles_col)
+
+    conditions = (AnalyticsView.user_id == user_id,)
+    groupby = (id_col,)
+    orderby = (desc(scrobbles_col), desc(func.max(AnalyticsView.timestamp)))
+
+    stmt = stmt.where(*conditions).group_by(*groupby).order_by(*orderby).limit(limit)
+
     if from_ts:
-        stmt = stmt.filter(Scrobble.timestamp >= from_ts)
+        stmt = stmt.filter(AnalyticsView.timestamp >= from_ts)
     if to_ts:
-        stmt = stmt.filter(Scrobble.timestamp < to_ts)
+        stmt = stmt.filter(AnalyticsView.timestamp <= to_ts)
+
     top = session.execute(stmt).mappings().fetchall()
     return top
 
@@ -88,19 +98,21 @@ def get_daily_scrobbles_count(
     datelimit = till if till else datetime.date.today()
     to_date = datelimit
     from_date = to_date - datetime.timedelta(days=limit)
-    stmt = (
-        select(
-            func.date(Scrobble.timestamp).label("Date"),
-            func.count(Scrobble.id).label("Scrobbles"),
-        )
-        .where(
-            Scrobble.user_id == user_id,
-            func.date(Scrobble.timestamp) <= to_date,
-            func.date(Scrobble.timestamp) >= from_date,
-        )
-        .order_by(desc("Date"))
-        .group_by("Date")
-    )
+
+    date_col = func.date(AnalyticsView.timestamp)
+    columns = [
+        date_col.label("Date"),
+        func.count(AnalyticsView.scrobble_id).label("Scrobbles"),
+    ]
+    conditions = [
+        AnalyticsView.user_id == user_id,
+        func.date(AnalyticsView.timestamp) <= to_date,
+        func.date(AnalyticsView.timestamp) >= from_date,
+    ]
+    orderby = (desc(date_col),)
+    groupby = (date_col,)
+    stmt = select(*columns).where(*conditions).order_by(*orderby).group_by(*groupby)
+
     data = session.execute(stmt).mappings().all()
     return from_date, to_date, data
 
