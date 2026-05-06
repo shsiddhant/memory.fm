@@ -8,7 +8,7 @@ from memoryfm.errors import (
     InvalidDataError,
 )
 import memoryfm.services.user_service as userv
-from memoryfm.models.core import Scrobble
+from memoryfm.models.core import AnalyticsView
 
 data_dir = Path(__file__).resolve().parent.parent / "data"
 json_dir = data_dir / "json"
@@ -34,6 +34,6 @@ class TestFromLastfmstats:
         assert context.tz == "Asia/Kolkata"
         user_id = context.user_id
 
-        stmt = select(Scrobble).where(Scrobble.user_id == user_id)
+        stmt = select(AnalyticsView).where(AnalyticsView.user_id == user_id)
         scrobbles = seeded_db.execute(stmt).fetchall()
         assert len(scrobbles) == 11
