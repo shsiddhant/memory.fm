@@ -131,8 +131,11 @@ def get_attachment_moments(
 
             top_moments_df["day"] = top_moments_df["day"].dt.strftime("%Y-%m-%d")
             top_charts_df["day"] = top_charts_df["day"].dt.strftime("%Y-%m-%d")
+            merge_cols = ["day", "name", "scrobbles", "total_scrobbles"]
+            if "subname" in top_charts_df.columns:
+                merge_cols.append("subname")
             top_moments_df = top_moments_df.merge(
-                top_charts_df[["day", "name", "scrobbles", "total_scrobbles"]],
+                top_charts_df[merge_cols],
                 on="day",
                 how="left",
             )

@@ -67,11 +67,11 @@ def get_top_charts_by_user(
 ) -> Sequence[RowMapping]:
     id_col = kind.id_column.label("id")  # type: ignore[attr-defined]
     name_col = func.any_value(kind.name_column).label("name")
-    subname_col = func.any_value(kind.subname_column).label("subname")
     scrobbles_col = func.count(AnalyticsView.scrobble_id).label("scrobbles")
 
     stmt = select(id_col, name_col, scrobbles_col)
-    if subname_col is not None:
+    if kind.subname_column is not None:
+        subname_col = func.any_value(kind.subname_column).label("subname")
         stmt = select(id_col, name_col, subname_col, scrobbles_col)
 
     conditions = (AnalyticsView.user_id == user_id,)
@@ -127,17 +127,25 @@ def get_top_charts_by_freq(
 ) -> Sequence[RowMapping]:
     stmt_cte_freq = get_frequency_cte(user_id, kind, from_ts, to_ts, freq)
     cols = stmt_cte_freq.columns
+    freq_col = cols[freq.value]
     scrobbles_col = cols["scrobbles"]
-    total_scrobbles_col = func.sum(scrobbles_col).over(partition_by=cols[freq.value])
-    stmt = (
-        select(
-            cols[freq.value].label("day"),
-            cols[kind.value].label("name"),
-            cols["scrobbles"],
-            total_scrobbles_col.label("total_scrobbles"),
-        )
-        .distinct(cols[freq.value])
-        .order_by(cols[freq.value], desc(cols["scrobbles"]))
+    total_scrobbles_col = (
+        func.sum(scrobbles_col).over(partition_by=freq_col).label("total_scrobbles")
     )
+
+    select_columns = (
+        freq_col.label("day"),
+        cols["id"],
+        cols["name"],
+        scrobbles_col,
+        total_scrobbles_col,
+    )
+
+    if "subname" in cols:
+        stmt = select(*select_columns, cols["subname"])
+    else:
+        stmt = select(*select_columns)
+
+    stmt = stmt.distinct(freq_col).order_by(freq_col, desc(cols["scrobbles"]))
     top = session.execute(stmt).mappings().fetchall()
     return top
