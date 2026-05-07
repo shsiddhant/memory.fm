@@ -5,6 +5,7 @@ from datetime import date, datetime
 from math import log2
 
 from memoryfm.models.service_enums import ChartKindColumn
+from memoryfm.storage.streaks import StreakType
 
 
 class ScrobblesCount(BaseModel):
@@ -87,19 +88,22 @@ class ListeningStreak(BaseModel):
     start: datetime
     end: datetime
     name: str
+    subname: str | None
     length: int
     log_length: float
     kind: ChartKindColumn
 
     @classmethod
-    def from_service_data(
-        cls, kind: ChartKindColumn, data: tuple[datetime, datetime, str, int] | None
-    ):
-        schema = TypeAdapter(tuple[datetime, datetime, str, int])
+    def from_service_data(cls, kind: ChartKindColumn, data: StreakType | None):
+        schema = TypeAdapter(StreakType)
         if not data:
             raise ResponseValidationError(errors=[{"msg": "No data found for user."}])
         try:
-            start, end, name, length = schema.validate_python(data)
+            if kind.subname_column is not None:
+                start, end, name, length, subname = schema.validate_python(data)
+            else:
+                start, end, name, length = schema.validate_python(data)
+                subname = None
         except ValidationError as e:
             raise ResponseValidationError(errors=e.errors())
         log_length = log2(length)
@@ -107,6 +111,7 @@ class ListeningStreak(BaseModel):
             start=start,
             end=end,
             name=name,
+            subname=subname,
             length=length,
             log_length=log_length,
             kind=kind,
