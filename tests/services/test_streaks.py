@@ -34,5 +34,20 @@ def test_streaks_by_year(seeded_db: Session):
     )
     assert streaks is not None
     assert len(streaks) == 2
+    assert len(streaks[1]) == 5
     assert streaks[0][2] == "Valentine"
     assert streaks[1][3] == 4
+    assert streaks[1][4] == "Fiona Apple"
+
+
+def test_artist_streaks(seeded_db: Session):
+    streaks = strkserv.get_streaks_by_year(
+        seeded_db,
+        username,
+        ChartKindColumn.Artist,
+        year,
+        min_length,
+    )
+    assert streaks is not None
+    assert len(streaks) > 0
+    assert len(streaks[0]) == 4
