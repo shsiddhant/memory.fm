@@ -61,6 +61,7 @@ class SummaryModel(BaseModel):
 
 class TopChart(BaseModel):
     name: str
+    subname: str | None = None
     scrobbles: int
 
 
@@ -74,6 +75,7 @@ class AttachmentMoment(BaseModel):
     value: float
     z_score: float
     name: str
+    subname: str | None = None
     scrobbles: float
     total_scrobbles: float
     dominance: float

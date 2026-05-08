@@ -1,17 +1,14 @@
-import { Box, Progress, Table } from "@chakra-ui/react";
+import { Box, Progress, Table, Text as ChakraText } from "@chakra-ui/react";
+import { type TopChart } from "@/typing";
 
-interface TopChart {
-    name: string,
-    scrobbles: number
-}
 
 export default function TopChartsPreview(
-    { kind, topCharts}: { kind: string, topCharts: TopChart[]}
+    { kind, topCharts }: { kind: string, topCharts: TopChart[] }
 ) {
 
     const values = topCharts.map(chart => chart.scrobbles);
     const max = Math.max(...values);
-    
+
 
     return (
         <Table.Root
@@ -46,7 +43,17 @@ export default function TopChartsPreview(
                         borderBottomColor={"bg"}
                     >
                         <Table.Cell py="3" fontWeight="500">
-                            {chart.name}
+                            <Box>
+                                <ChakraText>
+                                    {chart.name}
+                                </ChakraText>
+
+                                {chart.subname && (
+                                    <ChakraText fontSize="xs" color="fg.muted">
+                                        {chart.subname}
+                                    </ChakraText>
+                                )}
+                            </Box>
                         </Table.Cell>
                         <Table.Cell py="3" textAlign="end" >
                             <Progress.Root
