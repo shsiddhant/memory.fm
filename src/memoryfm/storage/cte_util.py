@@ -12,11 +12,15 @@ def get_frequency_cte(
     from_ts: datetime.datetime | None = None,
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
+    tz: str = "Etc/UTC",
 ) -> CTE:
     id_col = kind.id_column.label("id")  # type: ignore[attr-defined]
     name_col = kind.name_column.label("name")  # type: ignore[attr-defined]
     subname_col = kind.subname_column.label("subname") if kind.subname_column else None  # type: ignore[attr-defined]
-    date_col = func.date_trunc(freq.value, AnalyticsView.timestamp).label(freq.value)
+
+    local_ts = AnalyticsView.timestamp.op("AT TIME ZONE")(tz)
+    truncated_local = func.date_trunc(freq.value, local_ts)
+    date_col = truncated_local.label(freq.value)
 
     if subname_col is not None:
         stmt = select(date_col, id_col, name_col, subname_col)
@@ -59,8 +63,9 @@ def get_frequency_proportions_cte(
     from_ts: datetime.datetime | None = None,
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
+    tz: str = "Etc/UTC",
 ) -> CTE:
-    stmt_cte_freq = get_frequency_cte(user_id, kind, from_ts, to_ts, freq)
+    stmt_cte_freq = get_frequency_cte(user_id, kind, from_ts, to_ts, freq, tz)
     cte_freq_cols = stmt_cte_freq.columns
     scrobbles_col = cte_freq_cols["scrobbles"]
     total_scrobbles_col = func.sum(scrobbles_col).over(

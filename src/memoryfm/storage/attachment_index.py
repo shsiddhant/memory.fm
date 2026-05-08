@@ -22,8 +22,11 @@ def get_renyi_entropy(
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
     alpha: float = 1,
+    tz: str = "Etc/UTC",
 ) -> Sequence[RowMapping] | None:
-    stmt_cte_props = get_frequency_proportions_cte(user_id, kind, from_ts, to_ts, freq)
+    stmt_cte_props = get_frequency_proportions_cte(
+        user_id, kind, from_ts, to_ts, freq, tz
+    )
     cte_props_cols = stmt_cte_props.columns
     prop_col = cte_props_cols["prop"]
     total_scrobbles_col = func.any_value(cte_props_cols["total_scrobbles"])
@@ -51,8 +54,9 @@ def get_attachment_index(
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
     alpha: float = 1,
+    tz: str = "Etc/UTC",
 ):
-    entropy = get_renyi_entropy(session, user_id, kind, from_ts, to_ts, freq, alpha)
+    entropy = get_renyi_entropy(session, user_id, kind, from_ts, to_ts, freq, alpha, tz)
     att_index = (
         [{"day": k["day"], "value": 100 * exp(-k["value"])} for k in entropy]
         if entropy
