@@ -5,7 +5,8 @@ import {
     Card,
     Badge,
     Text as ChakraText,
-    Collapsible
+    Collapsible,
+    Alert
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -29,14 +30,14 @@ function MomentCard(
     const date_string = date.toLocaleDateString();
     const [open, setOpen] = useState(false);
 
-    const getColor  = (z_score: number) => {
+    const getColor = (z_score: number) => {
         if (z_score > 3) {
             return "brand.cardbg"
         }
         else {
             return "bg"
         }
-    } 
+    }
 
     return (
         <Flex
@@ -156,7 +157,18 @@ function SnakeGroup(
 export default function AttachmentTimeline(
     { moments }: { moments: AttachmentMoment[] }
 ) {
-
+    if (moments.length === 0) {
+        return (
+            <Flex justify={"center"}>
+                <Alert.Root status={"info"} width={"sm"} justifySelf={"center"}>
+                    <Alert.Indicator />
+                    <Alert.Content>
+                        <Alert.Title>No attachment moments found in the selected period.</Alert.Title>
+                    </Alert.Content>
+                </Alert.Root>
+            </Flex>
+        )
+    }
     const groups = groupMoments(moments, 4);
     return (
         <Flex direction="column" gap={12} mt={6} position="relative">
