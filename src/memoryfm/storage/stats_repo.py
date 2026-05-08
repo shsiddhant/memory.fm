@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import datetime
+from zoneinfo import ZoneInfo
 from sqlalchemy import desc, distinct, select, func
 from memoryfm.models.core import AnalyticsView
 from memoryfm.models.service_enums import Frequency
@@ -94,20 +95,21 @@ def get_daily_scrobbles_count(
     user_id: int,
     till: datetime.date | None = None,
     limit: int = 56,
+    tz: str = "Etc/UTC",
 ) -> tuple[datetime.date, datetime.date, Sequence[RowMapping]]:
-    datelimit = till if till else datetime.date.today()
+    datelimit = till if till else datetime.datetime.now(ZoneInfo(tz)).date()
     to_date = datelimit
     from_date = to_date - datetime.timedelta(days=limit)
 
-    date_col = func.date(AnalyticsView.timestamp)
+    date_col = func.date(AnalyticsView.timestamp.op("AT TIME ZONE")(tz))
     columns = [
         date_col.label("Date"),
         func.count(AnalyticsView.scrobble_id).label("Scrobbles"),
     ]
     conditions = [
         AnalyticsView.user_id == user_id,
-        func.date(AnalyticsView.timestamp) <= to_date,
-        func.date(AnalyticsView.timestamp) >= from_date,
+        date_col <= to_date,
+        date_col >= from_date,
     ]
     orderby = (desc(date_col),)
     groupby = (date_col,)
@@ -124,8 +126,9 @@ def get_top_charts_by_freq(
     from_ts: datetime.datetime | None = None,
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
+    tz: str = "Etc/UTC",
 ) -> Sequence[RowMapping]:
-    stmt_cte_freq = get_frequency_cte(user_id, kind, from_ts, to_ts, freq)
+    stmt_cte_freq = get_frequency_cte(user_id, kind, from_ts, to_ts, freq, tz)
     cols = stmt_cte_freq.columns
     freq_col = cols[freq.value]
     scrobbles_col = cols["scrobbles"]
