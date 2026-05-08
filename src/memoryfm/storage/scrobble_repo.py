@@ -100,7 +100,7 @@ def insert_scrobbles_by_user(session: Session, user_id: int, scrobbles: Sequence
                     artists_map[(s["artist"])],
                 )
             ],
-            **s,
+            "timestamp": s["timestamp"],
         }
         for s in scrobbles
     ]

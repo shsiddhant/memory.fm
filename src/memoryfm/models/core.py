@@ -134,17 +134,6 @@ class Scrobble(Base):
         doc="Timestamp at which the track was scrobbled. "
         "Stored as UTC with timezone awareness.",
     )
-    track: Mapped[str] = mapped_column(
-        String(), doc="Name/title of the scrobbled track."
-    )
-    artist: Mapped[str] = mapped_column(
-        String(), doc="Artist name for the scrobbled track."
-    )
-    album: Mapped[str] = mapped_column(
-        String(),
-        server_default="",
-        doc="(Optional) Album name for the scrobbled track.",
-    )
 
     track_id: Mapped[int] = mapped_column(ForeignKey("tracks.id"), index=True)
 
