@@ -36,9 +36,11 @@ def validate_tz(tz: str | None = None) -> str:
 
 def get_datelimit_from_period(period: int | Literal["all_time"] = 7):
     if period != "all_time":
-        return datetime.datetime.now() - datetime.timedelta(days=period)
+        return datetime.datetime.now(tz=ZoneInfo("Etc/UTC")) - datetime.timedelta(
+            days=period
+        )
     else:
-        return datetime.datetime.fromtimestamp(0)
+        return datetime.datetime.fromtimestamp(0, tz=ZoneInfo("Etc/UTC"))
 
 
 def normalize_timestamp(
