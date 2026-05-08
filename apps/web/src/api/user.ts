@@ -1,5 +1,5 @@
 import { BACKEND_URL } from "@/api/urls";
-
+import { getClientTimezone } from "@/api/tzhelper";
 
 export const handleResponse = async (res: Response) => {
   const data = await res.json();
@@ -50,22 +50,47 @@ export const fetchUserSummary = async (username: string) => {
 };
 
 export const fetchRecentActivity = async (username: string, weeks: number) => {
-  const res = await fetch(`${BACKEND_URL}/user/${username}/recent_scrobbles?weeks=${weeks}`);
+  const tz = getClientTimezone();
+
+  const params = new URLSearchParams({
+    weeks: String(weeks),
+    tz
+  });
+
+  const res = await fetch(`${BACKEND_URL}/user/${username}/recent_scrobbles?${params.toString()}`);
   return handleResponse(res);
 };
 
 export const fetchTopChartsByPeriod = async (
-  username: string, kind: string, period: number | "all_time", limit: number
+  username: string,
+  kind: string,
+  period: number | "all_time",
+  limit: number
 ) => {
+
+  const tz = getClientTimezone();
+
+  const params = new URLSearchParams({
+    kind,
+    period: String(period),
+    limit: String(limit),
+    tz
+  });
+
   const res = await fetch(
-    `${BACKEND_URL}/user/${username}/top_last?kind=${kind}&period=${period}&limit=${limit}`
+    `${BACKEND_URL}/user/${username}/top_last?${params.toString()}`
   );
   return handleResponse(res);
 };
 
 export const fetchYearRange = async (username: string) => {
+  const tz = getClientTimezone();
+
+  const params = new URLSearchParams({
+    tz
+  })
   const res = await fetch(
-    `${BACKEND_URL}/user/${username}/year_range`
+    `${BACKEND_URL}/user/${username}/year_range?${params.toString()}`
   );
   return handleResponse(res);
 };
