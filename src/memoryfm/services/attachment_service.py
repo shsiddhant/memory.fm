@@ -23,12 +23,13 @@ def get_renyi_entropy_by_username(
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
     alpha: float = 1,
+    tz: str = "Etc/UTC",
 ) -> Sequence[RowMapping] | None:
     user = get_user_by_username(session, username)
     if user:
         user_id = user.id
         return attrepo.get_renyi_entropy(
-            session, user_id, kind, from_ts, to_ts, freq, alpha
+            session, user_id, kind, from_ts, to_ts, freq, alpha, tz
         )
     return None
 
@@ -41,12 +42,13 @@ def get_attachment_index_by_username(
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
     alpha: float = 1,
+    tz: str = "Etc/UTC",
 ):
     user = get_user_by_username(session, username)
     if user:
         user_id = user.id
         return attrepo.get_attachment_index(
-            session, user_id, kind, from_ts, to_ts, freq, alpha
+            session, user_id, kind, from_ts, to_ts, freq, alpha, tz
         )
     return None
 
@@ -59,12 +61,13 @@ def get_weighted_attachment_index_by_username(
     to_ts: datetime.datetime | None = None,
     freq: Frequency = Frequency.D,
     alpha: float = 1,
+    tz: str = "Etc/UTC",
 ):
     user = get_user_by_username(session, username)
     if user:
         user_id = user.id
         entropy = attrepo.get_renyi_entropy(
-            session, user_id, kind, from_ts, to_ts, freq, alpha
+            session, user_id, kind, from_ts, to_ts, freq, alpha, tz
         )
         if entropy:
             df = pd.DataFrame(entropy)
@@ -83,13 +86,13 @@ def get_weighted_attachment_by_period(
     period: int | Literal["all_time"],
     freq: Frequency = Frequency.D,
     alpha: float = 1,
+    tz: str = "Etc/UTC",
 ):
     user = get_user_by_username(session, username)
     if user:
-        tz = user.tz
         from_ts = normalize_timestamp(get_datelimit_from_period(period), tz)
         return get_weighted_attachment_index_by_username(
-            session, username, kind, from_ts, to_ts=None, freq=freq, alpha=alpha
+            session, username, kind, from_ts, to_ts=None, freq=freq, alpha=alpha, tz=tz
         )
     return None
 
@@ -103,6 +106,7 @@ def get_attachment_moments(
     freq: Frequency = Frequency.D,
     alpha: float = 1,
     threshold: float = 1,
+    tz: str = "Etc/UTC",
 ):
     user = get_user_by_username(session, username)
     if user:
@@ -115,9 +119,10 @@ def get_attachment_moments(
             to_ts,
             freq,
             alpha,
+            tz,
         )
         top_charts = get_top_charts_by_freq(
-            session, user_id, kind, from_ts, to_ts, freq
+            session, user_id, kind, from_ts, to_ts, freq, tz
         )
         if weighted_att and top_charts:
             df = pd.DataFrame(weighted_att)
@@ -154,10 +159,10 @@ def get_attachment_moments_by_period(
     freq: Frequency = Frequency.D,
     alpha: float = 1,
     threshold: float = 1,
+    tz: str = "Etc/UTC",
 ):
     user = get_user_by_username(session, username)
     if user:
-        tz = user.tz
         from_ts = normalize_timestamp(get_datelimit_from_period(period), tz)
         return get_attachment_moments(
             session,
@@ -168,5 +173,6 @@ def get_attachment_moments_by_period(
             freq=freq,
             alpha=alpha,
             threshold=threshold,
+            tz=tz,
         )
     return None
