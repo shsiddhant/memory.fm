@@ -82,10 +82,10 @@ export default function StreaksTimeline(
             startFormatted: formatDate(start),
             endFormatted: formatDate(end),
             duration: end.getTime() - start.getTime(),
-            durationFormatted: formatDuration(end.getTime() - start.getTime())
+            durationFormatted: formatDuration(end.getTime() - start.getTime()),
+            subnameFormatted: d.subname ? `<i>${d.subname}</i><br>` : "",
         };
     });
-
 
 
     const data = [{
@@ -112,7 +112,8 @@ export default function StreaksTimeline(
 
         hovertemplate:
             "<b>%{customdata.name}</b><br>" +
-            "Start: %{customdata.startFormatted}<br>" +
+            "%{customdata.subnameFormatted}" +
+            "<br>Start: %{customdata.startFormatted}<br>" +
             "End: %{customdata.endFormatted}<br>" +
             "Duration: %{customdata.durationFormatted}<br>" +
             "Length: %{customdata.length}<extra></extra>",
