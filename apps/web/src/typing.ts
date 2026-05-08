@@ -64,6 +64,7 @@ export type ListeningStreak = {
   start: string
   end: string
   name: string
+  subname: string | null
   length: number
   log_length: number
   kind: KindType
