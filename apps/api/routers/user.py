@@ -65,17 +65,32 @@ def summary(username: TrimmedStr, session=Depends(get_db_session)):
 def recent_scrobbles(
     username: TrimmedStr,
     weeks: Annotated[int, Query(description="Number of weeks to fetch ", ge=1)] = 8,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Get recent daily scrobble counts for user."""
-    data = stserv.get_daily_scrobbles_count(session, username, limit=weeks * 7)
+    data = stserv.get_daily_scrobbles_count(session, username, limit=weeks * 7, tz=tz)
     return RecentActivity.from_service_data(data)
 
 
 @router.get("/user/{username}/year_range", response_model=YearRange)
-def year_range(username: TrimmedStr, session=Depends(get_db_session)):
+def year_range(
+    username: TrimmedStr,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
+    session=Depends(get_db_session),
+):
     """Get scrobbling year range for user."""
-    return get_year_range(session, username)
+    return get_year_range(session, username, tz)
 
 
 @router.post("/user/{username}/refresh")

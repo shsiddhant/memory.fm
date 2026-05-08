@@ -9,7 +9,6 @@ from apps.api.response_models import (
     TopChart,
 )
 from memoryfm.models.service_enums import ChartKindColumn, Frequency
-from memoryfm.services.user_service import get_user_context
 from memoryfm.storage.session import get_db_session
 import memoryfm.services.stats_service as stserv
 import memoryfm.services.attachment_service as attserv
@@ -38,10 +37,19 @@ def top_charts_recent(
             examples=[0, 10, 50],
         ),
     ] = 10,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch top charts by period."""
-    return stserv.get_top_charts_by_period(session, username, kind, period, limit) or []
+    return (
+        stserv.get_top_charts_by_period(session, username, kind, period, limit, tz)
+        or []
+    )
 
 
 @router.get("/user/{username}/top", response_model=Sequence[TopChart])
@@ -68,10 +76,15 @@ def top_charts(
             examples=[0, 10, 50],
         ),
     ] = 10,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch top charts for user in the given datetime range."""
-    tz = get_user_context(session, username).tz
     return (
         stserv.get_top_charts_by_username(
             session,
@@ -124,10 +137,15 @@ def attachment_index(
             le=3.0,
         ),
     ] = 1,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch Attachment Index for user in the given datetime range."""
-    tz = get_user_context(session, username).tz
     return (
         attserv.get_weighted_attachment_index_by_username(
             session,
@@ -137,6 +155,7 @@ def attachment_index(
             normalize_timestamp(to_ts, tz),
             freq,
             alpha,
+            tz,
         )
         or []
     )
@@ -172,6 +191,12 @@ def attachment_index_last(
             le=3.0,
         ),
     ] = 1,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch Attachment Index for user in the given period."""
@@ -183,6 +208,7 @@ def attachment_index_last(
             period,
             freq,
             alpha,
+            tz,
         )
         or []
     )
@@ -235,10 +261,15 @@ def attachment_moments(
             description="Threshold z_score for choosing top attachment moments.", ge=1
         ),
     ] = 1,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch Attachment Moments for user in the given datetime range."""
-    tz = get_user_context(session, username).tz
     return (
         attserv.get_attachment_moments(
             session,
@@ -249,6 +280,7 @@ def attachment_moments(
             freq,
             alpha,
             threshold,
+            tz,
         )
         or []
     )
@@ -293,6 +325,12 @@ def attachment_moments_last(
             description="Threshold z_score for choosing top attachment moments.", ge=1
         ),
     ] = 1,
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch Attachment Moments for user in the given period."""
@@ -305,6 +343,7 @@ def attachment_moments_last(
             freq,
             alpha,
             threshold,
+            tz,
         )
         or []
     )
@@ -323,6 +362,12 @@ def streaks(
         int, Query(description="Year for which streaks are to be fetched.", ge=1971)
     ],
     min_length: Annotated[int, Query(description="Minimum length of streaks.", ge=2)],
+    tz: Annotated[
+        str,
+        Query(
+            description="IANA Timezone string",
+        ),
+    ] = "Etc/UTC",
     session=Depends(get_db_session),
 ):
     """Fetch listening streaks for the user in a given year."""
@@ -332,6 +377,7 @@ def streaks(
         kind,
         year,
         min_length,
+        tz,
     )
     if not service_data:
         return []
