@@ -94,14 +94,12 @@ export default function Overview() {
             setShowAlert(true);
         }, 1000);
 
-    }, [syncStatus?.status, syncStatus?.fetched_scrobbles, username]);
-
-    useEffect(() => {
         queryClient.invalidateQueries({
             queryKey: ["summaryQuery", username]
         });
-    }, [username, queryClient]);
+        
 
+    }, [syncStatus?.status, syncStatus?.fetched_scrobbles, username, queryClient]);
 
     if (summaryQuery.isLoading) {
         return <LoadingSpinner />;

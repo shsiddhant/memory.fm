@@ -127,7 +127,7 @@ export default function AttachmentPage() {
                     />
                 </VStack>
             </Flex>
-            {(!loading && moments && moments.length > 0 && attachment && attachment.length > 0) ? (
+            {(!loading && moments && attachment) ? (
                 <>
                     <Section
                         title={`Top Attachment Moments - ${params.kind}s`}
