@@ -1,4 +1,4 @@
-import { ButtonGroup, IconButton, Pagination, Progress, Table } from "@chakra-ui/react";
+import { Box, ButtonGroup, IconButton, Pagination, Progress, Table, Text as ChakraText } from "@chakra-ui/react";
 import type { TopChart } from "@/typing";
 import { useState } from "react";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
@@ -52,7 +52,17 @@ export default function TopChartsTable(
                             borderBottomColor={"bg"}
                         >
                             <Table.Cell py="3" fontWeight="500" width={"md"}>
-                                {chart.name}
+                                <Box>
+                                    <ChakraText>
+                                        {chart.name}
+                                    </ChakraText>
+
+                                    {chart.subname && (
+                                        <ChakraText fontSize="xs" color="fg.muted">
+                                            {chart.subname}
+                                        </ChakraText>
+                                    )}
+                                </Box>
                             </Table.Cell>
                             <Table.Cell py="3" textAlign="end" >
                                 <Progress.Root

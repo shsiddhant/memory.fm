@@ -27,7 +27,11 @@ function MomentCard(
 ) {
     const { day, z_score } = item;
     const date = new Date(day);
-    const date_string = date.toLocaleDateString();
+    const date_string = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
     const [open, setOpen] = useState(false);
 
     const getColor = (z_score: number) => {
@@ -63,8 +67,15 @@ function MomentCard(
                             <Flex justify="space-between" align="center">
                                 <Box>
                                     <ChakraText fontWeight="bold">
-                                        {open ? item.name : formatName(item.name, 24)}
+                                        {open ? (
+                                            item.name
+                                        ) : formatName(item.name, 24)}
                                     </ChakraText>
+                                    {open && item.subname && (
+                                        <ChakraText fontSize="sm" fontStyle="italic" color="fg">
+                                            {item.subname}
+                                        </ChakraText>
+                                    )}
                                     <Badge colorPalette={"brand"} mt={1} variant="surface" size={"md"}>
                                         {date_string}
                                     </Badge>

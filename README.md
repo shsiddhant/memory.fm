@@ -1,4 +1,9 @@
+
+<div align="center">
+
 # memory.fm
+
+[![Live](https://img.shields.io/badge/Live-BF0808?style=for-the-badge&logo=rocket&logoColor=white)](https://memory-fm.vercel.app/)
 
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fshsiddhant%2Fmemory.fm%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&style=for-the-badge&logo=python&logoColor=FFE873&color=4B8BBE)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
@@ -6,7 +11,6 @@
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/shsiddhant/memory.fm/ci.yml?style=for-the-badge&logo=github&label=CI%20Pipeline)](https://github.com/shsiddhant/memory.fm/actions/workflows/ci.yml)
 [![LICENSE: MIT](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](LICENSE)
 
-<div align="center">
 
 ***music meets memory***
 
@@ -32,35 +36,6 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 | Streaks Timeline - Artists | Streaks Timeline - Albums|
 | -------------------------- | ------------------------ |
 |<img src="screenshots/streaks_artists.png" width="600px" alt="Streaks Timeline - Artists" /> |<img src="screenshots/streaks.png" width="600px" alt="Streaks Timeline - Albums" />|
-
-## Quick Start
-
-### Clone and install
-
-```
-git clone https://github.com/shsiddhant/memory.fm.git
-cd memory.fm
-pip install .
-```
-
-### Run backend
-
-```
-cd apps
-uvicorn api.main:app --reload
-```
-
-### Run frontend
-
-```
-cd apps/web
-npm install
-npm run dev
-```
-
-Then open:
-
-http://localhost:5173
 
 
 ## Features
@@ -132,6 +107,37 @@ Measure how concentrated your listening is within a time period.
 
 - Time-of-day and seasonal patterns
 
+
+## Running Locally
+
+### Clone and install
+
+```
+git clone https://github.com/shsiddhant/memory.fm.git
+cd memory.fm
+pip install .
+```
+
+### Run backend
+
+```
+cd apps
+uvicorn api.main:app --reload
+```
+
+### Run frontend
+
+```
+cd apps/web
+npm install
+npm run dev
+```
+
+Then open:
+
+http://localhost:5173
+
+
 ## Roadmap
 
 ### 1. Data Imports
@@ -155,6 +161,7 @@ Measure how concentrated your listening is within a time period.
 - [x] Activity heatmap
 - [ ] Insights and visualization
 	- [x] Attachment Index 
+    - [x] Attachment Moments Timeline
 	- [x] Streaks Timeline
   - [ ] Streaks Cards
 

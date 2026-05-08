@@ -5,8 +5,9 @@ import type { IconType } from "react-icons";
 
 export interface TopChart {
     name: string,
-    scrobbles: number
-    [key: string]: string | number; 
+    subname: string | null,
+    scrobbles: number,
+    [key: string]: string | number | null; 
 }
 
 export interface ChartsInput {
@@ -45,6 +46,7 @@ export type AttachmentMoment = {
   value: number
   z_score: number
   name: string
+  subname: string | null
   scrobbles: number
   total_scrobbles: number
   dominance: number
