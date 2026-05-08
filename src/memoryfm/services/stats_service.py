@@ -43,10 +43,10 @@ def get_top_charts_by_period(
     kind: ChartKindColumn,
     period: int | Literal["all_time"],
     limit: int | None = 10,
+    tz: str = "Etc/UTC",
 ) -> Sequence[RowMapping] | None:
     user = get_user_by_username(session, username)
     if user:
-        tz = user.tz
         from_ts = normalize_timestamp(get_datelimit_from_period(period), tz)
         return get_top_charts_by_username(session, username, kind, from_ts, limit=limit)
     return None
@@ -57,9 +57,10 @@ def get_daily_scrobbles_count(
     username: str,
     till: datetime.date | None = None,
     limit: int = 56,
+    tz: str = "Etc/UTC",
 ) -> tuple[datetime.date, datetime.date, Sequence[RowMapping]] | None:
     user = get_user_by_username(session, username)
     if user:
         user_id = user.id
-        return strepo.get_daily_scrobbles_count(session, user_id, till, limit)
+        return strepo.get_daily_scrobbles_count(session, user_id, till, limit, tz)
     return None

@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 
 from sqlalchemy.orm import Session
 
@@ -35,9 +36,10 @@ def get_streaks_by_year(
     kind: ChartKindColumn,
     year: int,
     min_length: int = 2,
+    tz: str = "Etc/UTC",
 ):
-    from_ts = datetime.datetime(year=year, month=1, day=1)
-    to_ts = datetime.datetime(year=year, month=12, day=31)
+    from_ts = datetime.datetime(year=year, month=1, day=1, tzinfo=ZoneInfo(tz))
+    to_ts = datetime.datetime(year=year, month=12, day=31, tzinfo=ZoneInfo(tz))
     return get_streaks_by_username(
         session,
         username,

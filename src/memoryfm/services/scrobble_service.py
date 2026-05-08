@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy.exc import SQLAlchemyError
 import memoryfm.storage.scrobble_repo as screpo
 from memoryfm.storage.user_repo import get_user_by_username
+from memoryfm.util.datetime_util import normalize_timestamp
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -37,7 +38,7 @@ def get_end_timestamps(
     return screpo.get_end_timestamps_by_user(session, user_id)
 
 
-def get_year_range(session: Session, username: str):
+def get_year_range(session: Session, username: str, tz: str = "Etc/UTC"):
     user = get_user_by_username(session, username)
     start, end = None, None
     if user:
@@ -45,10 +46,14 @@ def get_year_range(session: Session, username: str):
         timestamps = get_end_timestamps(session, user_id)
         if timestamps:
             start_ts, end_ts = timestamps
-            if start_ts:
-                start = start_ts.year
-            if end_ts:
-                end = end_ts.year
+            start_ts_norm, end_ts_norm = (
+                normalize_timestamp(start_ts, tz),
+                normalize_timestamp(end_ts, tz),
+            )
+            if start_ts_norm:
+                start = start_ts_norm.year
+            if end_ts_norm:
+                end = end_ts_norm.year
     return {"start": start, "end": end}
 
 
