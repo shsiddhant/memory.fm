@@ -130,7 +130,7 @@ class Scrobble(Base):
     )
     timestamp: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True),
-        index=True,
+        index=False,
         doc="Timestamp at which the track was scrobbled. "
         "Stored as UTC with timezone awareness.",
     )
