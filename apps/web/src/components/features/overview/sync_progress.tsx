@@ -47,12 +47,13 @@ export default function SyncProgress(
             direction={"column"}
             padding={5}
             mb={"6"}
+            gap={"6"}
             align="center"
             alignItems={"center"}
         >
             <Progress.Root
                 value={progressPercent}
-                width="sm"
+                width="xl"
             >
                 <HStack gap={"5"}>
                     <Progress.Label>Syncing scrobbles...</Progress.Label>
@@ -60,10 +61,19 @@ export default function SyncProgress(
                         <Progress.Range />
                     </Progress.Track>
                     <Progress.ValueText>
-                        {progressPercent.toPrecision(3)}%
+                        {progressPercent.toPrecision(3)}% ({syncStatus.fetched_scrobbles}/{syncStatus.total_scrobbles})
                     </Progress.ValueText>
                 </HStack>
             </Progress.Root>
+            <Alert.Root status={"info"} width={"md"} justifySelf={"center"}>
+                <Alert.Indicator />
+                <Alert.Content>
+                    <Alert.Title>First sync may take some time for large listening histories.</Alert.Title>
+                    <Alert.Description> While your scrobbles
+                        sync, you can still view your stats and charts using the sidebar.
+                        .</Alert.Description>
+                </Alert.Content>
+            </Alert.Root>
         </Flex>
     )
 }
