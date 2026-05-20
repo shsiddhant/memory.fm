@@ -13,7 +13,7 @@ export default function SyncProgress(
         return (
             <VStack mb={6}
             >
-                <Box w={"md"}>
+                <Box w={{ base: "xs", md: "md" }}>
                     <Alert.Root status={"error"} title="Sync Error">
                         <Alert.Indicator />
                         <Alert.Content>
@@ -53,19 +53,22 @@ export default function SyncProgress(
         >
             <Progress.Root
                 value={progressPercent}
-                width="xl"
+                width={{ base: "250px", md: "xl" }}
             >
                 <HStack gap={"5"}>
-                    <Progress.Label>Syncing scrobbles...</Progress.Label>
-                    <Progress.Track flex="1" height="2">
+                    <Progress.Label>Syncing...</Progress.Label>
+                    <Progress.Track flex="1" height={{ base: 1, md: 2 }}>
                         <Progress.Range />
                     </Progress.Track>
                     <Progress.ValueText>
-                        {progressPercent.toPrecision(3)}% ({syncStatus.fetched_scrobbles}/{syncStatus.total_scrobbles})
+                        {progressPercent.toPrecision(3)}% {/*({syncStatus.fetched_scrobbles}/{syncStatus.total_scrobbles})*/}
                     </Progress.ValueText>
                 </HStack>
+                <Progress.Label mt={2}>
+                    Fetched {syncStatus.fetched_scrobbles?.toLocaleString()} of {syncStatus.total_scrobbles?.toLocaleString()} scrobbles
+                </Progress.Label>
             </Progress.Root>
-            <Alert.Root status={"info"} width={"md"} justifySelf={"center"}>
+            <Alert.Root status={"info"} width={{ base: "auto", md: "md" }} justifySelf={"center"}>
                 <Alert.Indicator />
                 <Alert.Content>
                     <Alert.Title>First sync may take some time for large listening histories.</Alert.Title>
