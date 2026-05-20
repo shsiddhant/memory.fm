@@ -13,5 +13,5 @@ export const useNavItems = (username: string): SidebarNavItem[] => [
 export const useExternalLinks = (): ExternalLinkItem[] => [
     { icon: MdOutlineFeedback, label: "Feedback", href: "https://tally.so/r/Y5JVpz" },
     { icon: FaGithub, label: "GitHub", href: "https://github.com/shsiddhant/memory.fm/" },
-    { icon: MdOutlineVolunteerActivism, label: "Support Development", href: "https://ko-fi.com/shsiddhant" },
+    { icon: MdOutlineVolunteerActivism, label: "Support Us", href: "https://ko-fi.com/shsiddhant" },
 ];

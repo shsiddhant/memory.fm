@@ -109,14 +109,13 @@ export default function AttachmentPage() {
             <Flex
                 justify="space-around"
                 wrap="wrap"
-                gap={4}
                 padding={"4"}
-                mx={"12"}
-                mt={"4"}
+                mx={{ base: 0, md: 12 }}
+                mt="4"
             >
-                <VStack align="center" gap={"4"} px="6" py="3">
+                <VStack align="center" gap={"4"} px={{base: 2, md: 6}} py="3">
                     <ChakraText
-                        fontSize={"lg"}
+                        fontSize={{base: "sm", md: "lg"}}
                         fontWeight={"bold"}
                     >Period</ChakraText>
                     <PeriodSelector
@@ -142,7 +141,7 @@ export default function AttachmentPage() {
                 <LoadingSpinner />
             ) : (
                 <Flex justify={"center"}>
-                    <Alert.Root status={"info"} width={"sm"} justifySelf={"center"}>
+                    <Alert.Root status={"info"} width={{base: "auto", md: "sm"}} justifySelf={"center"}>
                         <Alert.Indicator />
                         <Alert.Content>
                             <Alert.Title>No scrobbles found in the selected period.</Alert.Title>

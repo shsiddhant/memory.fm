@@ -1,4 +1,4 @@
-import { Box, Flex, List, Text as ChakraText, Link, VStack, Separator, } from "@chakra-ui/react";
+import { Box, Flex, List, Text as ChakraText, Link, VStack, Separator, useBreakpointValue, } from "@chakra-ui/react";
 import type { IconType } from "react-icons";
 import { NavLink } from "react-router-dom";
 import { useSidebarNav } from "./nav_sidebar_context";
@@ -25,6 +25,8 @@ function sidebarItem(
 ) {
 
   const { open } = useSidebarNav();
+  const iconSize = useBreakpointValue({ base: "16px", md: "20px" });
+  const textSize = useBreakpointValue({ base: "12px", md: "16px" });
 
   return (
     <List.Item key={index} listStyle={"none"}>
@@ -42,10 +44,10 @@ function sidebarItem(
             color={isActive ? "white" : "inherit"}
             _hover={!isActive ? { bg: "bg.subtle" } : {}}
           >
-            <Flex align="center" gap="4" px="3" py="2">
-              <Box fontSize="20px"><item.icon /></Box>
+            <Flex align="center" gap="2" px="2.5" py="2">
+              <Box fontSize={iconSize}><item.icon /></Box>
               {open && (
-                <ChakraText fontWeight="medium">{item.label}</ChakraText>
+                <ChakraText fontWeight="medium" fontSize={textSize}>{item.label}</ChakraText>
               )}
             </Flex>
           </Box>
@@ -59,6 +61,8 @@ function sidebarItem(
 function ExternalItem(item: ExternalLinkItem, index: number) {
 
   const { open } = useSidebarNav();
+  const iconSize = useBreakpointValue({ base: "16px", md: "20px" });
+  const textSize = useBreakpointValue({ base: "12px", md: "16px" });
 
   return (
     <List.Item key={index} listStyle={"none"}>
@@ -75,10 +79,10 @@ function ExternalItem(item: ExternalLinkItem, index: number) {
           transition="all 0.2s"
           _hover={{ bg: "bg.subtle" }}
         >
-          <Flex align="center" gap="4" px="3" py="2">
-            <Box fontSize="20px"><item.icon /></Box>
+          <Flex align="center" gap="2" px="2.5" py="2">
+            <Box fontSize={iconSize}><item.icon /></Box>
             {open && (
-              <ChakraText fontWeight="medium">{item.label}</ChakraText>
+              <ChakraText fontWeight="medium" fontSize={textSize}>{item.label}</ChakraText>
             )}
           </Flex>
         </Box>

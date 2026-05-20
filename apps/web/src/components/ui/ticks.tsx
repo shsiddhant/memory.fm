@@ -18,7 +18,7 @@ export const SectionSeparator = ({
   }
 
   return (
-    <Flex align="center" gap="4" w="90%" my="8" justifySelf={"center"} mt={12}>
+    <Flex align="center" gap="4" w="90%" my={{base: 4, md: 8}} justifySelf={"center"} mt={12}>
       <Box
         flex="1"
         h="1px"
@@ -33,12 +33,12 @@ export const SectionSeparator = ({
 
         {title && (
         <ChakraText
-          fontSize="md"
+          fontSize={{base: "sm", md: "md"}}
           fontWeight="bold"
           color="fg.muted"
           textTransform="uppercase"
           letterSpacing="widest"
-          whiteSpace="nowrap"
+          lineBreak={"auto"}
         >
           {title}
         </ChakraText>

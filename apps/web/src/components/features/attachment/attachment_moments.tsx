@@ -6,7 +6,8 @@ import {
     Badge,
     Text as ChakraText,
     Collapsible,
-    Alert
+    Alert,
+    useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -23,7 +24,7 @@ function formatName(
 }
 
 function MomentCard(
-    { item, key }: { item: AttachmentMoment, key: number }
+    { item, key }: { item: AttachmentMoment, key: string }
 ) {
     const { day, z_score } = item;
     const date = new Date(day);
@@ -48,7 +49,7 @@ function MomentCard(
             overflow={"auto"}
             key={key}
         >
-            <Box w={"240px"}>
+            <Box w={{ base: "200px", md: "240px" }}>
                 <Collapsible.Root
                     unmountOnExit
                     open={open}
@@ -126,13 +127,14 @@ function SnakeGroup(
     }
 ) {
     const isEvenRow = index % 2 === 0;
+    const isMobile = useBreakpointValue({ base: true, md: false }) || false;
     return (
         <Flex
-            key={index}
-            direction={isEvenRow ? "row" : "row-reverse"}
+            key={`momentgroup.${index}`}
+            direction={{ base: "column", md: isEvenRow ? "row" : "row-reverse" }}
             gap="10"
             position={"relative"}
-            _after={index < totalGroups - 1 ? {
+            _after={!isMobile && index < totalGroups - 1 ? {
                 content: '""',
                 position: "absolute",
                 top: "95%",
@@ -146,9 +148,9 @@ function SnakeGroup(
             } : {}}
         >
             {group.map((item, idx) => (
-                <Box key={idx} position="relative">
-                    <MomentCard item={item} key={idx} />
-                    {((isEvenRow && idx < group.length - 1) || (!isEvenRow && idx > 0)) && (
+                <Box key={`momentbox.${index}.${idx}`} position="relative">
+                    <MomentCard item={item} key={`moment.${index}.${idx}`} />
+                    {((isEvenRow && idx < group.length - 1) || (!isEvenRow && idx > 0)) && !isMobile && (
                         <Box
                             position="absolute"
                             top="50px"
@@ -171,7 +173,7 @@ export default function AttachmentTimeline(
     if (moments.length === 0) {
         return (
             <Flex justify={"center"}>
-                <Alert.Root status={"info"} width={"sm"} justifySelf={"center"}>
+                <Alert.Root status={"info"} width={{ base: "250px", md: "sm" }} justifySelf={"center"}>
                     <Alert.Indicator />
                     <Alert.Content>
                         <Alert.Title>No attachment moments found in the selected period.</Alert.Title>
@@ -180,9 +182,10 @@ export default function AttachmentTimeline(
             </Flex>
         )
     }
-    const groups = groupMoments(moments, 4);
+    const groupSize = useBreakpointValue({ base: 1, md: 2, lg: 3, xl: 4 });
+    const groups = groupMoments(moments, groupSize || 1);
     return (
-        <Flex direction="column" gap={12} mt={6} position="relative">
+        <Flex direction="column" gap={{ base: 8, md: 12 }} mt={6} position="relative">
             {groups.map((group, index) => (
                 <SnakeGroup
                     group={group}
