@@ -1,5 +1,5 @@
 import { ResponsiveTimeRange } from "@nivo/calendar";
-import { useToken } from "@chakra-ui/react";
+import { Box, useBreakpointValue, useToken } from "@chakra-ui/react";
 
 interface ScrobblesCount {
     day: string,
@@ -16,6 +16,11 @@ export default function RecentActivity(
     { from_date, to_date, counts }: RecentActivityObject
 ) {
 
+    const chartWidth = useBreakpointValue({ base: 300, md: 600 });
+    const margin = useBreakpointValue({ base: 0, md: 20 });
+    const radius = useBreakpointValue({ base: 3, md: 5 });
+    const chartHeight = useBreakpointValue({ base: 200, md: 250});
+
     const theme = {
         labels: {
             text: {
@@ -23,9 +28,9 @@ export default function RecentActivity(
                 fill: "var(--chakra-colors-fg-muted)",
                 fontFamily: "var(--chakra-fonts-body)",
                 fontWeight: "500",
-                },
             },
-  
+        },
+
         tooltip: {
             container: {
                 fontFamily: "var(--chakra-fonts-body)",
@@ -38,32 +43,35 @@ export default function RecentActivity(
 
     const [emptyColor, c0, c1, c2, c3, c4] = useToken(
         "colors.activityColors", [
-            "empty",
-            "c0",
-            "c1",
-            "c2",
-            "c3",
-            "c4"
-        ]
+        "empty",
+        "c0",
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+    ]
     )
     return (
-        <div style={{ height: 250, width: 600 }}>
-        <ResponsiveTimeRange
-        data={counts}
-        theme={theme}
-        from={`${from_date}T00:00:00`}
-        to={`${to_date}T23:59:59`}
-        emptyColor={ emptyColor }
-        colors={ [c0, c1, c2, c3, c4] }
-        maxValue={"auto"}
-        minValue={0}
-        margin={{ top: 40, right: 20, bottom: 0, left: 20 }}
-        dayBorderColor=""
-        daySpacing={3}
-        dayRadius={5}
-        monthLegendOffset={20}
-        monthLegend={(_year, _month, date) => `${date.toLocaleDateString("default", {month: "long"})}`}
-        />
-        </div>
+        <Box height={chartHeight} width={chartWidth}>
+            <ResponsiveTimeRange
+                data={counts}
+                theme={theme}
+                from={`${from_date}T00:00:00`}
+                to={`${to_date}T23:59:59`}
+                emptyColor={emptyColor}
+                colors={[c0, c1, c2, c3, c4]}
+                maxValue={"auto"}
+                minValue={0}
+                margin={{ top: 40, right: margin, bottom: 0, left: margin }}
+                dayBorderColor=""
+                daySpacing={3}
+                dayRadius={radius}
+                monthLegendOffset={20}
+                monthLegend={(_year, _month, date) => `${date.toLocaleDateString("default", { month: "short" })}`}
+                weekdayTicks={[1, 3, 5]}
+                weekdays={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
+                weekdayLegendOffset={40}
+            />
+        </Box>
     )
 }

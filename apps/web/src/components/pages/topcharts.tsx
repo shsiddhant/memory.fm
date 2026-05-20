@@ -99,16 +99,17 @@ export default function TopChartsPage() {
                 <KindSelector value={params.kind} onKindChange={setKind} />
             </Box>
             <Flex
+                direction={{base: "column", md: "row"}}
                 justify="space-around"
                 wrap="wrap"
                 gap={4}
                 padding={"4"}
-                mx={"12"}
+                mx={{ base: 0, md: 12 }}
                 mt={"4"}
             >
-                <VStack align="center" gap={"4"} px="6" py="3">
+                <VStack align="center" gap={"4"} px={{base: 2, md: 6}} py="3">
                     <ChakraText
-                        fontSize={"lg"}
+                        fontSize={{base: "sm", md: "lg"}}
                         fontWeight={"bold"}
                     >Period</ChakraText>
                     <PeriodSelector
@@ -118,9 +119,9 @@ export default function TopChartsPage() {
                         onDatesChange={handleDateChange}
                     />
                 </VStack>
-                <VStack align={"center"} gap={"4"} padding={"6"}>
+                <VStack align="center" gap={"4"} px={{ base: 0, md: 6 }} py="3">
                     <ChakraText
-                        fontSize={"lg"}
+                        fontSize={{base: "sm", md: "lg"}}
                         fontWeight={"bold"}
                     >Limit</ChakraText>
                     <LimitSelector
@@ -132,21 +133,24 @@ export default function TopChartsPage() {
             </Flex>
             {(!loading && data && data.length > 0) ? (
                 <>
-                <Section
-                title={`Top ${params.kind}s`}
-                children={<TopChartsTable kind={params.kind} topCharts={data} pageSize={8}/>}
-                />
+                    <Section
+                        title={`Top ${params.kind}s`}
+                    >
+                        <Box width={{ base: "250px", md: "full" }}>
+                            <TopChartsTable kind={params.kind} topCharts={data} pageSize={8} />
+                        </Box>
+                    </Section>
                 </>
             ) : (loading) ? (
                 <LoadingSpinner />
-            ): (
+            ) : (
                 <Flex justify={"center"}>
-                <Alert.Root status={"info"} width={"sm"} justifySelf={"center"}>
-                    <Alert.Indicator />
-                    <Alert.Content>
-                        <Alert.Title>No scrobbles found in the selected period.</Alert.Title>
-                    </Alert.Content>
-                </Alert.Root>
+                    <Alert.Root status={"info"} width={{base: "250px", md: "sm"}} justifySelf={"center"}>
+                        <Alert.Indicator />
+                        <Alert.Content>
+                            <Alert.Title>No scrobbles found in the selected period.</Alert.Title>
+                        </Alert.Content>
+                    </Alert.Root>
                 </Flex>
             )}
         </Flex>

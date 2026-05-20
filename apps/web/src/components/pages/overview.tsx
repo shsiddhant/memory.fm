@@ -97,7 +97,7 @@ export default function Overview() {
         queryClient.invalidateQueries({
             queryKey: ["summaryQuery", username]
         });
-        
+
 
     }, [syncStatus?.status, syncStatus?.fetched_scrobbles, username, queryClient]);
 
@@ -194,15 +194,18 @@ export default function Overview() {
                     <Section
                         title={`Top Charts - Last ${period} Days`}
                     >
-                        <Flex direction={"row"} gap="10" justify={"space-between"}>
+                        <Box flexShrink={{ base: 0, md: 1 }} width={{ base: "250px", md: "full" }}>
                             <TopChartsPreview {...topArtistsInput} />
-                            <Separator />
+                        </Box>
+                        <Separator />
+                        <Box flexShrink={{ base: 0, md: 1 }} width={{ base: "250px", md: "full" }}>
                             <TopChartsPreview {...topTracksInput} />
-                        </Flex>
+                        </Box>
                     </Section>
                 </>
-            )}
-        </Flex>
+            )
+            }
+        </Flex >
     );
 }
 

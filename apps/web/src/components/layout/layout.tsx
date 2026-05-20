@@ -22,7 +22,15 @@ export default function AppLayout() {
   const externalLinks = useExternalLinks();
 
   const { open } = useSidebarNav();
-  const sidebarWidth = open ? "260px" : "72px";
+  const mobileWidth = open ? "260px" : "52px";
+  const mdWidth = open ? "260px" : "72px";
+  const sidebarWidth = { base: mobileWidth, md: mdWidth };
+  const topPosition = { base: "64px", md: "80px" }
+
+  const dynamicHeight = {
+    base: `calc(100vh - ${topPosition.base})`,
+    md: `calc(100vh - ${topPosition.md})`
+  };
 
   return (
     <Flex minH={"100vh"} direction={"column"}>
@@ -31,11 +39,16 @@ export default function AppLayout() {
       <HeaderBar username={username!} />
 
       {/* Sidebar */}
-      <Flex flex="1" overflow={"hidden"}>
+      <Flex flex="1">
         <Box
           w={sidebarWidth}
           bg="bg.muted"
           boxShadow={"md"}
+          position="sticky"
+          zIndex="docked"
+          top={topPosition}
+          h={dynamicHeight}
+
         >
           <SidebarNav navItems={navItems} externalLinks={externalLinks} />
         </Box>
@@ -50,6 +63,6 @@ export default function AppLayout() {
           <Outlet />
         </Box>
       </Flex>
-    </Flex>
+    </Flex >
   );
 }

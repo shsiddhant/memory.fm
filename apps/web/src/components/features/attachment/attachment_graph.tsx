@@ -1,5 +1,6 @@
 import type { TimeSeries } from "@/typing"
 import { Chart, useChart } from "@chakra-ui/charts"
+import { useBreakpointValue } from "@chakra-ui/react";
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 
 export default function AttachmentGraph(
@@ -7,21 +8,25 @@ export default function AttachmentGraph(
 ) {
     const chart = useChart({ data });
 
-    return (
+    const chartWidth = useBreakpointValue({ base: 300, md: 500, lg: 700, xl: 1000 });
+    const fontSize = useBreakpointValue({ base: "12px", md: "13px" });
+    const lableFontSize = useBreakpointValue({ base: "13px", md: "15px" });
+    const labelStyleProps = { fontSize: lableFontSize, fontWeight: "bold" };
 
+    return (
         <Chart.Root chart={chart} mt={"6"}>
-            <LineChart data={data} width={1000} height={500}>
+            <LineChart data={data} width={chartWidth} height={500}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                     dataKey={"day"}
-                    label={{ value: "DATE", position: "bottom", style: { fontSize: "15px", fontWeight: "bold" } }}
+                    label={{ value: "DATE", position: "bottom", style: labelStyleProps }}
                     interval="preserveStartEnd"
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(day) => new Date(day).toLocaleDateString(
-                        "en-US", {month: "short", day: "2-digit", year: "numeric"}
+                        "en-US", { month: "short", day: "2-digit", year: "numeric" }
                     )}
-                    tick={{ style: {fontSize: "13px"}}}
+                    tick={{ style: { fontSize: fontSize } }}
                     tickMargin={5}
                     minTickGap={30}
                 />
@@ -30,7 +35,7 @@ export default function AttachmentGraph(
                         value: "ATTACHMENT INDEX",
                         position: "left",
                         angle: -90,
-                        style: { fontSize: "15px", fontWeight: "bold"}
+                        style: labelStyleProps
                     }}
                     axisLine={false}
                 />

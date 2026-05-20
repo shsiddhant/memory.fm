@@ -20,7 +20,7 @@ export default function SidebarNav(
       transition="all 0.2s ease"
       overflowX="hidden"
     >
-      <Stack p={"4"} gap={"4"}>
+      <Stack p={{ base: "2", md: "4" }} gap={"4"}>
         <SidebarNavItems navItems={navItems} externalLinks={externalLinks} />
       </Stack>
     </Box>

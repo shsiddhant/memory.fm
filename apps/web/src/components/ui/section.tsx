@@ -14,8 +14,14 @@ const Section = ({ title, children }: SectionProps) => {
       <Box width="full" maxW="1200px" mx={"auto"}>
         <SectionSeparator title={title} colorToken="ticks" />
       </Box>
-        <Box as="section" mb="12" justifyItems={"center"}>
-          <Stack className="content" h="full">
+        <Box as="section" mb={{base: 0, md: 8}} justifyItems={"center"}>
+          <Stack
+            className="content"
+            h="full"
+            direction={{ base: "column", lg: "row"}}
+            gap={10}
+            minW="max-content"
+            >
             {children}
           </Stack>
         </Box>

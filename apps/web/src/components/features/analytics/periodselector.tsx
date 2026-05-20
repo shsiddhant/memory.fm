@@ -3,7 +3,6 @@
 import type { Dates, Mode, ModeOption } from "@/typing";
 import {
   DatePicker,
-  HStack,
   Portal,
   RadioGroup,
   Stack,
@@ -83,10 +82,9 @@ export default function PeriodSelector(
       <RadioGroup.Root
         value={mode as string}
         onValueChange={(details) => onModeChange(details.value as Mode)}
-        mb={"6"}
         colorPalette="brand"
       >
-        <HStack>
+        <Stack direction={{ base: "column", md: "row" }}>
           {modeOptions.map((item) => (
             <RadioGroup.Item key={item.value} value={item.value as string}>
               <RadioGroup.ItemHiddenInput />
@@ -94,10 +92,10 @@ export default function PeriodSelector(
               <RadioGroup.ItemText>{item.label}</RadioGroup.ItemText>
             </RadioGroup.Item>
           ))}
-        </HStack>
+        </Stack>
       </RadioGroup.Root>
       {mode == "custom" && (
-        <Stack direction={"row"} gap={"4"} p={"4"}>
+        <Stack direction={{ base: "column", md: "row" }} gap={"4"} p={"4"}>
           <DateSelector
             label="From"
             value={[customDates.from_ts]}

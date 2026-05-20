@@ -24,10 +24,11 @@ export default function HeaderBar (
           h="16"
           width="100%"
           position={"sticky"}
-          zIndex={"sticky"}
+          top={0}
+          zIndex="sticky"
           bg={"bg.muted"}
           padding={5}
-          py="10"
+          py={{base: "4", md: "10"}}
         >
           <Flex align="center" gap="4">
             <IconButton 

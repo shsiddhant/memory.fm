@@ -13,7 +13,6 @@ export default function TopChartsPreview(
     return (
         <Table.Root
             size="sm"
-            width="sm"
         >
             <Table.Header>
                 <Table.Row borderBottomWidth="1px">
