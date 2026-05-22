@@ -33,9 +33,9 @@ Instead of focusing only on aggregate stats, it surfaces long-term and local pat
 | -------- | -----------|
 | <img src="screenshots/attachment_index.png" width="600px" alt="Attachment Index" />| <img src="screenshots/attachment_timeline.png" width="600px" alt="Attachment Moments Timeline" />|
 
-| Streaks Timeline - Artists | Streaks Timeline - Albums|
+| Streaks - Tracks | Streaks - Albums|
 | -------------------------- | ------------------------ |
-|<img src="screenshots/streaks_artists.png" width="600px" alt="Streaks Timeline - Artists" /> |<img src="screenshots/streaks.png" width="600px" alt="Streaks Timeline - Albums" />|
+|<img src="screenshots/streaks_tracks.png" width="600px" alt="Streaks Timeline - Artists" /> |<img src="screenshots/streaks_albums.png" width="600px" alt="Streaks Timeline - Albums" />|
 
 
 ## Features

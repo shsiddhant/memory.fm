@@ -20,7 +20,7 @@ export default function SliderSelector(
             value={[value]}
             min={min}
             max={max}
-            minW={"300px"}
+            minW={{base: "200px", md: "300px"}}
             variant={"solid"}
             colorPalette={"brand"}
             onValueChange={(details) => onValueChange(details.value[0])}

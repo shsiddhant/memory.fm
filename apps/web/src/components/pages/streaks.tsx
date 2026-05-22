@@ -14,6 +14,7 @@ import Section from "../ui/section";
 import { LoadingSpinner } from "../ui/loading";
 import { MdBolt } from "react-icons/md";
 import PageHeader from "../ui/page-header";
+import TopStreaks from "../features/streaks/top_streaks";
 
 
 export default function StreaksPage() {
@@ -78,16 +79,17 @@ export default function StreaksPage() {
                 <KindSelector value={params.kind} onKindChange={setKind} />
             </Box>
             <Flex
+                direction={{base: "column", md: "row"}}
                 justify="space-around"
                 wrap="wrap"
                 gap={4}
                 padding={"4"}
-                mx={"12"}
+                mx={{ base: 0, md: 12 }}
                 mt={"4"}
             >
-                <VStack align="center" gap={"4"} px="6" py="3">
+                <VStack align="center" gap={"4"} px={{base: 2, md: 6}} py="3">
                     <ChakraText
-                        fontSize={"lg"}
+                        fontSize={{base: "sm", md: "lg"}}
                         fontWeight={"bold"}
                     >Year</ChakraText>
                     <SliderSelector
@@ -99,13 +101,21 @@ export default function StreaksPage() {
                 </VStack>
             </Flex>
             {(!isLoading) && (
-                <Section
-                    title={`Streaks timeline - ${params.kind}s`}
-                >
-                    <StreaksTimeline
-                        streaks={streaks}
-                    />
-                </Section>
+                <>
+                    <Section title={`Top Streaks - ${params.kind}`}
+                    >
+                        <Box maxW={{ base: "250px", md: "full" }}>
+                            <TopStreaks streaks={streaks} />
+                        </Box>
+                    </Section>
+                    <Section
+                        title={`Streaks timeline - ${params.kind}s`}
+                    >
+                        <StreaksTimeline
+                            streaks={streaks}
+                        />
+                    </Section>
+                </>
             )}
         </Flex>
     )
