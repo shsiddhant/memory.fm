@@ -16,7 +16,7 @@ export default function SyncProgress(
                 <Box w={{ base: "xs", md: "md" }}>
                     <Alert.Root status={"error"} title="Sync Error">
                         <Alert.Indicator />
-                        <Alert.Content>
+                        <Alert.Content textAlign={"left"}>
                             <Alert.Description>
                                 Sync failed: {syncStatus.error || "Unexpected Error."}
                             </Alert.Description>
@@ -61,7 +61,7 @@ export default function SyncProgress(
                         <Progress.Range />
                     </Progress.Track>
                     <Progress.ValueText>
-                        {progressPercent.toPrecision(3)}% {/*({syncStatus.fetched_scrobbles}/{syncStatus.total_scrobbles})*/}
+                        {progressPercent.toPrecision(3)}%
                     </Progress.ValueText>
                 </HStack>
                 <Progress.Label mt={2}>
@@ -70,7 +70,7 @@ export default function SyncProgress(
             </Progress.Root>
             <Alert.Root status={"info"} width={{ base: "auto", md: "md" }} justifySelf={"center"}>
                 <Alert.Indicator />
-                <Alert.Content>
+                <Alert.Content textAlign={"left"}>
                     <Alert.Title>First sync may take some time for large listening histories.</Alert.Title>
                     <Alert.Description> While your scrobbles
                         sync, you can still view your stats and charts using the sidebar.

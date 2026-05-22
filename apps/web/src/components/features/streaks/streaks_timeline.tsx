@@ -1,5 +1,5 @@
 import type { ListeningStreak } from "@/typing";
-import { Flex } from "@chakra-ui/react";
+import { Alert, Flex, useBreakpointValue } from "@chakra-ui/react";
 import type { Layout } from "plotly.js";
 import Plotly from "plotly.js-dist";
 import _createPlotlyComponent from 'react-plotly.js/factory';
@@ -119,8 +119,10 @@ export default function StreaksTimeline(
             "Length: %{customdata.length}<extra></extra>",
     }];
 
+    const chartWidth = useBreakpointValue({ md: 700, lg: 1000, xl: 1000 });
+
     const layout: Partial<Layout> = {
-        width: 1000,
+        width: chartWidth,
         height: 300,
         margin: { l: 20, r: 20, t: 0, b: 40 },
         font: {
@@ -138,17 +140,30 @@ export default function StreaksTimeline(
         paper_bgcolor: "transparent",
     }
 
+    const isWide = useBreakpointValue({ base: false, md: true, lg: true });
+
     return (
         <Flex justify={"center"}>
-            <Plot
-                data={data as any}
-                layout={layout}
-                config={{
-                    responsive: true,
-                    displayModeBar: false,
-                }}
-
-            />
+            {isWide ? (
+                <Plot
+                    data={data as any}
+                    layout={layout}
+                    config={{
+                        responsive: true,
+                        displayModeBar: false,
+                    }}
+                />) : (
+                <Alert.Root status={"info"} width={{ base: "250px", md: "sm" }} justifySelf={"center"}>
+                    <Alert.Indicator />
+                    <Alert.Content textAlign={"left"}>
+                        <Alert.Title>
+                            To view the streaks timeline on smaller devices such as smartphones,
+                            please rotate the screen to view in landscape mode.
+                        </Alert.Title>
+                    </Alert.Content>
+                </Alert.Root>
+            )
+            }
         </Flex>
     );
 }

@@ -16,7 +16,7 @@ export default function SyncCompleteAlert(
         >
             <Alert.Root status={"info"} width={{ base: "250px", md: "xs"}}>
                 <Alert.Indicator />
-                <Alert.Content>
+                <Alert.Content textAlign={"left"}>
                     <Alert.Title>Fetched {fetched! - 1} scrobble{fetched! != 1 ? "s" : ""}</Alert.Title>
                 </Alert.Content>
                 <CloseButton

@@ -36,7 +36,7 @@ export default function NoScrobbles(
                 {showWarning && (
                     <Alert.Root status={"warning"} title="Title">
                         <Alert.Indicator />
-                        <Alert.Content>
+                        <Alert.Content textAlign={"left"}>
                             <Alert.Description>
                                 No Scrobbles found! Please sync scrobbles using the sync button below.
                             </Alert.Description>

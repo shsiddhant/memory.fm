@@ -147,7 +147,7 @@ export default function TopChartsPage() {
                 <Flex justify={"center"}>
                     <Alert.Root status={"info"} width={{base: "250px", md: "sm"}} justifySelf={"center"}>
                         <Alert.Indicator />
-                        <Alert.Content>
+                        <Alert.Content textAlign={"left"}>
                             <Alert.Title>No scrobbles found in the selected period.</Alert.Title>
                         </Alert.Content>
                     </Alert.Root>
