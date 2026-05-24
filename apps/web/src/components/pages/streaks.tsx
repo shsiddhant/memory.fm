@@ -102,7 +102,7 @@ export default function StreaksPage() {
             </Flex>
             {(!isLoading) && (
                 <>
-                    <Section title={`Top Streaks - ${params.kind}`}
+                    <Section title={`Top Streaks - ${params.kind}s`}
                     >
                         <Box maxW={{ base: "250px", md: "full" }}>
                             <TopStreaks streaks={streaks} />

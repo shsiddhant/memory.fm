@@ -18,73 +18,73 @@ export default function TopChartsTable(
 
 
     return (
-            <Box w={"full"} direction={"column"}>
-                <Table.Root
-                    size={{base: "sm", md:"lg"}}
-                >
-                    <Table.Header>
-                        <Table.Row borderBottomWidth="1px">
-                            <Table.ColumnHeader
-                                color="fg.muted"
-                                letterSpacing="wider"
-                                fontSize="md"
-                                textTransform={"uppercase"}
-                            >
-                                {kind}
-                            </Table.ColumnHeader>
-                            <Table.ColumnHeader
-                                textAlign="end"
-                                color="fg.muted"
-                                letterSpacing="wider"
-                                fontSize="md"
-                            >
-                                SCROBBLES
-                            </Table.ColumnHeader>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {paginatedCharts.map((chart) => (
-                            <Table.Row
-                                key={chart.name}
-                                borderBottomWidth={"2px"}
-                                borderBottomColor={"bg"}
-                            >
-                                <Table.Cell py="3" fontWeight="500">
-                                    <Box>
-                                        <ChakraText>
-                                            {chart.name}
+        <Box w={{ base: "full", md: "lg", xl: "full" }} direction={"column"}>
+            <Table.Root
+                size={{ base: "sm", md: "lg" }}
+            >
+                <Table.Header>
+                    <Table.Row borderBottomWidth="1px">
+                        <Table.ColumnHeader
+                            color="fg.muted"
+                            letterSpacing="wider"
+                            fontSize="md"
+                            textTransform={"uppercase"}
+                        >
+                            {kind}
+                        </Table.ColumnHeader>
+                        <Table.ColumnHeader
+                            textAlign="end"
+                            color="fg.muted"
+                            letterSpacing="wider"
+                            fontSize="md"
+                        >
+                            SCROBBLES
+                        </Table.ColumnHeader>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {paginatedCharts.map((chart) => (
+                        <Table.Row
+                            key={chart.name}
+                            borderBottomWidth={"2px"}
+                            borderBottomColor={"bg"}
+                        >
+                            <Table.Cell py="3" fontWeight="500">
+                                <Box>
+                                    <ChakraText>
+                                        {chart.name}
+                                    </ChakraText>
+
+                                    {chart.subname && (
+                                        <ChakraText fontSize="xs" color="fg.muted">
+                                            {chart.subname}
                                         </ChakraText>
+                                    )}
+                                </Box>
+                            </Table.Cell>
+                            <Table.Cell py="3" textAlign="end" >
+                                <Progress.Root
+                                    value={chart.scrobbles}
+                                    max={max}
+                                    colorPalette="brand"
+                                    variant="subtle"
+                                    shape="rounded"
+                                    size={{ base: "xs", md: "lg" }}
+                                    minWidth={{ md: "200px" }}
+                                >
 
-                                        {chart.subname && (
-                                            <ChakraText fontSize="xs" color="fg.muted">
-                                                {chart.subname}
-                                            </ChakraText>
-                                        )}
-                                    </Box>
-                                </Table.Cell>
-                                <Table.Cell py="3" textAlign="end" >
-                                    <Progress.Root
-                                        value={chart.scrobbles}
-                                        max={max}
-                                        colorPalette="brand"
-                                        variant="subtle"
-                                        shape="rounded"
-                                        size={{base: "xs", md: "lg"}}
-                                        minWidth={{md: "200px"}}
-                                    >
-
-                                        <Progress.ValueText fontSize={"sm"}>
-                                            {chart.scrobbles}
-                                        </Progress.ValueText>
-                                        <Progress.Track>
-                                            <Progress.Range />
-                                        </Progress.Track>
-                                    </Progress.Root>
-                                </Table.Cell>
-                            </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table.Root>
+                                    <Progress.ValueText fontSize={"sm"}>
+                                        {chart.scrobbles}
+                                    </Progress.ValueText>
+                                    <Progress.Track>
+                                        <Progress.Range />
+                                    </Progress.Track>
+                                </Progress.Root>
+                            </Table.Cell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
             <Pagination.Root
                 count={topCharts.length}
                 pageSize={pageSize}
