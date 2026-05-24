@@ -1,36 +1,83 @@
 name: Feature Request
-description: Suggest an idea for memory.fm
+description: Suggest a new feature, visualization, or analytics idea for memory.fm
 title: "enh: "
 labels: [enhancement]
 
 body:
-  - type: checkboxes
-    id: checks
+  - type: markdown
     attributes:
-      label: Feature Type
-      description: Please check what type of feature request you would like to propose.
+      value: |
+        Thanks for suggesting an idea for memory.fm.
+
+        Feature requests can include:
+        - New analytics
+        - Visualizations
+        - UX improvements
+        - Import/sync features
+        - Performance improvements
+        - Timeline/memory exploration ideas
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What problem does this solve or what insight would this feature provide?
+      placeholder: |
+        Example:
+        It would be interesting to see how much one track dominates their album listening.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or behavior you'd like to see.
+      placeholder: |
+        Example:
+        Add a scrobbles of most played track on album to album scrobbles ratio for top albums.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature Area
       options:
-        - label: >
-            Adding new functionality to memory.fm
-        - label: >
-            Changing existing functionality in memory.fm
-        - label: >
-            Removing existing functionality in memory.fm
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Problem Description
-      description: >
-        Please describe what problem the feature would solve.
+        - Analytics / behavioral modeling
+        - Frontend / UI
+        - Visualizations
+        - FastAPI backend
+        - Database / data processing
+        - Last.fm import
+        - Spotify import
+        - Performance
+        - Developer experience
+        - Other
     validations:
       required: true
 
   - type: textarea
-    id: feature
+    id: implementation
     attributes:
-      label: Feature Description
-      description: >
-        Please describe how the new feature would be implemented, using pseudocode if relevant.
-    validations:
-      required: true
+      label: Possible Implementation (optional)
+      description: |
+        If you have ideas for implementation, data modeling,
+        API design, or UI behavior, describe them here.
+      placeholder: |
+        Example:
+        - Add aggregation query in analytics service
+        - Expose endpoint under /insights
+        - Render as timeline heatmap
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups / References (optional)
+      description: Add screenshots, sketches, references, or inspiration links.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that would help explain the idea.

@@ -171,25 +171,6 @@ http://localhost:5173
 - [ ] Spotify wrapped but make it nerdier
 
 
-## Vision
-
-
-An earlier experimental version (v0.8.5) of memory.fm explored deeper behavioral analytics and more experimental visualizations.
-
-You can check out a demo at: [https://memoryfm-demo.streamlit.app/](https://memoryfm-demo.streamlit.app/)
-
-It introduced early versions of:
-
-- Attachment Index (listening concentration over time)
-- Streaks (intensity bursts in listening behavior)
-- Streaks Timeline (color coded timeline of streaks across years)
-
-The current rewrite is an architectural rebuild, focusing on:
-
-- Stable import pipeline (Last.fm + future Spotify support) using SQLAlchemy.
-- Modern FastAPI back-end and web UI (React)
-- Extensible analytics layer
-
 ## Contributing
 
 Contributions are welcome, especially in visualizations and front-end improvements.
