@@ -4,56 +4,83 @@ title: "bug: "
 labels: [bug]
 
 body:
-- type: markdown
-  attributes:
-    value: >
-      Thank you for taking the time to file a bug report. Before creating a new
-      issue, please make sure to take a few minutes to check the issue tracker
-      for existing issues about the bug.
-    
-- type: textarea
-  attributes: 
-    label: Describe the issue
-  validations:
-    required: true
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug.
 
-- type: textarea
-  attributes:
-    label: Reproduce the code example
-    description: >
-      A short code example that reproduces the problem/missing feature. It
-      should be self-contained, i.e., can be copy-pasted into the Python
-      interpreter or run as-is via `python myproblem.py`.
-    placeholder: |
-      import memoryfm as mfm
-      << your code here >>
-    render: python
-  validations:
-    required: true
-  
-- type: textarea
-  attributes:
-    label: Error message
-    description: >
-      Please include full error message, if any.
-    placeholder: |
-      << Full traceback starting from `Traceback: ...` >>
-    render: shell
+        Please provide enough detail to help reproduce and diagnose the issue.
 
-- type: textarea
-  attributes:
-    label: Python and memory.fm versions
-    description: >
-      Output from `import sys, memoryfm; print(memoryfm.__version__); print(sys.version)`.
-  validations:
-    required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected to happen.
+      placeholder: |
+        Example:
+        On the Attachment page, Attachment timeline is cut off on some browser widths.
+    validations:
+      required: true
 
-- type: textarea
-  attributes:
-    label: Context for the issue
-    description: |
-      Please explain how this issue affects your work or why it should be prioritized.
-    placeholder: |
-      << your explanation here >>
-  validations:
-    required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include clear reproduction steps.
+      placeholder: |
+        1. Open the Attachment page.
+        2. Adjust browser width between 768px and 1024px.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Frontend (React/Vite)
+        - Backend (FastAPI)
+        - Database / Analytics
+        - Data import / sync
+        - Visualizations
+        - CI / tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages / logs
+      description: Paste exception traces, console errors, if available.
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Recordings
+      description: |
+        Drag and drop screenshots, GIFs, or screen recordings here if applicable.
+      placeholder: |
+        Paste images or recordings directly into this field.
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include relevant environment details.
+      placeholder: |
+        - OS:
+        - Browser:
+        - Python version:
+        - Node version:
+        - Database:
+        - Commit/version:
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Anything else that might help diagnose the issue.
