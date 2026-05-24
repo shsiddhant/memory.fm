@@ -119,7 +119,7 @@ export default function StreaksTimeline(
             "Length: %{customdata.length}<extra></extra>",
     }];
 
-    const chartWidth = useBreakpointValue({ md: 700, lg: 1000, xl: 1000 });
+    const chartWidth = useBreakpointValue({ md: 600, lg: 700, xl: 1000 });
 
     const layout: Partial<Layout> = {
         width: chartWidth,

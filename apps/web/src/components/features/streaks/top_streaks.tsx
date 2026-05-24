@@ -59,7 +59,7 @@ function StreakCard(streak: ListeningStreak) {
                     padding={4}
                 >
                     <Flex justify="space-between" align="center">
-                        <Stack gap={"1"}>
+                        <Stack gap={"1"} minW="0" w="100%">
                             <ChakraText fontWeight="bold">
                                 {transformedStreak.name}
                             </ChakraText>
