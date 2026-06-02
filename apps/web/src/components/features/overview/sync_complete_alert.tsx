@@ -6,6 +6,18 @@ export default function SyncCompleteAlert(
         onClose: () => void
     }
 ) {
+
+    const formatFetched = (fetched: number | null) => {
+        if (fetched! <= 1) {
+            return 0;
+        } else if (fetched! > 1) {
+            return fetched!;
+        }
+    };
+
+    const fetchedFormatted = formatFetched(fetched);
+    const formattedTitle = `Fetched ${fetchedFormatted} scrobble${fetchedFormatted != 1 ? "s" : ""}`;
+
     return (
         <Flex
             direction={"column"}
@@ -17,11 +29,11 @@ export default function SyncCompleteAlert(
             <Alert.Root status={"info"} width={{ base: "250px", md: "xs"}}>
                 <Alert.Indicator />
                 <Alert.Content textAlign={"left"}>
-                    <Alert.Title>Fetched {fetched! - 1} scrobble{fetched! != 1 ? "s" : ""}</Alert.Title>
+                    <Alert.Title>{formattedTitle}</Alert.Title>
                 </Alert.Content>
                 <CloseButton
                     position="absolute"
-                    right="-1"
+                    right="1"
                     top="1"
                     onClick={() => onClose()} />
             </Alert.Root>
