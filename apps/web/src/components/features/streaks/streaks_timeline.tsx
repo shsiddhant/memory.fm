@@ -58,7 +58,7 @@ export default function StreaksTimeline(
         const hours = totalhours % 24;
         const days = Math.trunc(totalhours / 24);
 
-        return `${fmtNumber(days, "day")} ${fmtNumber(hours, "hour")}, ${fmtNumber(minutes, "minute")}`;
+        return `${fmtNumber(days, "day")} ${fmtNumber(hours, "hour")} ${fmtNumber(minutes, "minute")}`;
     };
 
     // Format Date
@@ -82,7 +82,7 @@ export default function StreaksTimeline(
             startFormatted: formatDate(start),
             endFormatted: formatDate(end),
             duration: end.getTime() - start.getTime(),
-            durationFormatted: formatDuration(end.getTime() - start.getTime()),
+            durationFormatted: formatDuration(end.getTime() - start.getTime()).trim(),
             subnameFormatted: d.subname ? `<i>${d.subname}</i><br>` : "",
         };
     });

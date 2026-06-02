@@ -74,7 +74,7 @@ export default function SyncProgress(
                     <Alert.Title>First sync may take some time for large listening histories.</Alert.Title>
                     <Alert.Description> While your scrobbles
                         sync, you can still view your stats and charts using the sidebar.
-                        .</Alert.Description>
+                    </Alert.Description>
                 </Alert.Content>
             </Alert.Root>
         </Flex>
