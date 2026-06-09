@@ -16,5 +16,10 @@ APP_NAME = "memoryfm"
 
 DB_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
+DEBUG_DIR = os.getenv("DEBUG_DIR", None)
+
+if DEBUG_DIR is not None:
+    Path(DEBUG_DIR).mkdir(exist_ok=True)
+
 Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
 Path(LOG_FILE).touch(exist_ok=True)

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 from typing import TYPE_CHECKING
 import requests
 import json
@@ -8,7 +9,7 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy.exc import SQLAlchemyError
 
-
+from memoryfm.config import DEBUG_DIR
 from memoryfm.errors import (
     APIKeyError,
     InvalidDataError,
@@ -70,7 +71,12 @@ def lastfm_get_recent_tracks(
         f"&user={username}&api_key={api_key}&page={page}&from={from_ts}&to={to_ts}"
         f"&limit={limit}&format=json"
     )
-    response = requests.get(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json",
+        "Accept-Encoding": "identity",  # Forces raw, uncompressed 8-bit data
+    }
+    response = requests.get(url, headers=headers)
     return response
 
 
@@ -95,6 +101,12 @@ def from_recenttracks_response(
         response_data = response.json()
         return parse_lastfm_api_response(response_data)
     except json.JSONDecodeError:
+        if DEBUG_DIR:
+            with open(Path(DEBUG_DIR) / "failed-lastfm-response.txt", "w") as fp:
+                fp.write(response.text)
+            with open(Path(DEBUG_DIR) / "failed-lastfm-response.bin", "wb") as fp:
+                fp.write(response.content)
+            print("URL", response.url)
         raise
     except InvalidDataError:
         raise
@@ -231,7 +243,7 @@ def sync_lastfm_api(
     api_key: str,
     sync_status: SyncStatus,
     tz: str | None = None,
-    limit: int = 200,
+    limit: int = 1000,
 ):
     """
     Fetch and sync scrobbles from a last.fm username using last.fm API.
@@ -301,7 +313,7 @@ def refresh_scrobbles_lastfm_api(
     username: str,
     api_key: str,
     sync_status: SyncStatus,
-    limit: int = 200,
+    limit: int = 1000,
 ):
     try:
         context = userv.get_user_context(session, username)

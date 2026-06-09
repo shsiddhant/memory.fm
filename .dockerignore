@@ -1,0 +1,44 @@
+**/.gitignore
+**/.git/
+
+
+# System files
+**/.DS_Store
+**/Thumbs.db
+
+# Backup files
+*~
+*.swp
+*.bak
+*.tmp
+
+# Python cache
+*.pyc
+__pycache__/
+*/__pycache__/
+
+# Ruff
+**/ruff.toml
+
+# Build artifacts
+*.egg-info/
+build/
+*/docs/build/
+/docs/build/
+
+# Cython compiled
+*.so
+*.pyd
+
+# Venv
+venv/
+.venv/
+env/
+.env/
+
+# Obsidian
+.obsidian/
+
+# Jupyter
+*.ipynb_checkpoints/
+

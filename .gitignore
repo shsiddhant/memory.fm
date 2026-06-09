@@ -4,6 +4,7 @@ Thumbs.db
 
 # Environment files
 **/*.env
+**/*.env.dev
 
 # Backup files
 *~
